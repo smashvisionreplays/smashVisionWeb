@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+  * {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .ant-table-filter-dropdown {
+    background: rgb(14, 13, 13) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Optional: Adds a shadow for better visibility */
+    border-radius: 0px; /* Optional: Gives it rounded corners */
+  }
+
