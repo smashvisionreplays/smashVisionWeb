@@ -123,7 +123,7 @@ export default function Dashboard({ triggerNotification }) {
               <div className="p-6">
                 <DashboardContent 
                   selectedButton={selectedButton} 
-                  userRole={userMetadata.role}
+                  userRole={userMetadata.role }
                   userId={userMetadata.id}
                   renderModal={showModal} 
                 />

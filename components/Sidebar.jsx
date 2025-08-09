@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { initFlowbite } from "flowbite";
 import { TabGroup, TabList, Tab } from '@headlessui/react';
+import { useAuth, useUser, UserButton } from '@clerk/clerk-react'
 
 export default function Sidebar({ onSelect, userRole = 'member' }) {
   useEffect(() => {
@@ -27,11 +28,14 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
             <div className="flex flex-col items-center mb-8">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="relative">
-                  <img 
-                    src="https://smashvision.s3.us-east-2.amazonaws.com/Logos/padelNation_logo.png" 
-                    className="w-16 h-16 rounded-full ring-4 ring-white/20 shadow-lg" 
-                    alt="Club Logo" 
-                  />
+                  <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8",
+                      userButtonPopoverCard: "bg-white/95 backdrop-blur-sm border border-white/20"
+                    }
+                  }}
+                />
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white/20"></div>
                 </div>
                 

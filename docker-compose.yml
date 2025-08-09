@@ -1,0 +1,14 @@
+version: '3.8'
+
+networks:
+  webapp:
+    external: true
+
+services:
+  web:
+    build: .
+    container_name: web
+    networks:
+      - webapp
+    environment:
+      - NODE_ENV=production
