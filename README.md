@@ -35,17 +35,9 @@ npm run dev
 # Access at http://localhost:5173
 ```
 
-### Option 2: Using Docker
-```bash
-# Build and run with Docker Compose
-docker-compose up -d --build
-
-# Access at http://localhost:3000
-```
-
 ## Production Deployment with Cloudflare Tunnel
 
-### Step 1: Create Cloudflare Tunnel
+### Step 1: Create Cloudflare Tunnel if not created yet
 
 1. Login to [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Go to **Zero Trust** > **Networks** > **Tunnels**
@@ -103,12 +95,7 @@ docker run --detach --network webapp cloudflare/cloudflared:latest tunnel --no-a
 docker ps
 ```
 
-2. Verify network connectivity:
-```cmd
-debug-tunnel.bat
-```
-
-3. Access your application at: `https://web.your-domain.com`
+2. Access your application at: `https://web.your-domain.com`
 
 ## Troubleshooting
 

@@ -44,10 +44,20 @@ export const fetchClubVideos = async (clubId) => {
 
 export const fetchClubClips = async (clubId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/clips/${clubId}`);
+    const response = await axios.get(`${API_BASE_URL}/clips/club/${clubId}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching clips for club in controller${clubId}:`, error);
+    console.error(`Error fetching clips for club ${clubId} in controller:`, error);
+    throw error;
+  }
+};
+
+export const fetchMemberClips = async (memberId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/clips/member/${memberId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching clips for member ${memberId} in controller:`, error);
     throw error;
   }
 };

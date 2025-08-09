@@ -1,5 +1,5 @@
 import TableAnt from "../TableAnt";
-import { fetchClubVideos, fetchClubClips, fetchClubCameras, fetchStartStream, fetchBlockVideo, fetchUnblockVideo, createYoutubeLive, fetchClubById, fetchStopStream, checkYouTubeStatus, disconnectYouTube } from '../../src/controllers/serverController';
+import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchStartStream, fetchBlockVideo, fetchUnblockVideo, createYoutubeLive, fetchClubById, fetchStopStream, checkYouTubeStatus, disconnectYouTube } from '../../src/controllers/serverController';
 import { useState, useEffect } from "react";
 import { useAuth } from '@clerk/clerk-react';
 import '../../stylesheet/dashboard.css';
@@ -113,7 +113,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
           clubData = await fetchClubClips(userId);
         } else {
           // Member sees clips from their associated club (you may need to adjust this logic)
-          clubData = await fetchClubClips(userId); // or fetch member-specific clips
+          clubData = await fetchMemberClips(userId); // or fetch member-specific clips
         }
         
         if (clubData) {
@@ -128,6 +128,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
             URL: clip.URL || null,
             downloadURL: clip.downloadURL || null,
           }));
+          console.log("formattedClips", formattedClips);
           setClips(formattedClips);
         }
       } catch (error) {
