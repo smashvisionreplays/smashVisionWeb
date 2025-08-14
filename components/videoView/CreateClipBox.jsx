@@ -10,10 +10,8 @@ const { TextArea } = Input;
 // Constants
 const MAX_TIME_FOR_CLIPS = 60;
 const MIN_TIME_FOR_CLIPS = 5;
-const CLUB_ID = 8;
-const USER_ID = 62;
 
-export default function CreateClipBox({ videoRef }) {
+export default function CreateClipBox({ videoRef, clubId, userId }) {
   const navigate = useNavigate();
   
   // Refs
@@ -115,8 +113,8 @@ export default function CreateClipBox({ videoRef }) {
       const clipRegistered = await registerClip(
         videoRef.current.src, 
         tag, 
-        CLUB_ID, 
-        USER_ID, 
+        clubId, 
+        userId, 
         startTimeSeconds, 
         endTimeSeconds
       );

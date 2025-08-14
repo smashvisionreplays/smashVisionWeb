@@ -270,7 +270,7 @@ export async function disconnectYouTube(authToken) {
 
 export async function fetchStartStream(clubId, cameraId, cameraIp, court, rtmpKey, clubEndpoint, watchUrl) {
   try {
-    console.log(`sending to ${API_BASE_URL}/cameras/startLive,  ${clubId,cameraId, court, rtmpKey, clubEndpoint}` )
+    // console.log(`sending to ${API_BASE_URL}/cameras/startLive,  ${clubId}, ${cameraId}, ${court}, ${rtmpKey}, ${clubEndpoint}` )
     const response = await fetch(`${API_BASE_URL}/cameras/${cameraId}/startLive`, {
       method: 'POST',
       headers: {

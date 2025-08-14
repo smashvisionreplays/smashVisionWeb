@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
 import BestPointsTable from "../../components/videoView/TableActions";
@@ -15,7 +16,10 @@ const MINUTES_TO_SECONDS = 60;
 const VideoView = ({ triggerNotification }) => {
   const videoRef = useRef(null);
   const location = useLocation();
+  const { user } = useUser();
   const { id_club, weekday, hour, court_number, section, videoUID } = location.state;
+  
+  const userId = user?.privateMetadata?.id;
 
   // State
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -126,7 +130,7 @@ const VideoView = ({ triggerNotification }) => {
           </div>
         ) : (
           <div className="flex flex-row mt-5 mx-auto justify-center gap-10">
-            <CreateClipBox videoRef={videoRef} />
+            <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
             <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
           </div>
         )}
