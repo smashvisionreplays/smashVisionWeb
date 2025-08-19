@@ -28,7 +28,7 @@ const BlurredContainer = ({ triggerNotification }) => {
   const [selectedClub, setSelectedClub] = useState({});
   const [courts, setCourts] = useState([]);
   const [selectedCourt, setSelectedCourt] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(dayjs(todayString, dateFormat));
   const [selectedTime, setSelectedTime] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -150,6 +150,7 @@ const BlurredContainer = ({ triggerNotification }) => {
       <div className="relative z-10">
         <ConfigProvider
           theme={{
+            algorithm: theme.defaultAlgorithm,
             components: {
               Select: {
                 colorBgContainer: "rgba(255,255,255,0.95)",
@@ -166,6 +167,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 colorTextPlaceholder: "rgba(0,0,0,0.6)",
                 colorBorder: "rgba(255,255,255,0.2)",
                 colorBgElevated: "rgba(255,255,255,0.95)",
+                
               },
               TimePicker: {
                 colorText: "rgba(0,0,0,0.85)",
@@ -173,6 +175,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 colorTextPlaceholder: "rgba(0,0,0,0.6)",
                 colorBorder: "rgba(255,255,255,0.2)",
                 colorBgElevated: "rgba(255,255,255,0.95)",
+
               },
               Button: {
                 colorPrimary: "#DDF31A",
@@ -210,7 +213,6 @@ const BlurredContainer = ({ triggerNotification }) => {
                     </span>
                   </Space>
                 )}
-                className="glass-select"
               />
             </Form.Item>
 
@@ -226,7 +228,6 @@ const BlurredContainer = ({ triggerNotification }) => {
                 onChange={setSelectedCourt}
                 options={courts.map((court) => ({ label: `Court ${court}`, value: court }))}
                 disabled={!selectedClubId}
-                className="glass-select"
               />
             </Form.Item>
 
@@ -256,12 +257,16 @@ const BlurredContainer = ({ triggerNotification }) => {
             >
               <TimePicker
                 size="large"
-                style={{ width: '100%' }}
+                style={{ width: '100%',  }}
                 use12Hours
                 format="h:mm a"
                 minuteStep={30}
                 onChange={handleTimeSelect}
-                className="glass-input"
+                classNames={{
+                  popup: {
+                    root: 'timepicker-popup'
+                  }
+                }}
               />
             </Form.Item>
 
