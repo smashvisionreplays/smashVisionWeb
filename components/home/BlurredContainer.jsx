@@ -54,6 +54,8 @@ const BlurredContainer = ({ triggerNotification }) => {
     loadClubs();
   }, []);
 
+
+
   // Load courts when club is selected
   useEffect(() => {
     const loadCourts = async () => {
@@ -99,7 +101,7 @@ const BlurredContainer = ({ triggerNotification }) => {
       const section = selectedTime.split(":")[1].includes("00") ? 0 : 1;
       const params = {
         id_club: selectedClubId,
-        weekday: selectedDate.toLocaleString('en', { weekday: 'long' }),
+        weekday: selectedDate.toDate().toLocaleString('en', { weekday: 'long' }),
         court_number: selectedCourt,
         hour: convert24To12(selectedTime).split(":")[0],
         section: section
@@ -114,7 +116,7 @@ const BlurredContainer = ({ triggerNotification }) => {
           state: {
             videoUID: video[0].UID,
             id_club: selectedClubId,
-            weekday: selectedDate.toLocaleString('en', { weekday: 'long' }),
+            weekday: selectedDate.toDate().toLocaleString('en', { weekday: 'long' }),
             court_number: selectedCourt,
             hour: convert24To12(selectedTime).split(":")[0],
             section: section
@@ -153,29 +155,18 @@ const BlurredContainer = ({ triggerNotification }) => {
             algorithm: theme.defaultAlgorithm,
             components: {
               Select: {
-                colorBgContainer: "rgba(255,255,255,0.95)",
-                colorText: "rgba(0,0,0,0.85)",
                 colorTextPlaceholder: "rgba(0,0,0,0.6)",
                 colorBorder: "rgba(255,255,255,0.2)",
-                optionSelectedBg: "rgba(255,255,255,0.9)",
-                optionActiveBg: "rgba(255,255,255,0.8)",
-                colorBgElevated: "rgba(255,255,255,0.95)",
+
               },
               DatePicker: {
-                colorText: "rgba(0,0,0,0.85)",
-                colorBgContainer: "rgba(255,255,255,0.95)",
                 colorTextPlaceholder: "rgba(0,0,0,0.6)",
                 colorBorder: "rgba(255,255,255,0.2)",
-                colorBgElevated: "rgba(255,255,255,0.95)",
                 
               },
               TimePicker: {
-                colorText: "rgba(0,0,0,0.85)",
-                colorBgContainer: "rgba(255,255,255,0.95)",
                 colorTextPlaceholder: "rgba(0,0,0,0.6)",
                 colorBorder: "rgba(255,255,255,0.2)",
-                colorBgElevated: "rgba(255,255,255,0.95)",
-
               },
               Button: {
                 colorPrimary: "#DDF31A",
@@ -188,6 +179,9 @@ const BlurredContainer = ({ triggerNotification }) => {
             layout="vertical"
             onFinish={handleSeeVideo}
             className="space-y-6"
+            initialValues={{
+              date: dayjs(todayString, dateFormat)
+            }}
           >
             {/* Club Selection */}
             <Form.Item
@@ -240,10 +234,10 @@ const BlurredContainer = ({ triggerNotification }) => {
               <DatePicker
                 size="large"
                 style={{ width: '100%' }}
-                defaultValue={dayjs(todayString, dateFormat)}
+                value={selectedDate}
                 minDate={dayjs(lastWeekString, dateFormat)}
                 maxDate={dayjs(todayString, dateFormat)}
-                onChange={(date) => date && setSelectedDate(date.toDate())}
+                onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
                 className="glass-input"
               />
