@@ -2,11 +2,13 @@ import TableAnt from "../TableAnt";
 import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchStartStream, fetchBlockVideo, fetchUnblockVideo, createYoutubeLive, fetchClubById, fetchStopStream, checkYouTubeStatus, disconnectYouTube } from '../../src/controllers/serverController';
 import { useState, useEffect } from "react";
 import { useAuth } from '@clerk/clerk-react';
+import { useLanguage } from '../../src/contexts/LanguageContext';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => {
   const { getToken } = useAuth();
+  const { t } = useLanguage();
   const [videos, setVideos] = useState([]);
   const [clips, setClips] = useState([]);
   const [cameras, setCameras] = useState([]);
@@ -280,7 +282,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
         return clips.length > 0 ? (
           <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
             <TableAnt 
-              columns={clipsColumns(clips, handleShowModal)} 
+              columns={clipsColumns(clips, handleShowModal, t)} 
               data={clips} 
               needsExpand={false} 
               needsVirtual={true} 
@@ -294,7 +296,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
         return videos.length > 0 ? (
           <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
             <TableAnt 
-              columns={videosColumns(videos, handleShowModal, handleBlockVideo, handleUnblockVideo)} 
+              columns={videosColumns(videos, handleShowModal, handleBlockVideo, handleUnblockVideo, t)} 
               data={videos} 
               needsExpand={false} 
               needsVirtual={true} 
@@ -339,7 +341,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
               <>
                 <div className="sm:hidden backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
                   <TableAnt 
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras)} 
+                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)} 
                     data={cameras} 
                     needsExpand={true} 
                     needsVirtual={true} 
@@ -347,7 +349,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
                 </div>
                 <div className="hidden lg:block backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
                   <TableAnt 
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras)} 
+                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)} 
                     data={cameras} 
                     needsExpand={false} 
                     needsVirtual={false} 

@@ -2,12 +2,13 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline' 
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth, useUser, UserButton } from '@clerk/clerk-react'
+import { useLanguage } from '../src/contexts/LanguageContext'
+import LanguageSelector from './LanguageSelector'
 
-const navigation = [
-  { name: 'Dashboard', to: '/dashboard', current: false },
-  { name: 'Lives', to: '/lives', current: false },
-  { name: 'Tournaments', to: '/tournaments', current: false },
-  { name: 'Contact', to: '/contact', current: false },
+const getNavigation = (t) => [
+  { name: t('dashboard'), to: '/dashboard', current: false },
+  { name: t('lives'), to: '/lives', current: false },
+  { name: t('tournaments'), to: '/tournaments', current: false },
 ]
 
 function classNames(...classes) {
@@ -18,6 +19,9 @@ export default function NavBar() {
   const location = useLocation();
   const { isSignedIn } = useAuth();
   const { user } = useUser();
+  const { t } = useLanguage();
+  
+  const navigation = getNavigation(t);
   
   return (
     <Disclosure as="nav" className="m-auto bg-transparent flex flex-col mb-10">
@@ -71,7 +75,8 @@ export default function NavBar() {
               </div>
             </div>
           
-            <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <div className="inset-y-0 right-0 flex items-center gap-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <LanguageSelector />
               {isSignedIn ? (
                 <UserButton 
                   appearance={{

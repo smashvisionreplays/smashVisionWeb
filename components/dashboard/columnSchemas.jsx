@@ -1,13 +1,14 @@
 import { Button, Input, Table, Modal } from "antd";
 import { useState } from "react";
+import { useLanguage } from '../../src/contexts/LanguageContext';
 import VideoPlayer from "../videoView/VideoPlayer"; // Adjust the import path as needed
 
-export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo) => {
+export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
   const uniqueCourtNumbers = [...new Set(videos.map(item => item.Court_Number))];
   const uniqueDays = [...new Set(videos.map(item => item.Weekday))];
   return [
     {
-      title: 'Day',
+      title: t('day') || 'Day',
       dataIndex: 'Weekday',
       key: 'Weekday',
       filters: uniqueDays.map(day => ({
@@ -19,7 +20,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
       onFilter: (value, record) => {return record.Weekday===value}
     },
     {
-      title: 'Court',
+      title: t('court') || 'Court',
       dataIndex: 'Court_Number',
       key: 'Court_Number',
       filters: uniqueCourtNumbers.map(number => ({
@@ -31,15 +32,15 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
       onFilter: (value, record) => {return record.Court_Number==value}
     },
     {
-      title: 'Hour',
+      title: t('hour') || 'Hour',
       dataIndex: 'Hour',
       key: 'Hour',
     },
     {
-      title: 'Actions',
+      title: t('actions') || 'Actions',
       children:[
         {
-          title: 'Recorded',
+          title: t('recorded') || 'Recorded',
           dataIndex: 'URL',
           key: 'URL',
           filters: [
@@ -64,13 +65,13 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
                     target="_blank" 
                     className="mr-2 bg-blue-500" 
             >
-                  Watch
+                  {t('watch') || 'Watch'}
             </Button>
             </>
           ),    
         },
         {
-          title: 'Status',
+          title: t('status') || 'Status',
           dataIndex: 'Blocked',
           key: 'Blocked',
           filters: [
@@ -87,7 +88,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
                 onClick={() => record.Blocked=="No" ? blockVideo(record.ID): unblockVideo(record.ID)}
                 className={record.Blocked=="No" ? "bg-red-500" : "bg-green-500"}
               >
-                {record.Blocked=="No" ? "Block" : "Unblock"}
+                {record.Blocked=="No" ? (t('block') || 'Block') : (t('unblock') || 'Unblock')}
               </Button>
             </>
           ),    
@@ -98,11 +99,11 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
   ];
 }
 
-  export const clipsColumns = (clips, showVideoInModal) => {
+  export const clipsColumns = (clips, showVideoInModal, t) => {
     const uniqueDays = [...new Set(clips.map(item => item.Weekday))];
     return [
       {
-        title: 'Day',
+        title: t('day') || 'Day',
         dataIndex: 'Weekday',
         key: 'Weekday',
         filters: uniqueDays.map(day => ({
@@ -114,17 +115,17 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         onFilter: (value, record) => {return record.Weekday===value}
       },
       {
-        title: 'Date',
+        title: t('date') || 'Date',
         dataIndex: 'date',
         key: 'date',
       },    
       {
-        title: 'Tag',
+        title: t('tag') || 'Tag',
         dataIndex: 'tag',
         key: 'tag',
       },
       {
-        title: 'Actions',
+        title: t('actions') || 'Actions',
         dataIndex: 'downloadURL',
         key: 'downloadURL',
         render: (_, record) => (
@@ -142,9 +143,9 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
                   target="_blank" 
                   className="mr-2 bg-blue-500" 
           >
-                Watch
+                {t('watch') || 'Watch'}
           </Button>
-          {record.downloadURL && <Button className="" href={record.downloadURL}>Download</Button>}
+          {record.downloadURL && <Button className="" href={record.downloadURL}>{t('download') || 'Download'}</Button>}
           </>
         ),
         // render: (url2 ) => (url2 ? <Button className="" href={url2}>Link</Button> : 'No video'),
@@ -159,10 +160,10 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
     ];
   }
 
-  export const livesColumns = (cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras) => {
+  export const livesColumns = (cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t) => {
     return [
       {
-        title: 'Court',
+        title: t('court') || 'Court',
         dataIndex: 'court_number',
         key: 'court_number',
         filters: cameras.map(item => ({
@@ -174,18 +175,18 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         onFilter: (value, record) => {return record.Court_Number==value}
       },
       {
-        title: 'Status',
+        title: t('status') || 'Status',
         dataIndex: 'status',
         key: 'status',
       },
       {
-        title: 'Link',
+        title: t('link') || 'Link',
         dataIndex: 'url',
         key: 'url',
-        render: (url) => (url ? <Button className="" href={url}>Link</Button> : 'No video'),
+        render: (url) => (url ? <Button className="" href={url}>{t('link') || 'Link'}</Button> : 'No video'),
       },
       {
-        title: 'Notes',
+        title: t('notes') || 'Notes',
         dataIndex: 'notes',
         key: 'notes',
         responsive: ['lg', 'md'],
@@ -197,7 +198,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         hidden:true
       },
       {
-        title: 'Actions',
+        title: t('actions') || 'Actions',
         key: 'actions',
         render: (_, record) => {
           const isConnecting = connectingCameras.has(record.ID);
@@ -216,7 +217,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
               disabled={isConnecting}
               loading={isConnecting}
             >
-              {isConnecting ? "Connecting..." : "Start Live"}
+              {isConnecting ? (t('connecting') || 'Connecting...') : (t('startLive') || 'Start Live')}
             </Button>
           ) : (
             <Button 
@@ -231,7 +232,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
               disabled={isConnecting}
               loading={isConnecting}
             >
-              {isConnecting ? "Stopping..." : "Stop Live"}
+              {isConnecting ? (t('stopping') || 'Stopping...') : (t('stopLive') || 'Stop Live')}
             </Button>
           );
         }

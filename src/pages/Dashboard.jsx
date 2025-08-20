@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { Tab, TabGroup, TabList } from '@headlessui/react';
 import { useUser } from '@clerk/clerk-react';
 import { fetchUserMetadata } from '../controllers/userController';
+import { useLanguage } from '../contexts/LanguageContext';
 import VideoModal from "../../components/VideoModal";
 
 export default function Dashboard({ triggerNotification }) {
   const { user } = useUser();
+  const { t } = useLanguage();
   const [userMetadata, setUserMetadata] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const categories = [
-    { name: 'Clips' },
-    { name: 'Videos' },
-    { name: 'Lives' },
+  const getCategories = () => [
+    { name: 'Clips', label: t('myClips') },
+    { name: 'Videos', label: 'Videos' },
+    { name: 'Lives', label: t('lives') },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,7 +54,10 @@ export default function Dashboard({ triggerNotification }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60 mx-auto mb-4"></div>
+          <p className="text-white/60">{t('loading')}</p>
+        </div>
       </div>
     );
   }
@@ -84,7 +89,7 @@ export default function Dashboard({ triggerNotification }) {
             <div className="backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-2">
               <TabGroup>
                 <TabList className="flex gap-2">
-                  {categories.map(({ name }) => (
+                  {getCategories().map(({ name, label }) => (
                     <Tab
                       key={name}
                       className="rounded-xl py-2 px-4 text-sm font-semibold text-white/90 focus:outline-none 
@@ -93,9 +98,10 @@ export default function Dashboard({ triggerNotification }) {
                                 transition-all duration-200 ease-in-out"
                       onClick={() => handleSelect(name)}
                     >
-                      {name}
+                      {label}
                     </Tab>
-                  ))}
+                  ))
+                }
                 </TabList>
               </TabGroup>
             </div>
@@ -112,10 +118,10 @@ export default function Dashboard({ triggerNotification }) {
               {/* Content Header */}
               <div className="p-6 border-b border-white/10">
                 <h1 className="text-2xl font-bold text-white/90 mb-2">
-                  {selectedButton} Dashboard
+                  {getCategories().find(cat => cat.name === selectedButton)?.label || selectedButton} {t('dashboard')}
                 </h1>
                 <p className="text-white/60">
-                  Manage your {selectedButton.toLowerCase()} and monitor activity
+                  {t('descriptionPanel')} {selectedButton.toLowerCase()}
                 </p>
               </div>
 

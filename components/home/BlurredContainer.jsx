@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchClubs, fetchClubById, fetchVideos } from '../../src/controllers/serverController';
 import { useNavigate } from "react-router-dom";
 import { DatePicker, TimePicker, Form, Button, Space, Select, ConfigProvider, theme } from 'antd';
+import { useLanguage } from '../../src/contexts/LanguageContext';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -23,6 +24,7 @@ const todayString = formatDateString(todayDate);
 const lastWeekString = formatDateString(lastWeekDate);
 
 const BlurredContainer = ({ triggerNotification }) => {
+  const { t } = useLanguage();
   const [clubs, setClubs] = useState([]);
   const [selectedClubId, setSelectedClubId] = useState(null);
   const [selectedClub, setSelectedClub] = useState({});
@@ -92,7 +94,7 @@ const BlurredContainer = ({ triggerNotification }) => {
 
   const handleSeeVideo = async () => {
     if (!selectedClubId || !selectedCourt || !selectedDate || !selectedTime) {
-      triggerNotification?.("error", "Please fill in all fields");
+      triggerNotification?.("error", t('fillAllFields'));
       return;
     }
 
@@ -110,7 +112,7 @@ const BlurredContainer = ({ triggerNotification }) => {
       const video = await fetchVideos(params);
       
       if (video.length === 0 || video[0].URL === null) {
-        triggerNotification?.("error", "Video Not Found", "No video available for the selected time and court");
+        triggerNotification?.("error", t('videoNotFound'), t('noVideoAvailable'));
       } else {
         navigate(`/videoView`, {
           state: {
@@ -185,13 +187,13 @@ const BlurredContainer = ({ triggerNotification }) => {
           >
             {/* Club Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">Club</span>}
+              label={<span className="text-white/90 font-medium text-base">{t('club')}</span>}
               name="club"
-              rules={[{ required: true, message: 'Please select your club!' }]}
+              rules={[{ required: true, message: t('selectClub') }]}
             >
               <Select
                 size="large"
-                placeholder="Select your club"
+                placeholder={t('selectClub')}
                 onChange={(value) => {
                   const club = clubs.find(item => item.value === parseInt(value));
                   setSelectedClub(club);
@@ -212,13 +214,13 @@ const BlurredContainer = ({ triggerNotification }) => {
 
             {/* Court Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">Court</span>}
+              label={<span className="text-white/90 font-medium text-base">{t('court')}</span>}
               name="court"
-              rules={[{ required: true, message: 'Please select a court!' }]}
+              rules={[{ required: true, message: t('selectCourt') }]}
             >
               <Select
                 size="large"
-                placeholder="Select court number"
+                placeholder={t('selectCourt')}
                 onChange={setSelectedCourt}
                 options={courts.map((court) => ({ label: `Court ${court}`, value: court }))}
                 disabled={!selectedClubId}
@@ -227,9 +229,9 @@ const BlurredContainer = ({ triggerNotification }) => {
 
             {/* Date Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">Date</span>}
+              label={<span className="text-white/90 font-medium text-base">{t('date')}</span>}
               name="date"
-              rules={[{ required: true, message: 'Please select the date!' }]}
+              rules={[{ required: true, message: t('selectDate') }]}
             >
               <DatePicker
                 size="large"
@@ -245,9 +247,9 @@ const BlurredContainer = ({ triggerNotification }) => {
 
             {/* Time Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">Time</span>}
+              label={<span className="text-white/90 font-medium text-base">{t('time')}</span>}
               name="time"
-              rules={[{ required: true, message: 'Please select the time!' }]}
+              rules={[{ required: true, message: t('selectTime') }]}
             >
               <TimePicker
                 size="large"
@@ -273,7 +275,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 loading={loading}
                 className="w-full h-12 bg-[#DDF31A] hover:bg-[#c9de17] border-none text-black font-semibold rounded-xl shadow-lg transition-all duration-200"
               >
-                {loading ? 'Searching...' : 'Find My Game'}
+                {loading ? t('searching') : t('findMyGame')}
               </Button>
             </Form.Item>
           </Form>
