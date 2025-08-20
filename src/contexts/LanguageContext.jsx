@@ -80,6 +80,19 @@ const translations = {
     goodPoint: 'Good Point',
     forcedError: 'Forced Error',
     
+    // Lives page
+    liveStreams: 'Live Streams',
+    liveStreamsDescription: 'Watch live padel matches from clubs around the world. Select a club to see their active courts.',
+    selectClubLive: 'Select Club',
+    chooseClubPlaceholder: 'Choose a club to view live streams',
+    liveCourts: 'Live Courts',
+    noLiveStreamingFound: 'No live streaming found',
+    clickToWatchFullScreen: 'Click to watch full screen',
+    offline: 'Offline',
+    noCamerasFound: 'No cameras found',
+    noCamerasDescription: "This club doesn't have any cameras set up yet.",
+    liveStreamTitle: 'Live Stream',
+    
     // Common
     language: 'Language',
     Monday: 'Monday',
@@ -163,6 +176,19 @@ const translations = {
     blooper: 'Error Gracioso',
     goodPoint: 'Buen Punto',
     forcedError: 'Error Forzado',
+    
+    // Lives page
+    liveStreams: 'Transmisiones en Vivo',
+    liveStreamsDescription: 'Mira partidos de pádel en vivo de clubes de todo el mundo. Selecciona un club para ver sus canchas activas.',
+    selectClubLive: 'Seleccionar Club',
+    chooseClubPlaceholder: 'Elige un club para ver transmisiones en vivo',
+    liveCourts: 'Canchas en Vivo',
+    noLiveStreamingFound: 'No se encontró transmisión en vivo',
+    clickToWatchFullScreen: 'Haz clic para ver en pantalla completa',
+    offline: 'Desconectado',
+    noCamerasFound: 'No se encontraron cámaras',
+    noCamerasDescription: 'Este club aún no tiene cámaras configuradas.',
+    liveStreamTitle: 'Transmisión en Vivo',
     
     // Common
     language: 'Idioma',

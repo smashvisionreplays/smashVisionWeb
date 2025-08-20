@@ -131,32 +131,34 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         dataIndex: 'downloadURL',
         key: 'downloadURL',
         render: (_, record) => (
-          <>
-          <Button disabled={!record.URL}
-                  onClick={()=>showVideoInModal({
-                    videoUID:record.UID,
-                    id_club:record.id_club,
-                    Clip_Name:record.Clip_Name,
-                    weekday:record.Weekday, 
-                    court_number:record.Court_Number, 
-                    hour:record.originalHour, 
-                    section:record.Hour_Section
-                  })} 
-                  target="_blank" 
-                  className="mr-2 bg-blue-500" 
-          >
-                {t('watch') || 'Watch'}
-          </Button>
-          {record.downloadURL && <Button className="" href={record.downloadURL}>{t('download') || 'Download'}</Button>}
-          </>
+          <div className="flex gap-2">
+            <Button 
+              disabled={!record.URL}
+              onClick={()=>showVideoInModal({
+                videoUID:record.UID,
+                id_club:record.id_club,
+                Clip_Name:record.Clip_Name,
+                weekday:record.Weekday, 
+                court_number:record.Court_Number, 
+                hour:record.originalHour, 
+                section:record.Hour_Section
+              })} 
+              target="_blank" 
+              className="bg-blue-500 flex-1" 
+            >
+              {t('watch') || 'Watch'}
+            </Button>
+            {record.downloadURL && (
+              <Button 
+                className="flex-1" 
+                href={record.downloadURL}
+              >
+                {t('download') || 'Download'}
+              </Button>
+            )}
+          </div>
         ),
         // render: (url2 ) => (url2 ? <Button className="" href={url2}>Link</Button> : 'No video'),
-      },
-      {
-        title: 'Download URL',
-        dataIndex: 'downloadURL',
-        key: 'downloadURL',
-        render: (downloadURL) => (downloadURL ? <Button className="" href={downloadURL}>Download</Button> : 'N/A'),
       },
   
     ];

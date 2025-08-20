@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Select, ConfigProvider, theme, Modal } from 'antd';
 import { fetchClubs, fetchClubCameras } from '../controllers/serverController';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Lives = () => {
+  const { t } = useLanguage();
   const [clubs, setClubs] = useState([]);
   const [selectedClubId, setSelectedClubId] = useState(null);
   const [cameras, setCameras] = useState([]);
@@ -97,7 +99,7 @@ const Lives = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <p className="text-white/60 text-sm">No live streaming found</p>
+                <p className="text-white/60 text-sm">{t('noLiveStreamingFound')}</p>
               </div>
             </div>
           )}
@@ -106,7 +108,7 @@ const Lives = () => {
           {isLive && (
             <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
               <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-              LIVE
+              {t('lives').toUpperCase()}
             </div>
           )}
 
@@ -124,7 +126,7 @@ const Lives = () => {
         
         <div className="p-4">
           <h3 className="text-lg font-semibold text-white/90 mb-2">
-            Court {camera.court_number}
+            {t('court')} {camera.court_number}
           </h3>
           <div className="flex items-center justify-between">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -132,14 +134,14 @@ const Lives = () => {
                 ? 'bg-green-500/20 text-green-400' 
                 : 'bg-gray-500/20 text-gray-400'
             }`}>
-              {camera.status || 'Offline'}
+              {camera.status || t('offline')}
             </span>
             {camera.notes && (
               <span className="text-white/50 text-xs">{camera.notes}</span>
             )}
           </div>
           {isClickable && (
-            <p className="text-white/40 text-xs mt-2">Click to watch full screen</p>
+            <p className="text-white/40 text-xs mt-2">{t('clickToWatchFullScreen')}</p>
           )}
         </div>
       </div>
@@ -175,10 +177,10 @@ const Lives = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl lg:text-5xl font-bold text-white/90 mb-4">
-              Live Streams
+              {t('liveStreams')}
             </h1>
             <p className="text-lg text-white/60 max-w-2xl mx-auto">
-              Watch live padel matches from clubs around the world. Select a club to see their active courts.
+              {t('liveStreamsDescription')}
             </p>
           </div>
 
@@ -186,10 +188,10 @@ const Lives = () => {
           <div className="backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl p-8 mb-8">
             <div className="max-w-md mx-auto">
               <label className="block text-white/90 text-lg font-medium mb-4">
-                Select Club
+                {t('selectClubLive')}
               </label>
               <Select
-                placeholder="Choose a club to view live streams"
+                placeholder={t('chooseClubPlaceholder')}
                 className="w-full"
                 size="large"
                 value={selectedClubId}
@@ -206,7 +208,7 @@ const Lives = () => {
           {selectedClubId && (
             <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8">
               <h2 className="text-2xl font-bold text-white/90 mb-6">
-                {clubs.find(club => club.ID === selectedClubId)?.Name} - Live Courts
+                {clubs.find(club => club.ID === selectedClubId)?.Name} - {t('liveCourts')}
               </h2>
               
               {loading ? (
@@ -224,8 +226,8 @@ const Lives = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-white/80 mb-2">No cameras found</h3>
-                  <p className="text-white/50">This club doesn't have any cameras set up yet.</p>
+                  <h3 className="text-lg font-semibold text-white/80 mb-2">{t('noCamerasFound')}</h3>
+                  <p className="text-white/50">{t('noCamerasDescription')}</p>
                 </div>
               )}
             </div>
@@ -235,7 +237,7 @@ const Lives = () => {
 
       {/* Full Screen Video Modal */}
       <Modal
-        title={`Court ${selectedStream?.court_number} - Live Stream`}
+        title={`${t('court')} ${selectedStream?.court_number} - ${t('liveStreamTitle')}`}
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
