@@ -18,7 +18,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
   const [connectingCameras, setConnectingCameras] = useState(new Set());
   const [youtubeStatus, setYoutubeStatus] = useState({ connected: false, authUrl: null });
 
-  const handleInputChange = (court_number, value) => {
+  const handleInputChange = (court_number, value) => {ta
     setRtmpKeys((prev) => ({ ...prev, [court_number]: value }));
   };
 

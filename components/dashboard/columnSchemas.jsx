@@ -5,19 +5,20 @@ import VideoPlayer from "../videoView/VideoPlayer"; // Adjust the import path as
 
 export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
   const uniqueCourtNumbers = [...new Set(videos.map(item => item.Court_Number))];
-  const uniqueDays = [...new Set(videos.map(item => item.Weekday))];
+  const uniqueDays = [...new Set(videos.map(item => t(item.Weekday) || item.Weekday))];
   return [
     {
       title: t('day') || 'Day',
       dataIndex: 'Weekday',
       key: 'Weekday',
       filters: uniqueDays.map(day => ({
-        text: day,
-        value: day,
+        text: t(day)|| day,
+        value: t(day)|| day,
       })),
       filterMode: 'tree',
       filterSearch: true,
-      onFilter: (value, record) => {return record.Weekday===value}
+      onFilter: (value, record) => {return t(record.Weekday)===value},
+      render: (weekday) => t(weekday) || weekday
     },
     {
       title: t('court') || 'Court',
@@ -44,8 +45,8 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
           dataIndex: 'URL',
           key: 'URL',
           filters: [
-            { text: 'Recorded', value: true },
-            { text: 'Not Recorded', value: false },
+            { text: t('recorded'), value: true },
+            { text: t('notRecorded'), value: false },
           ],
           filterMode: 'tree',
           filterSearch: true,
@@ -75,8 +76,8 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
           dataIndex: 'Blocked',
           key: 'Blocked',
           filters: [
-            { text: 'Blocked', value: "Si" },
-            { text: 'Not Blocked', value: "No" },
+            { text: t('blocked'), value: "Si" },
+            { text: t('unblocked'), value: "No" },
           ],
           filterMode: 'tree',
           filterSearch: true,
@@ -107,12 +108,13 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         dataIndex: 'Weekday',
         key: 'Weekday',
         filters: uniqueDays.map(day => ({
-          text: day,
-          value: day,
+          text: t(day)|| day,
+          value: t(day)|| day,
         })),
         filterMode: 'tree',
         filterSearch: true,
-        onFilter: (value, record) => {return record.Weekday===value}
+        onFilter: (value, record) => {return t(record.Weekday)===value},
+        render: (weekday) => t(weekday) || weekday
       },
       {
         title: t('date') || 'Date',

@@ -66,6 +66,10 @@ const translations = {
     memberDashboard: 'Member Dashboard',
     clubAccount: 'Club Account',
     memberAccount: 'Member Account',
+    blocked: 'Blocked',
+    unblocked: 'Unblocked',
+    recorded: 'Recorded',
+    notRecorded: 'Not Recorded',
     
     // Video view
     createClip: 'Create Clip of my Game!',
@@ -77,7 +81,14 @@ const translations = {
     forcedError: 'Forced Error',
     
     // Common
-    language: 'Language'
+    language: 'Language',
+    Monday: 'Monday',
+    Tuesday: 'Tuesday',
+    Wednesday: 'Wednesday',
+    Thursday: 'Thursday',
+    Friday: 'Friday',
+    Saturday: 'Saturday',
+    Sunday: 'Sunday'
   },
   es: {
     // Navbar
@@ -130,14 +141,18 @@ const translations = {
     download: 'Descargar',
     link: 'Enlace',
     notes: 'Notas',
-    startLive: 'Iniciar En Vivo',
-    stopLive: 'Detener En Vivo',
+    startLive: 'Iniciar Live',
+    stopLive: 'Detener Live',
     connecting: 'Conectando...',
     stopping: 'Deteniendo...',
     clubDashboard: 'Panel del Club',
     memberDashboard: 'Panel del Miembro',
     clubAccount: 'Cuenta del Club',
     memberAccount: 'Cuenta del Miembro',
+    blocked: 'Bloqueado',
+    unblocked: 'Desbloqueado',
+    recorded: 'Grabado',
+    notRecorded: 'No Grabado',
     
     // Video view
     createClip: '¡Crear Clip de mi Juego!',
@@ -150,7 +165,14 @@ const translations = {
     forcedError: 'Error Forzado',
     
     // Common
-    language: 'Idioma'
+    language: 'Idioma',
+    Monday: 'Lunes',
+    Tuesday: 'Martes',
+    Wednesday: 'Miércoles',
+    Thursday: 'Jueves',
+    Friday: 'Viernes',
+    Saturday: 'Sábado',
+    Sunday: 'Domingo'
   }
 };
 
