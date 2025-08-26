@@ -187,7 +187,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         title: t('link') || 'Link',
         dataIndex: 'url',
         key: 'url',
-        render: (url) => (url ? <Button className="" href={url}>{t('link') || 'Link'}</Button> : 'No video'),
+        render: (url) => (url && url!='null' ? <Button className="" href={url}>{t('link') || 'Link'}</Button> : 'No video'),
       },
       {
         title: t('notes') || 'Notes',

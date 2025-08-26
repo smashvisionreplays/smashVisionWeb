@@ -3,12 +3,15 @@ import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fe
 import { useState, useEffect } from "react";
 import { useAuth } from '@clerk/clerk-react';
 import { useLanguage } from '../../src/contexts/LanguageContext';
+import { useWebSocket } from '../../src/contexts/WebSocketContext';
+import { useWebSocketStatus } from '../../src/hooks/useWebSocketStatus';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => {
   const { getToken } = useAuth();
   const { t } = useLanguage();
+  const { liveUpdates } = useWebSocket();
   const [videos, setVideos] = useState([]);
   const [clips, setClips] = useState([]);
   const [cameras, setCameras] = useState([]);
@@ -172,6 +175,16 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
       loadYouTubeStatus();
     }
   }, [userId, userRole]);
+
+  // Reload cameras when WebSocket reload signal is received
+  useEffect(() => {
+    if (liveUpdates._reloadTrigger && userRole === 'club' && userId) {
+      console.log('Reloading cameras due to WebSocket signal');
+      loadCameras();
+    }
+  }, [liveUpdates._reloadTrigger, userRole, userId]);
+
+
 
   // Listen for YouTube auth completion
   useEffect(() => {

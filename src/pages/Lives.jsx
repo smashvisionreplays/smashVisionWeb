@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Select, ConfigProvider, theme, Modal } from 'antd';
 import { fetchClubs, fetchClubCameras } from '../controllers/serverController';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useWebSocketStatus } from '../hooks/useWebSocketStatus';
 
 const Lives = () => {
   const { t } = useLanguage();
@@ -11,6 +12,9 @@ const Lives = () => {
   const [loading, setLoading] = useState(false);
   const [selectedStream, setSelectedStream] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Use WebSocket hook to get real-time updates
+  const updatedCameras = useWebSocketStatus(cameras);
 
 
   const youtubeUrl = "https://www.youtube.com/embed/lXjxVL3zwIw";
@@ -215,9 +219,9 @@ const Lives = () => {
                 <div className="flex items-center justify-center h-64">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
                 </div>
-              ) : cameras.length > 0 ? (
+              ) : updatedCameras.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {cameras.map(renderCameraCard)}
+                  {updatedCameras.map(renderCameraCard)}
                 </div>
               ) : (
                 <div className="text-center py-12">
