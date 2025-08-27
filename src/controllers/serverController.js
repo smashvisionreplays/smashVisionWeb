@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const API_BASE_URL = "http://localhost:5000/api"; // Replace with your server URL
-const API_BASE_URL = "https://api.smashvisionreplays.website/api";
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export const fetchClubs = async () => {
   try {
