@@ -78,6 +78,7 @@ const translations = {
     blooper: 'Blooper',
     goodPoint: 'Good Point',
     forcedError: 'Forced Error',
+    bestMoments: 'Best Moments',
     
     // Lives page
     liveStreams: 'Live Streams',
@@ -174,6 +175,7 @@ const translations = {
     blooper: 'Error Gracioso',
     goodPoint: 'Buen Punto',
     forcedError: 'Error Forzado',
+    bestMoments: 'Mejores Momentos',
     
     // Lives page
     liveStreams: 'Transmisiones en Vivo',

@@ -7,6 +7,7 @@ import BestPointsTable from "../../components/videoView/TableActions";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime } from "../scripts/utils";
 import { fetchBestPoints } from "../../src/controllers/serverController";
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Constants
 const SECTION_OFFSET_MINUTES = 30;
@@ -26,6 +27,8 @@ const VideoView = ({ triggerNotification }) => {
   const [bestPoints, setBestPoints] = useState([]);
   const [startTime, setStartTime] = useState({ hour: 0, minute: 0, second: 0 });
   const [clockTime, setClockTime] = useState("00:00:00");
+  const [activeTab, setActiveTab] = useState('createClip');
+  const { t } = useLanguage();
 
   // Utility functions
   const formatTime = (hours, minutes, seconds) =>
@@ -129,10 +132,58 @@ const VideoView = ({ triggerNotification }) => {
             <Notification type="info" message="Loading Video" />
           </div>
         ) : (
-          <div className="flex flex-row mt-5 mx-auto justify-center gap-10">
-            <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
-            <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
-          </div>
+          <>
+            {/* Desktop Layout - Side by side */}
+            <div className="hidden md:flex flex-row mt-5 mx-auto justify-center gap-10">
+              <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
+              <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
+            </div>
+            
+            {/* Mobile Layout - Tabs */}
+            <div className="md:hidden mt-5">
+              <div className="px-8 py-4">
+                <div className=" ">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setActiveTab('createClip')}
+                      className={`rounded-t-xl py-2 px-4 text-sm font-semibold text-white/90 focus:outline-none transition-all duration-200 ease-in-out ${
+                        activeTab === 'createClip'
+                          ? 'bg-white/5'
+                          : 'hover:bg-white/10'
+                      }`}
+                    >
+                      {'Create Clip'}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('bestMoments')}
+                      className={`rounded-t-xl py-2 px-4 text-sm font-semibold text-white/90 focus:outline-none transition-all duration-200 ease-in-out ${
+                        activeTab === 'bestMoments'
+                          ? 'bg-white/5'
+                          : 'hover:bg-white/10'
+                      }`}
+                    >
+                      {t('bestMoments') || 'Best Moments'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="px-4 -mt-4">
+                {activeTab === 'createClip' ? (
+                  <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
+                ) : (
+                  <div className="w-full max-w-lg px-4 mx-auto">
+                    <div className="space-y-6 rounded-b-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
+                      <h2 className="text-base/7 font-semibold text-white self-center mb-3">
+                        {t('bestMoments') || 'Best Moments'}
+                      </h2>
+                      <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

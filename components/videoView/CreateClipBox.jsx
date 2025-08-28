@@ -142,7 +142,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
       
       <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
         <div className="w-full max-w-lg px-4">
-          <div className="space-y-6 rounded-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
+          <div className="space-y-6 rounded-b-xl sm:rounded-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
             <h2 className="text-base/7 font-semibold text-white self-center mb-3">
               Create Clip of my Game!
             </h2>
