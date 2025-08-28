@@ -19,7 +19,7 @@ export default function NavBar() {
   const location = useLocation();
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   
   const navigation = getNavigation(t);
   
@@ -76,7 +76,9 @@ export default function NavBar() {
             </div>
           
             <div className="inset-y-0 right-0 flex items-center gap-3 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <LanguageSelector />
+              <div className="hidden sm:block">
+                <LanguageSelector />
+              </div>
               {isSignedIn ? (
                 <UserButton 
                   appearance={{
@@ -99,8 +101,8 @@ export default function NavBar() {
         </div>
       </div>
 
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
+      <DisclosurePanel className="sm:hidden transition-all duration-300 ease-in-out">
+        <div className="space-y-1 px-2 pb-3 pt-2 text-center">
           {navigation.map((item) => (
             <Link
               key={item.name}
@@ -108,12 +110,37 @@ export default function NavBar() {
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
                 item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                'block rounded-md px-3 py-2 text-base max-sm:text-xs font-medium',
+                'block rounded-md px-3 py-2 text-base max-sm:text-xs font-medium mx-auto max-w-xs',
               )}
             >
               {item.name}
             </Link>
           ))}
+          <div className="px-3 py-2">
+            <div className="flex flex-col items-center space-y-2">
+             
+              <div className="flex bg-gray-800 rounded-md p-1">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={classNames(
+                    language === 'en' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-white',
+                    'px-3 py-1 rounded text-sm font-medium transition-colors'
+                  )}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage('es')}
+                  className={classNames(
+                    language === 'es' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-white',
+                    'px-3 py-1 rounded text-sm font-medium transition-colors'
+                  )}
+                >
+                  ES
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </DisclosurePanel>
     </Disclosure>

@@ -11,13 +11,13 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl p-8">
+    <div className="min-h-screen flex justify-center sm:items-center p-4">
+      <div className="sm:backdrop-blur-xl sm:bg-white/10 sm:rounded-3xl sm:border sm:border-white/20 sm:shadow-2xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white/90 mb-4">
+          <h1 className="hidden text-3xl font-bold text-white/90 mb-4 sm:block">
             Welcome to SmashVision
           </h1>
-          <p className="text-white/60">
+          <p className="hidden sm:block text-white/60">
             {isSignUp ? 'Create your account' : 'Sign in to access your account'} and manage your padel content
           </p>
         </div>
