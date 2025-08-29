@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import clockIcon from "../../src/assets/clock.svg";
 import { registerClip } from '../../src/controllers/serverController';
 import TopNotification from '../TopNotification';
+import { useLanguage } from '../../src/contexts/LanguageContext';
 
 const { TextArea } = Input;
 
@@ -12,6 +13,7 @@ const MAX_TIME_FOR_CLIPS = 60;
 const MIN_TIME_FOR_CLIPS = 5;
 
 export default function CreateClipBox({ videoRef, clubId, userId }) {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   
   // Refs
@@ -144,14 +146,14 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
         <div className="w-full max-w-lg px-4">
           <div className="space-y-6 rounded-b-xl sm:rounded-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
             <h2 className="text-base/7 font-semibold text-white self-center mb-3">
-              Create Clip of my Game!
+              {t('createClip')}
             </h2>
 
             {/* Time Input Section */}
             <div className="w-full gap-10 flex flex-row">
               <div className="w-full">
                 <label className="text-sm/6 font-medium text-white flex justify-between items-center">
-                  Start Time
+                  {t('startTime')}
                   <Button
                     onClick={() => setCurrentTime(startTimeRef)}
                     className="ml-1 flex-end inline-flex items-center gap-2 bg-gray-700 text-white border-none shadow-inner hover:bg-gray-600"
@@ -160,7 +162,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                     <img src={clockIcon} alt="" className="w-4 h-4" />
                   </Button>
                 </label>
-                <p className="text-sm/6 text-white/50">Use the button to get current time in the video.</p>
+                <p className="text-sm/6 text-white/50">{t('useButtonToGetTime')}</p>
                 <Input
                   ref={startTimeRef}
                   value={startTime}
@@ -171,7 +173,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
 
               <div className="w-full">
                 <label className="text-sm/6 font-medium text-white flex justify-between items-center">
-                  End Time
+                  {t('endTime')}
                   <Button
                     onClick={() => setCurrentTime(endTimeRef)}
                     className="ml-1 flex-end inline-flex items-center gap-2 bg-gray-700 text-white border-none shadow-inner hover:bg-gray-600"
@@ -180,7 +182,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                     <img src={clockIcon} alt="" className="w-4 h-4" />
                   </Button>
                 </label>
-                <p className="text-sm/6 text-white/50">Use the button to get current time in the video.</p>
+                <p className="text-sm/6 text-white/50">{t('useButtonToGetTime')}</p>
                 <Input
                   ref={endTimeRef}
                   value={endTime}
@@ -193,27 +195,27 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
 
             {/* Tag Selection */}
             <div>
-              <label className="text-sm/6 font-medium text-white">Tag</label>
-              <p className="text-sm/6 text-white/50">Classify your clip</p>
+              <label className="text-sm/6 font-medium text-white">{t('tag')}</label>
+              <p className="text-sm/6 text-white/50">{t('classifyYourClip')}</p>
               <Select
                 onChange={setTag}
                 className="mt-3 w-full"
                 dropdownStyle={{ color: "black" }}
-                placeholder="Select a tag"
+                placeholder={t('selectATag')}
                 mode="tags"
                 maxTagCount={1}
               >
-                <Select.Option value="Blooper">Blooper</Select.Option>
-                <Select.Option value="Good Point">Good Point</Select.Option>
-                <Select.Option value="Forced Error">Forced Error</Select.Option>
+                <Select.Option value="Blooper">{t('blooper')}</Select.Option>
+                <Select.Option value="Good Point">{t('goodPoint')}</Select.Option>
+                <Select.Option value="Forced Error">{t('forcedError')}</Select.Option>
               </Select>
               {errors.tag && <p className="text-xs text-red-500">{errors.tag}</p>}
             </div>
 
             {/* Personal Note */}
             <div>
-              <label className="text-sm/6 font-medium text-white">Personal Note</label>
-              <p className="text-sm/6 text-white/50">Make a note for yourself about this clip.</p>
+              <label className="text-sm/6 font-medium text-white">{t('personalNote')}</label>
+              <p className="text-sm/6 text-white/50">{t('makeNoteForClip')}</p>
               <TextArea
                 className="mt-3 block w-full resize-none rounded-lg bg-white/5 text-white"
                 rows={3}
@@ -224,7 +226,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
               className="self-center inline-flex items-center gap-2 bg-[#DDF31A] text-black shadow-inner hover:bg-gray-600"
               onClick={handleCreateClip}
             >
-              Create Clip
+              {t('createClip')}
             </Button>
           </div>
         </div>

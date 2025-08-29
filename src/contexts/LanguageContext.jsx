@@ -79,6 +79,19 @@ const translations = {
     goodPoint: 'Good Point',
     forcedError: 'Forced Error',
     bestMoments: 'Best Moments',
+    useButtonToGetTime: 'Use the button to get current time in the video.',
+    classifyYourClip: 'Classify your clip',
+    selectATag: 'Select a tag',
+    makeNoteForClip: 'Make a note for yourself about this clip.',
+    
+    // ClipView progress steps
+    creatingClip: 'Creating Clip',
+    videoBeingClipped: 'Video is being clipped',
+    downloadStep: 'Download',
+    generatingDownloadLink: 'Generating link to download video locally',
+    savingInAccount: 'Saving in Account',
+    clipSavedInAccount: 'The clip has been saved in your account',
+    downloadVideo: 'Download Video',
     
     // Lives page
     liveStreams: 'Live Streams',
@@ -172,10 +185,23 @@ const translations = {
     endTime: 'Tiempo Final',
     tag: 'Etiqueta',
     personalNote: 'Nota Personal',
-    blooper: 'Error Gracioso',
+    blooper: 'Blooper',
     goodPoint: 'Buen Punto',
     forcedError: 'Error Forzado',
     bestMoments: 'Mejores Momentos',
+    useButtonToGetTime: 'Usa el botón para obtener el tiempo actual en el video.',
+    classifyYourClip: 'Clasifica tu clip',
+    selectATag: 'Selecciona una etiqueta',
+    makeNoteForClip: 'Haz una nota para ti sobre este clip.',
+    
+    // ClipView progress steps
+    creatingClip: 'Creando Clip',
+    videoBeingClipped: 'El video está siendo recortado',
+    downloadStep: 'Descarga',
+    generatingDownloadLink: 'Generando enlace para descargar video localmente',
+    savingInAccount: 'Guardando en Cuenta',
+    clipSavedInAccount: 'El clip ha sido guardado en tu cuenta',
+    downloadVideo: 'Descargar Video',
     
     // Lives page
     liveStreams: 'Transmisiones en Vivo',

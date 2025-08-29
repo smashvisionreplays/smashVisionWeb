@@ -5,8 +5,10 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@headlessui/react";
 import clockIcon from "../../src/assets/clock.svg";
 import { fetchVideoData, createDownload, fetchDownload, selectDownload, updateDownload } from "../controllers/serverController";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const ClipView = ({ triggerNotification }) => {
+  const { t } = useLanguage();
   const videoRef = useRef(null);
   const [isClipReady, setIsClipReady] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -21,16 +23,16 @@ const ClipView = ({ triggerNotification }) => {
   //Progress bar items
   let items=[
     {
-      title: 'Creating Clip',
-      description: 'Video is being clipped'
+      title: t('creatingClip'),
+      description: t('videoBeingClipped')
     },
     {
-      title: ' Download',
-      description: 'Generating link to download video locally'
+      title: t('downloadStep'),
+      description: t('generatingDownloadLink')
     },
     {
-      title: 'Saving in Account',
-      description: 'The clip has been saved in your account'
+      title: t('savingInAccount'),
+      description: t('clipSavedInAccount')
     },
   
   ]
@@ -166,7 +168,7 @@ const ClipView = ({ triggerNotification }) => {
               disabled={!downloadURL}
               onClick={() => handleDownloadVideo(downloadURL)}
             >
-              Download Video
+              {t('downloadVideo')}
             </Button>
             <Button className="ml-1 flex-end inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-2 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600">
               <img src={clockIcon} alt="" className="w-4 h-4" />
