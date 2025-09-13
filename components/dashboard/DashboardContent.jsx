@@ -8,7 +8,7 @@ import { useWebSocketStatus } from '../../src/hooks/useWebSocketStatus';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 
-const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => {
+const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
   const { getToken } = useAuth();
   const { t } = useLanguage();
   const { liveUpdates } = useWebSocket();
@@ -75,9 +75,12 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal }) => 
         window.addEventListener('message', messageListener);
       } else {
         console.error('Failed to create YouTube live:', youtubeResponse?.error);
+        const errorMessage = youtubeResponse?.error?.error?.message || youtubeResponse?.error || 'Failed to create YouTube live stream';
+        triggerNotification?.('error', 'YouTube Live Creation Failed', errorMessage);
       }
     } catch (error) {
       console.error('Error in handleStartLive:', error);
+      triggerNotification?.('error', 'Stream Start Failed', error.message || 'An unexpected error occurred while starting the stream');
     } finally {
       setConnectingCameras(prev => {
         const newSet = new Set(prev);

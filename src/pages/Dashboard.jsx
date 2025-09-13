@@ -131,7 +131,8 @@ export default function Dashboard({ triggerNotification }) {
                   selectedButton={selectedButton} 
                   userRole={userMetadata.role }
                   userId={userMetadata.id}
-                  renderModal={showModal} 
+                  renderModal={showModal}
+                  triggerNotification={triggerNotification}
                 />
               </div>
             </div>
