@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import NavBarTW from '../components/NavBarTW';
-import Notification from '../components/Notification';
+import TopNotification from '../components/TopNotification';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import '../stylesheet/index.css';
 import Home from './pages/Home';
@@ -17,9 +17,11 @@ const Index = () => {
   const [notification, setNotification] = useState(null);
 
   // Function to trigger a notification
-  const triggerNotification = (type, message, description) => {
-    setNotification({ type, message, description });
-    setTimeout(() => setNotification(null), 5000);
+  const triggerNotification = (type, message, description, timing = true) => {
+    setNotification({ type, message, description, timing });
+    if (timing) {
+      setTimeout(() => setNotification(null), 5000);
+    }
   };
 
   return (
@@ -36,15 +38,15 @@ const Index = () => {
       <div>
         <NavBarTW />
         
-        <div className="w-full h-min flex justify-center items-center px-6 lg:px-20 mb-5">
-          {notification && (
-            <Notification 
-              type={notification.type} 
-              message={notification.message} 
-              description={notification.description} 
-            />
-          )}
-        </div>
+        {notification && (
+          <TopNotification 
+            type={notification.type} 
+            message={notification.message} 
+            description={notification.description}
+            timing={notification.timing}
+            onClose={() => setNotification(null)}
+          />
+        )}
 
         <Routes>
           <Route path="/" element={<Home triggerNotification={triggerNotification} />} />

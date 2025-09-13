@@ -76,11 +76,11 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       } else {
         console.error('Failed to create YouTube live:', youtubeResponse?.error);
         const errorMessage = youtubeResponse?.error?.error?.message || youtubeResponse?.error || 'Failed to create YouTube live stream';
-        triggerNotification?.('error', 'YouTube Live Creation Failed', errorMessage);
+        triggerNotification?.('error', 'YouTube Live Creation Failed', errorMessage, true);
       }
     } catch (error) {
       console.error('Error in handleStartLive:', error);
-      triggerNotification?.('error', 'Stream Start Failed', error.message || 'An unexpected error occurred while starting the stream');
+      triggerNotification?.('error', 'Stream Start Failed', error.message || 'An unexpected error occurred while starting the stream', true);
     } finally {
       setConnectingCameras(prev => {
         const newSet = new Set(prev);
