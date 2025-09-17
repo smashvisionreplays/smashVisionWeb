@@ -106,6 +106,16 @@ const translations = {
     noCamerasDescription: "This club doesn't have any cameras set up yet.",
     liveStreamTitle: 'Live Stream',
     
+    // YouTube Status
+    youtubeConnected: 'Connected',
+    youtubeNotConnected: 'Not Connected',
+    connect: 'Connect YouTube',
+    disconnect: 'Disconnect',
+    
+    // Empty State
+    noTypeAvailable: 'No {type} available',
+    noTypeCurrently: 'There are currently no {type} available. Check back later or contact support if you believe this is an error.',
+
     // Common
     language: 'Language',
     Monday: 'Monday',
@@ -216,6 +226,16 @@ const translations = {
     noCamerasDescription: 'Este club aún no tiene cámaras configuradas.',
     liveStreamTitle: 'Transmisión en Vivo',
     
+    // YouTube Status
+    youtubeConnected: 'Conectado',
+    youtubeNotConnected: 'No Conectado',
+    connect: 'Conectar YouTube',
+    disconnect: 'Desconectar',
+    
+    // Empty State
+    noTypeAvailable: 'No hay {type} disponibles',
+    noTypeCurrently: 'Actualmente no hay {type} disponibles. Vuelve más tarde o contacta soporte si crees que esto es un error.',
+
     // Common
     language: 'Idioma',
     Monday: 'Lunes',

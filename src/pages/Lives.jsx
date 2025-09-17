@@ -128,7 +128,7 @@ const Lives = () => {
           )}
         </div>
         
-        <div className="p-4">
+        <div className="p-4 flex flex-row justify-between">
           <h3 className="text-lg font-semibold text-white/90 mb-2">
             {t('court')} {camera.court_number}
           </h3>
@@ -140,14 +140,12 @@ const Lives = () => {
             }`}>
               {camera.status || t('offline')}
             </span>
-            {camera.notes && (
-              <span className="text-white/50 text-xs">{camera.notes}</span>
-            )}
           </div>
-          {isClickable && (
-            <p className="text-white/40 text-xs mt-2">{t('clickToWatchFullScreen')}</p>
-          )}
+          
         </div>
+        {isClickable && (
+            <p className="text-white/40 text-xs px-4 pb-1">{t('clickToWatchFullScreen')}</p>
+          )}
       </div>
     );
   };

@@ -331,7 +331,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
                 <div className="flex items-center space-x-3">
                   <div className={`w-3 h-3 rounded-full ${youtubeStatus.connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
                   <span className="text-white/90 font-medium">
-                    YouTube: {youtubeStatus.connected ? 'Connected' : 'Not Connected'}
+                    YouTube: {youtubeStatus.connected ? t('youtubeConnected') : t('youtubeNotConnected')}
                   </span>
                 </div>
                 {youtubeStatus.connected ? (
@@ -339,14 +339,14 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
                     onClick={handleDisconnectYouTube}
                     className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-colors"
                   >
-                    Disconnect
+                    {t('disconnect')}
                   </button>
                 ) : (
                   <button
                     onClick={() => youtubeStatus.authUrl && window.open(youtubeStatus.authUrl, 'youtube-auth', 'width=500,height=600')}
                     className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 transition-colors"
                   >
-                    Connect YouTube
+                    {t('connect')}
                   </button>
                 )}
               </div>
@@ -391,18 +391,21 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 };
 
 // Empty State Component
-const EmptyState = ({ type }) => (
-  <div className="flex flex-col items-center justify-center h-64 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10">
-    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-      <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
-      </svg>
+const EmptyState = ({ type }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="flex flex-col items-center justify-center h-64 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10">
+      <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
+        <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-semibold text-white/80 mb-2">{t('noTypeAvailable').replace('{type}', type)}</h3>
+      <p className="text-white/50 text-center max-w-sm">
+        {t('noTypeCurrently').replace('{type}', type)}
+      </p>
     </div>
-    <h3 className="text-lg font-semibold text-white/80 mb-2">No {type} available</h3>
-    <p className="text-white/50 text-center max-w-sm">
-      There are currently no {type} available. Check back later or contact support if you believe this is an error.
-    </p>
-  </div>
-);
+  );
+};
 
 export default DashboardContent;
