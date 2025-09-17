@@ -6,7 +6,13 @@ import { useNavigate } from "react-router-dom";
 const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
     const videoRef = useRef(null);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-    let navigate = useNavigate(); 
+    let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isModalOpen && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [isModalOpen]); 
 
   const handleGoToCreateClip= ()=>{
     navigate(`/videoView`, 

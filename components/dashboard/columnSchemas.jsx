@@ -2,6 +2,7 @@ import { Button, Input, Table, Modal } from "antd";
 import { useState } from "react";
 import { useLanguage } from '../../src/contexts/LanguageContext';
 import VideoPlayer from "../videoView/VideoPlayer"; // Adjust the import path as needed
+import TagDisplay from "../TagDisplay";
 
 export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
   const uniqueCourtNumbers = [...new Set(videos.map(item => item.Court_Number))];
@@ -125,6 +126,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         title: t('tag') || 'Tag',
         dataIndex: 'tag',
         key: 'tag',
+        render: (tags) => <TagDisplay tags={tags} />,
       },
       {
         title: t('actions') || 'Actions',
