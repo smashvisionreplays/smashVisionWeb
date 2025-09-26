@@ -15,6 +15,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
     { name: 'Clips', label: t('myClips'), roles: ['member', 'club'] },
     { name: 'Videos', label: 'Videos', roles: ['club'] },
     { name: 'Lives', label: t('lives'), roles: ['club'] },
+    { name: 'Statistics', label: t('statistics'), roles: ['club'] },
   ];
 
   const allCategories = getAllCategories();

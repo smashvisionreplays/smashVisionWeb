@@ -269,7 +269,6 @@ export async function disconnectYouTube(authToken) {
 
 export async function fetchStartStream(clubId, cameraId, cameraIp, court, rtmpKey, clubEndpoint, watchUrl) {
   try {
-    // console.log(`sending to ${API_BASE_URL}/cameras/startLive,  ${clubId}, ${cameraId}, ${court}, ${rtmpKey}, ${clubEndpoint}` )
     const response = await fetch(`${API_BASE_URL}/cameras/${cameraId}/startLive`, {
       method: 'POST',
       headers: {
@@ -278,13 +277,17 @@ export async function fetchStartStream(clubId, cameraId, cameraIp, court, rtmpKe
       body: JSON.stringify({clubId, cameraId, court,cameraIp, rtmpKey, clubEndpoint, watchUrl}),
     });
 
-      if (!response.ok) {
-          throw new Error(`Failed to fetch startLive data, response is: ${await response.text()}`);
-      }
-      return await response.json();
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      const error = new Error(errorData.message || 'Failed to start live stream');
+      error.isClubServerDown = errorData.isClubServerDown;
+      error.status = response.status;
+      throw error;
+    }
+    return await response.json();
   } catch (error) {
       console.error('Error fetching start live:', error);
-      return null;
+      throw error;
   }
 }
 
@@ -336,13 +339,17 @@ export async function fetchStopStream(clubId, cameraId, cameraIp, clubEndpoint) 
       body: JSON.stringify({clubId, cameraId, cameraIp, clubEndpoint}),
     });
 
-      if (!response.ok) {
-          throw new Error('Failed to stop stream');
-      }
-      return await response.json();
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      const error = new Error(errorData.message || 'Failed to stop stream');
+      error.isClubServerDown = errorData.isClubServerDown;
+      error.status = response.status;
+      throw error;
+    }
+    return await response.json();
   } catch (error) {
       console.error('Error stopping stream:', error);
-      return null;
+      throw error;
   }
 }
 

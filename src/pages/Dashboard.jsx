@@ -17,6 +17,7 @@ export default function Dashboard({ triggerNotification }) {
     { name: 'Clips', label: t('myClips') },
     { name: 'Videos', label: 'Videos' },
     { name: 'Lives', label: t('lives') },
+    { name: 'Statistics', label: t('statistics') },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);

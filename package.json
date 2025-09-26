@@ -25,6 +25,7 @@
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
+    "dayjs": "^1.11.18",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "flowbite-react": "^0.10.2",

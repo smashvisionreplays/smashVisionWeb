@@ -116,6 +116,19 @@ const translations = {
     noTypeAvailable: 'No {type} available',
     noTypeCurrently: 'There are currently no {type} available. Check back later or contact support if you believe this is an error.',
 
+    // Statistics
+    statistics: 'Statistics',
+    selectDateRange: 'Select Date Range',
+    clipsGenerated: 'Clips Generated',
+    bestPointsGenerated: 'Best Points Generated',
+    totalClips: 'Total Clips',
+    totalBestPoints: 'Total Best Points',
+
+    // Error notifications
+    clubServerUnavailable: 'Club Server Unavailable',
+    streamStartFailed: 'Stream Start Failed',
+    streamStopFailed: 'Stream Stop Failed',
+    
     // Common
     language: 'Language',
     Monday: 'Monday',
@@ -236,6 +249,19 @@ const translations = {
     noTypeAvailable: 'No hay {type} disponibles',
     noTypeCurrently: 'Actualmente no hay {type} disponibles. Vuelve más tarde o contacta soporte si crees que esto es un error.',
 
+    // Statistics
+    statistics: 'Estadísticas',
+    selectDateRange: 'Seleccionar Rango de Fechas',
+    clipsGenerated: 'Clips Generados',
+    bestPointsGenerated: 'Mejores Puntos Generados',
+    totalClips: 'Total de Clips',
+    totalBestPoints: 'Total de Mejores Puntos',
+
+    // Error notifications
+    clubServerUnavailable: 'Servidor del Club No Disponible',
+    streamStartFailed: 'Error al Iniciar Transmisión',
+    streamStopFailed: 'Error al Detener Transmisión',
+    
     // Common
     language: 'Idioma',
     Monday: 'Lunes',

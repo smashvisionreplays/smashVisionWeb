@@ -7,6 +7,7 @@ import { useWebSocket } from '../../src/contexts/WebSocketContext';
 import { useWebSocketStatus } from '../../src/hooks/useWebSocketStatus';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
+import StatisticsContent from "./StatisticsContent";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
   const { getToken } = useAuth();
@@ -21,7 +22,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   const [connectingCameras, setConnectingCameras] = useState(new Set());
   const [youtubeStatus, setYoutubeStatus] = useState({ connected: false, authUrl: null });
 
-  const handleInputChange = (court_number, value) => {ta
+  const handleInputChange = (court_number, value) => {
     setRtmpKeys((prev) => ({ ...prev, [court_number]: value }));
   };
 
@@ -80,7 +81,11 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       }
     } catch (error) {
       console.error('Error in handleStartLive:', error);
-      triggerNotification?.('error', 'Stream Start Failed', error.message || 'An unexpected error occurred while starting the stream', true);
+      if (error.isClubServerDown) {
+        triggerNotification?.('error', t('clubServerUnavailable'), error.message, true);
+      } else {
+        triggerNotification?.('error', t('streamStartFailed'), error.message || 'An unexpected error occurred while starting the stream', true);
+      }
     } finally {
       setConnectingCameras(prev => {
         const newSet = new Set(prev);
@@ -101,6 +106,11 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       loadCameras();
     } catch (error) {
       console.error('Error in handleStopLive:', error);
+      if (error.isClubServerDown) {
+        triggerNotification?.('error', t('clubServerUnavailable'), error.message, true);
+      } else {
+        triggerNotification?.('error', t('streamStopFailed'), error.message || 'An unexpected error occurred while stopping the stream', true);
+      }
     } finally {
       setConnectingCameras(prev => {
         const newSet = new Set(prev);
@@ -377,6 +387,9 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             )}
           </div>
         );
+
+      case "Statistics":
+        return <StatisticsContent userId={userId} />;
 
       default:
         return <EmptyState type="data" />;
