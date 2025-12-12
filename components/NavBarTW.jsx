@@ -8,7 +8,7 @@ import LanguageSelector from './LanguageSelector'
 const getNavigation = (t) => [
   { name: t('dashboard'), to: '/dashboard', current: false },
   { name: t('lives'), to: '/lives', current: false },
-  { name: t('tournaments'), to: '/tournaments', current: false },
+  // { name: t('tournaments'), to: '/tournaments', current: false }, Uncomment when tournaments page is ready
 ]
 
 function classNames(...classes) {

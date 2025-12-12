@@ -129,6 +129,15 @@ const translations = {
     streamStartFailed: 'Stream Start Failed',
     streamStopFailed: 'Stream Stop Failed',
     
+    // Login page
+    welcomeToSmashVision: 'Welcome to SmashVision',
+    createAccount: 'Create your account',
+    signInToAccount: 'Sign in to access your account',
+    manageContent: 'and manage your padel content',
+    alreadyHaveAccount: 'Already have an account? Sign in',
+    dontHaveAccount: "Don't have an account? Sign up",
+    continueWithGoogle: 'Continue with Google',
+    
     // Common
     language: 'Language',
     Monday: 'Monday',
@@ -137,8 +146,27 @@ const translations = {
     Thursday: 'Thursday',
     Friday: 'Friday',
     Saturday: 'Saturday',
-    Sunday: 'Sunday'
+    Sunday: 'Sunday',
+
+    //Login
+    continueWith: 'Continue with {{provider}}',
+    or: 'or',
+    emailAddress: 'Email address',
+    password: 'Password',
+    continue: 'Continue',
+    forgotPassword: 'Forgot password?',
+    signInTitle: 'Sign in',
+    signInSubtitle: 'to continue to SmashVision',
+    signUpTitle: 'Create account',
+    signUpSubtitle: 'to continue to SmashVision',
+    noAccount: "Don't have an account?",
+    haveAccount: 'Already have an account?',
+    signUp: 'Sign up',
+    signIn: 'Sign in',
+    enterPassword: 'Enter your password',
+    enterPasswordSubtitle: 'Enter the password associated with your account',
   },
+
   es: {
     // Navbar
     home: 'Inicio',
@@ -262,6 +290,15 @@ const translations = {
     streamStartFailed: 'Error al Iniciar Transmisión',
     streamStopFailed: 'Error al Detener Transmisión',
     
+    // Login page
+    welcomeToSmashVision: 'Bienvenido a SmashVision',
+    createAccount: 'Crea tu cuenta',
+    signInToAccount: 'Inicia sesión para acceder a tu cuenta',
+    manageContent: 'y gestiona tu contenido de pádel',
+    alreadyHaveAccount: '¿Ya tienes una cuenta? Inicia sesión',
+    dontHaveAccount: '¿No tienes una cuenta? Regístrate',
+    continueWithGoogle: 'Continuar con Google',
+    
     // Common
     language: 'Idioma',
     Monday: 'Lunes',
@@ -270,7 +307,25 @@ const translations = {
     Thursday: 'Jueves',
     Friday: 'Viernes',
     Saturday: 'Sábado',
-    Sunday: 'Domingo'
+    Sunday: 'Domingo',
+
+    //Login
+    continueWith: 'Continuar con {{provider}}',
+    or: 'o',
+    emailAddress: 'Correo electrónico',
+    password: 'Contraseña',
+    continue: 'Continuar',
+    forgotPassword: '¿Olvidaste tu contraseña?',
+    signInTitle: 'Iniciar sesión',
+    signInSubtitle: 'para continuar a SmashVision',
+    signUpTitle: 'Crear cuenta',
+    signUpSubtitle: 'para continuar a SmashVision',
+    noAccount: '¿No tienes una cuenta?',
+    haveAccount: '¿Ya tienes una cuenta?',
+    signUp: 'Regístrate',
+    signIn: 'Iniciar sesión',
+    enterPassword: 'Ingresa tu contraseña',
+    enterPasswordSubtitle: 'Ingresa la contraseña asociada a tu cuenta',
   }
 };
 
