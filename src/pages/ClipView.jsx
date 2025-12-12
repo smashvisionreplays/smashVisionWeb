@@ -45,7 +45,7 @@ const ClipView = ({ triggerNotification }) => {
       try {
         // Wait for video to be ready
         const firstCheck = await fetchVideoData(clipUID);
-        console.log(firstCheck)
+        // console.log(firstCheck)
         if(firstCheck.success){
           if (firstCheck.result.readyToStream) { //First check to not display progressBar but a notification
             triggerNotification("info", "Loading Clip");
@@ -84,7 +84,7 @@ const ClipView = ({ triggerNotification }) => {
 
   const handleDownloadVideo = async (url) => {
     try {
-      console.log("Downloading video...");
+      // console.log("Downloading video...");
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'clip.mp4');

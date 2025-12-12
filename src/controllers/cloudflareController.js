@@ -27,12 +27,12 @@ export const createClip = async (videoId, startTime, endTime, videoName, waterma
 
     try {
         const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountId}/stream/clip`, options);
-        console.log("response of createclip is:", response);
+        // console.log("response of createclip is:", response);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(`Error: ${data.errors[0].message}`);
         }
-        console.log("Response.data was okay from cloudflare creation clip, response.data: ",data);
+        // console.log("Response.data was okay from cloudflare creation clip, response.data: ",data);
         return {success:true,result:data.result};
     } catch (err) {
         console.error("ERROR IN CREATE CLIP RESPONSE",err);
@@ -57,7 +57,7 @@ export const getVideoData=async(videoUID)=>{
         if (!response.ok) {
             throw new Error(`Error: ${data.errors[0].message}`);
         }
-        console.log("FECTH GET VIDEO INFO RESPONSE",data);
+        // console.log("FECTH GET VIDEO INFO RESPONSE",data);
         return {success:true,result:data.result};
     } catch (err) {
         console.error("ERROR IN GET VIDEO INFO",err);
@@ -79,12 +79,12 @@ export const createDownload=async(videoUID)=>{
 
     try {
         const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountId}/stream/${videoUID}/downloads`,options);
-        console.log("response create download backend", response);
+        // console.log("response create download backend", response);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(`Error: ${data.errors[0].message}`);
         }
-        console.log("FECTH CREATE DOWNLOAD INFO RESPONSE",data);
+        // console.log("FECTH CREATE DOWNLOAD INFO RESPONSE",data);
         return {success:true,result:data.result};
     } catch (err) {
         console.error("ERROR CREATE DOWNLOAD INFO",err);
@@ -105,12 +105,12 @@ export const getDownloadInfo=async(videoUID)=>{
 
     try {
         const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountId}/stream/${videoUID}/downloads`,options);
-        console.log("response get download info backend", response);
+        // console.log("response get download info backend", response);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(`Error: ${data.errors[0].message}`);
         }
-        console.log("FECTH GET DOWNLOAD INFO RESPONSE",data);
+        // console.log("FECTH GET DOWNLOAD INFO RESPONSE",data);
         return {success:true,result:data.result};
     } catch (err) {
         console.error("ERROR GETTING DOWNLOAD INFO",err);

@@ -21,7 +21,7 @@ export const WebSocketProvider = ({ children }) => {
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('WebSocket connected to:', wsUrl);
+        console.log('WebSocket connected to api ws');
         setIsConnected(true);
         reconnectAttempts.current = 0;
       };

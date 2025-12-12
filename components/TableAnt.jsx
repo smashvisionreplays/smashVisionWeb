@@ -8,14 +8,14 @@ const App = ({ data, columns, needsExpand, needsVirtual }) => {
     key: index, // Use index as the key (or use a unique ID from your data if available)
   }));
 
-  useEffect(() => {
-    console.log('Data:', dataWithKeys);
-  }
-  , []);
+  // useEffect(() => {
+  //   // console.log('Data:', dataWithKeys);
+  // }
+  // , []);
 
   // Define the onChange handler for the table
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
+    // console.log('params', pagination, filters, sorter, extra);
   };
 
   return (

@@ -14,7 +14,7 @@ let last_week_day = lastWeekDate.getDate();
 let last_week_month = lastWeekDate.getMonth();
 let last_week_year = lastWeekDate.getFullYear();
 
-console.log(`todays: ${todayDate}, ${day}, ${month}, ${year}, lastweeks ${lastWeekDate}, ${last_week_day}, ${last_week_month}, ${last_week_year},`)
+// console.log(`todays: ${todayDate}, ${day}, ${month}, ${year}, lastweeks ${lastWeekDate}, ${last_week_day}, ${last_week_month}, ${last_week_year},`)
 
 const options = {
 	autoHide: true,
@@ -58,7 +58,7 @@ export default function DatePicker({label, onSelect}){
 	const [show, setShow] = useState(false)
 
 	const handleChange = (selectedDate) => {
-        console.log("In handle change", selectedDate)
+        // console.log("In handle change", selectedDate)
         onSelect(selectedDate)
 	}
 	const handleClose = (state) => {

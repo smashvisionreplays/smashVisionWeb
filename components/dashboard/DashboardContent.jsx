@@ -32,18 +32,18 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 
   const handleBlockVideo = async (videoId) => {
     const response = await fetchBlockVideo(videoId);
-    console.log("response fetch block video", response);
+    // console.log("response fetch block video", response);
     loadVideos();
   };
 
   const handleUnblockVideo = async (videoId) => {
     const response = await fetchUnblockVideo(videoId);
-    console.log("response fetch unblock video", response);
+    // console.log("response fetch unblock video", response);
     loadVideos();
   };
 
   const handleStartLive = async (cameraId, court, cameraIp, rtmpKey, clubEndpoint) => {
-    console.log("handle start live", cameraId, court, cameraIp, rtmpKey, clubEndpoint);
+    // console.log("handle start live", cameraId, court, cameraIp, rtmpKey, clubEndpoint);
     
     setConnectingCameras(prev => new Set([...prev, cameraId]));
     
@@ -55,13 +55,13 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       if (youtubeResponse?.success) {
         const autoRtmpKey = youtubeResponse.data.rtmpKey;
         const watchUrl = youtubeResponse.data.watchUrl;
-        console.log('YouTube live created:', youtubeResponse.data);
+        // console.log('YouTube live created:', youtubeResponse.data);
         
         const response = await fetchStartStream(userId, cameraId, cameraIp, court, autoRtmpKey, clubEndpoint, watchUrl);
-        console.log("response fetch start stream", response);
+        // console.log("response fetch start stream", response);
         loadCameras();
       } else if (youtubeResponse?.needsAuth) {
-        console.log('Opening YouTube OAuth...');
+        // console.log('Opening YouTube OAuth...');
         const popup = window.open(youtubeResponse.authUrl, 'youtube-auth', 'width=500,height=600');
         
         // Listen for auth completion
@@ -96,13 +96,13 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   };
 
   const handleStopLive = async (cameraId, cameraIp, clubEndpoint) => {
-    console.log("handle stop live", cameraId, cameraIp, clubEndpoint);
+    // console.log("handle stop live", cameraId, cameraIp, clubEndpoint);
     
     setConnectingCameras(prev => new Set([...prev, cameraId]));
     
     try {
       const response = await fetchStopStream(userId, cameraId, cameraIp, clubEndpoint);
-      console.log("response fetch stop stream", response);
+      // console.log("response fetch stop stream", response);
       loadCameras();
     } catch (error) {
       console.error('Error in handleStopLive:', error);
@@ -146,7 +146,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             URL: clip.URL || null,
             downloadURL: clip.downloadURL || null,
           }));
-          console.log("formattedClips", formattedClips);
+          // // console.log("formattedClips", formattedClips);
           setClips(formattedClips);
         }
       } catch (error) {
@@ -192,7 +192,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   // Reload cameras when WebSocket reload signal is received
   useEffect(() => {
     if (liveUpdates._reloadTrigger && userRole === 'club' && userId) {
-      console.log('Reloading cameras due to WebSocket signal');
+      // console.log('Reloading cameras due to WebSocket signal');
       loadCameras();
     }
   }, [liveUpdates._reloadTrigger, userRole, userId]);

@@ -39,7 +39,7 @@ const tournaments = [
 
 const Tournaments = () => {
   const handleSeeMore = (tournament) => {
-    console.log("See more:", tournament);
+    // console.log("See more:", tournament);
     // Navigate to tournament details or open modal
   };
 

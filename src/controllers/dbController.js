@@ -4,10 +4,10 @@ import mysql from 'mysql2/promise';
 
 // Set up the MySQL connection pool
 const pool = mysql.createPool({
-    host: "database-prueba.cpmi8kiuw7c4.us-east-2.rds.amazonaws.com",
-    user: "admin",
-    password: "Bruno1226*",
-    database: "DB_Prueba",
+    host: import.meta.env.DB_HOST,
+    user: import.meta.env.DB_USER,
+    password: import.meta.env.DB_PASSWORD,
+    database: import.meta.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 // Generic function for querying the database
 async function query(sql, params) {
-    console.log("in query", sql)
+    // console.log("in query", sql)
     const [results] = await pool.execute(sql, params);
     return results;
 }
@@ -29,7 +29,7 @@ export const selectIndv_Video = async (id_club, weekday, court_number, hour, sec
 }
 
 export const selectBestPoints=async(id_club, weekday, court_number, hour, section)=>{
-    console.log("indbcontroller selectbestpoints" )
+    // console.log("indbcontroller selectbestpoints" )
     return await query(
         'SELECT Time FROM bestPoints WHERE id_club = ? AND Court_Number = ? AND Hour = ? AND Section = ?', 
         [id_club, court_number, hour, section]

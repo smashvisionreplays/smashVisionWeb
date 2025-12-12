@@ -73,7 +73,7 @@ export const fetchClubCameras= async (clubId) => {
 
 export async function fetchClubById(id) {
     try {
-      console.log(`sending to ${API_BASE_URL}/clubs/${id}` )
+      // // console.log(`sending to ${API_BASE_URL}/clubs/${id}` )
         const response = await fetch(`${API_BASE_URL}/clubs/${id}`); // Update URL as needed
         
         if (!response.ok) {
