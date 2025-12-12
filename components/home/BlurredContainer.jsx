@@ -41,7 +41,8 @@ const BlurredContainer = ({ triggerNotification }) => {
     const loadClubs = async () => {
       try {
         const fetchedClubs = await fetchClubs();
-        const formattedClubs = fetchedClubs.map((club) => ({
+        const filteredClubs = fetchedClubs.filter(club => club.status === "active");
+        const formattedClubs = filteredClubs.map((club) => ({
           value: club.ID,
           label: club.Name,
           icon: club.Logo && <img alt="" src={club.Logo} className="w-5 h-5 rounded-full" />,

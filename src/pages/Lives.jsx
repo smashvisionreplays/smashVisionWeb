@@ -16,9 +16,6 @@ const Lives = () => {
   // Use WebSocket hook to get real-time updates
   const updatedCameras = useWebSocketStatus(cameras);
 
-
-  const youtubeUrl = "https://www.youtube.com/embed/lXjxVL3zwIw";
-
   useEffect(() => {
     loadClubs();
   }, []);
@@ -32,7 +29,8 @@ const Lives = () => {
   const loadClubs = async () => {
     try {
       const clubsData = await fetchClubs();
-      setClubs(clubsData);
+      const filteredClubs = clubsData.filter(club => club.status === "active");
+      setClubs(filteredClubs);
     } catch (error) {
       console.error('Error loading clubs:', error);
     }
