@@ -3,7 +3,6 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Home({ triggerNotification }) {
   const { t } = useLanguage();
-  
   return (
     <div className="min-h-screen flex items-start justify-center px-4 ">
       <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
@@ -15,7 +14,7 @@ export default function Home({ triggerNotification }) {
           <p className="text-base sm:text-lg lg:text-xl text-white/60 mb-8 leading-relaxed">
             {t('gameDescription')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <div className="flex flex-row  gap-4 justify-around lg:justify-start">
             <div className="flex items-center gap-3 text-white/70">
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <span className="text-sm sm:text-base">{t('feature1')}</span>

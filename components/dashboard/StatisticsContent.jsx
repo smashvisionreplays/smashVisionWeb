@@ -4,6 +4,7 @@ import { fetchStatistics } from '../../src/controllers/statisticsController';
 import { useAuth } from '@clerk/clerk-react';
 import { useLanguage } from '../../src/contexts/LanguageContext';
 import dayjs from 'dayjs';
+import '../../stylesheet/rangepicker.css';
 
 const { RangePicker } = DatePicker;
 
@@ -71,6 +72,8 @@ const StatisticsContent = ({ userId }) => {
               borderColor: 'rgba(255, 255, 255, 0.2)',
               color: 'white'
             }}
+            className="w-full sm:w-auto"
+            dropdownClassName="mobile-rangepicker"
           />
         </div>
       </div>

@@ -46,9 +46,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center sm:items-center p-4">
-      
-      <div className="w-full max-w-md backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl p-8">
+    <div className="min-h-screen flex justify-center ">
+      <div className="w-full max-w-md backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl h-min py-8 flex flex-col items-center justify-center">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white/90 mb-2">
             {t('welcomeToSmashVision')}
@@ -57,18 +56,21 @@ const Login = () => {
             {isSignUp ? t('createAccount') : t('signInToAccount')}
           </p>
         </div>
-        
-        {isSignUp ? (
-          <SignUp 
-            appearance={clerkAppearance}
-            afterSignUpUrl="/dashboard"
-          />
-        ) : (
-          <SignIn 
-            appearance={clerkAppearance}
-            afterSignInUrl="/dashboard"
-          />
-        )}
+        <div className="">
+
+          {isSignUp ? (
+            <SignUp 
+              appearance={clerkAppearance}
+              afterSignUpUrl="/dashboard"
+            />
+          ) : (
+            <SignIn 
+              appearance={clerkAppearance}
+              afterSignInUrl="/dashboard"
+            />
+          )}
+        </div>
+       
         
         <div className="text-center mt-6">
           <button

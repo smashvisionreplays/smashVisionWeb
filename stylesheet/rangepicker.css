@@ -1,0 +1,5 @@
+@media (max-width: 640px) {
+  .mobile-rangepicker .ant-picker-panels {
+    flex-direction: column !important;
+  }
+}

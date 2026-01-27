@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ConfigProvider } from 'antd';
 import enUS from 'antd/locale/en_US';
 import esES from 'antd/locale/es_ES';
@@ -177,7 +177,7 @@ const translations = {
     // Home page
     findYourGame: 'Encuentra Tu Juego',
     gameDescription: 'Busca y mira tus partidos de pádel seleccionando tu club, cancha y hora de juego. Revive tus mejores momentos y analiza tu juego.',
-    feature1: 'Partidos en vivo disponibles',
+    feature1: 'Partidos en vivo',
     feature2: 'Historial de 7 días',
     club: 'Club',
     court: 'Cancha',
@@ -334,8 +334,32 @@ const antdLocales = {
   es: esES
 };
 
+// Spanish-speaking countries
+const spanishCountries = ['ES', 'MX', 'CO', 'AR', 'PE', 'VE', 'CL', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'PA', 'UY', 'GQ'];
+
+const detectLanguageFromLocation = async () => {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    return spanishCountries.includes(data.country_code) ? 'es' : 'en';
+  } catch (error) {
+    console.log('Location detection failed, using browser language');
+    const browserLang = navigator.language.split('-')[0];
+    return browserLang === 'es' ? 'es' : 'en';
+  }
+};
+
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
+
+  useEffect(() => {
+    const initializeLanguage = async () => {
+      const detectedLanguage = await detectLanguageFromLocation();
+      setLanguage(detectedLanguage);
+    };
+    
+    initializeLanguage();
+  }, []);
 
   const t = (key) => translations[language][key] || key;
 
