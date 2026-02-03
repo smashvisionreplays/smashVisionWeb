@@ -173,7 +173,7 @@ const Lives = () => {
       }}
     >
       <div className="min-h-screen p-4 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto" style={{ marginTop: '6rem' }}>
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl lg:text-5xl font-bold text-white/90 mb-4">

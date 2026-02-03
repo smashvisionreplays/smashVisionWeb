@@ -83,7 +83,7 @@ export default function Dashboard({ triggerNotification }) {
         handleCancel={handleCancel} 
       />
       
-      <div className="min-h-screen">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-full lg:w-10/12 xl:w-8/12 m-auto lg:flex min-h-screen">
           {/* Mobile Tab Navigation */}
           <div className="sm:hidden flex justify-center p-4">

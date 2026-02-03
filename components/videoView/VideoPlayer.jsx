@@ -3,6 +3,7 @@ import { Stream } from "@cloudflare/stream-react";
 
 const VideoPlayer = ({ videoRef, onVideoLoaded, uid }) => {
   useEffect(() => {
+    console.log("VideoPlayer: in useffect");
     if (!videoRef?.current) return;
 
     const handleLoadedData = () => {
@@ -19,12 +20,15 @@ const VideoPlayer = ({ videoRef, onVideoLoaded, uid }) => {
   }, [videoRef, onVideoLoaded]);
 
   return (
-    <Stream
-      streamRef={videoRef}
-      controls
-      src={uid}
-      onCanPlay={() => onVideoLoaded(true)}
-    />
+    <div className="relative group rounded-2xl overflow-hidden border border-white/5 aspect-video flex flex-col shadow-2xl w-full">
+      <Stream
+        streamRef={videoRef}
+        controls
+        src={uid}
+        onCanPlay={() => onVideoLoaded(true)}
+        style={{ borderRadius: '1rem' }}
+      />
+    </div>
   );
 };
 

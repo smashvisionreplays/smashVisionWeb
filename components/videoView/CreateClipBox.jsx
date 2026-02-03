@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
-import { Input, Select, Button, ConfigProvider, theme } from "antd";
+import { Input, Select, Button, ConfigProvider, theme, Modal } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { SignIn } from "@clerk/clerk-react";
 import clockIcon from "../../src/assets/clock.svg";
 import { registerClip } from '../../src/controllers/serverController';
 import TopNotification from '../TopNotification';
@@ -15,6 +17,7 @@ const MIN_TIME_FOR_CLIPS = 5;
 export default function CreateClipBox({ videoRef, clubId, userId }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { isSignedIn, getToken } = useAuth();
   
   // Refs
   const startTimeRef = useRef("");
@@ -26,6 +29,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
   const [tag, setTag] = useState(null);
   const [errors, setErrors] = useState({});
   const [notification, setNotification] = useState(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   // Validation functions
   const validateClipTiming = (startClip, endClip, videoDuration) => {
@@ -99,6 +103,18 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
   };
 
   const handleCreateClip = async () => {
+    // Check if user is authenticated before proceeding
+    if (!isSignedIn) {
+      setShowSignInModal(true);
+      return;
+    }
+
+    // Check if userId is available
+    if (!userId) {
+      showNotification('error', 'User information not available. Please try logging in again.');
+      return;
+    }
+
     const startTimeSeconds = parseTimeInput(startTime);
     const endTimeSeconds = parseTimeInput(endTime);
 
@@ -112,13 +128,17 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
     setErrors({});
 
     try {
+      // Get authentication token
+      const token = await getToken();
+      
       const clipRegistered = await registerClip(
         videoRef.current.src, 
         tag, 
         clubId, 
         userId, 
         startTimeSeconds, 
-        endTimeSeconds
+        endTimeSeconds,
+        token
       );
       
       if (clipRegistered?.success) {
@@ -143,94 +163,162 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
       )}
       
       <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
-        <div className="w-full max-w-lg px-4">
-          <div className="space-y-6 rounded-b-xl sm:rounded-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
-            <h2 className="text-base/7 font-semibold text-white self-center mb-3">
-              {t('createClip')}
-            </h2>
-
-            {/* Time Input Section */}
-            <div className="w-full gap-10 flex flex-row">
-              <div className="w-full">
-                <label className="text-sm/6 font-medium text-white flex justify-between items-center">
-                  {t('startTime')}
-                  <Button
-                    onClick={() => setCurrentTime(startTimeRef)}
-                    className="ml-1 flex-end inline-flex items-center gap-2 bg-gray-700 text-white border-none shadow-inner hover:bg-gray-600"
-                    size="small"
-                  >
-                    <img src={clockIcon} alt="" className="w-4 h-4" />
-                  </Button>
-                </label>
-                <p className="text-sm/6 text-white/50">{t('useButtonToGetTime')}</p>
-                <Input
+        <div className="liquid-glass iridescent-border rounded-2xl p-6" style={{
+          backdropFilter: 'blur(2px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+          background: 'transparent',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          {/* Liquid glass radial gradient overlay */}
+          <div style={{
+            content: '',
+            position: 'absolute',
+            top: '-50%',
+            left: '-50%',
+            width: '200%',
+            height: '200%',
+            background: 'radial-gradient(circle, rgba(128, 236, 19, 0.05) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }}></div>
+          
+          <div className="flex items-center gap-2 mb-6 relative z-10">
+            <h2 className="text-white text-xl font-bold tracking-tight">{t('createClip')}</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
+            <div className="flex flex-col gap-2">
+              <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('startTime')}</p>
+              <div className="relative">
+                <input
                   ref={startTimeRef}
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="mt-3 block w-full rounded-lg bg-white/5 text-white"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+                  type="text"
+                  placeholder="00:00:00"
                 />
+                <button
+                  onClick={() => setCurrentTime(startTimeRef)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6bbe18] hover:text-[#d9ff00] transition-colors"
+                >
+                  <span className="text-sm">Set</span>
+                </button>
               </div>
-
-              <div className="w-full">
-                <label className="text-sm/6 font-medium text-white flex justify-between items-center">
-                  {t('endTime')}
-                  <Button
-                    onClick={() => setCurrentTime(endTimeRef)}
-                    className="ml-1 flex-end inline-flex items-center gap-2 bg-gray-700 text-white border-none shadow-inner hover:bg-gray-600"
-                    size="small"
-                  >
-                    <img src={clockIcon} alt="" className="w-4 h-4" />
-                  </Button>
-                </label>
-                <p className="text-sm/6 text-white/50">{t('useButtonToGetTime')}</p>
-                <Input
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('endTime')}</p>
+              <div className="relative">
+                <input
                   ref={endTimeRef}
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="mt-3 block w-full rounded-lg bg-white/5 text-white"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+                  type="text"
+                  placeholder="00:00:00"
                 />
+                <button
+                  onClick={() => setCurrentTime(endTimeRef)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2  text-[#6bbe18] hover:text-[#d9ff00] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-sm">Set</span>
+                </button>
               </div>
             </div>
-            {errors.clipTime && <p className="text-xs text-red-500">{errors.clipTime}</p>}
-
-            {/* Tag Selection */}
-            <div>
-              <label className="text-sm/6 font-medium text-white">{t('tag')}</label>
-              <p className="text-sm/6 text-white/50">{t('classifyYourClip')}</p>
-              <Select
-                onChange={setTag}
-                className="mt-3 w-full"
-                dropdownStyle={{ color: "black" }}
-                placeholder={t('selectATag')}
-                mode="tags"
-                maxTagCount={1}
-              >
-                <Select.Option value="Blooper">{t('blooper')}</Select.Option>
-                <Select.Option value="Good Point">{t('goodPoint')}</Select.Option>
-                <Select.Option value="Forced Error">{t('forcedError')}</Select.Option>
-              </Select>
-              {errors.tag && <p className="text-xs text-red-500">{errors.tag}</p>}
-            </div>
-
-            {/* Personal Note */}
-            <div>
-              <label className="text-sm/6 font-medium text-white">{t('personalNote')}</label>
-              <p className="text-sm/6 text-white/50">{t('makeNoteForClip')}</p>
-              <TextArea
-                className="mt-3 block w-full resize-none rounded-lg bg-white/5 text-white"
-                rows={3}
-              />
-            </div>
-
-            <Button
-              className="self-center inline-flex items-center gap-2 bg-[#DDF31A] text-black shadow-inner hover:bg-gray-600"
-              onClick={handleCreateClip}
-            >
-              {t('createClip')}
-            </Button>
           </div>
+          
+          {errors.clipTime && <p className="text-xs text-red-500 mb-4 relative z-10">{errors.clipTime}</p>}
+          
+          {/* Tag Selection */}
+          <div className="mb-6 relative z-10">
+            <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2">{t('tag')}</p>
+            <Select
+              onChange={setTag}
+              className="w-full [&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!py-3 [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+              dropdownStyle={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '0.75rem'
+              }}
+              placeholder={t('selectATag')}
+              mode="tags"
+              maxTagCount={1}
+            >
+              <Select.Option value="Blooper">{t('blooper')}</Select.Option>
+              <Select.Option value="Good Point">{t('goodPoint')}</Select.Option>
+              <Select.Option value="Forced Error">{t('forcedError')}</Select.Option>
+            </Select>
+            {errors.tag && <p className="text-xs text-red-500 mt-1">{errors.tag}</p>}
+          </div>
+
+          {/* Personal Note */}
+          <div className="mb-6 relative z-10">
+            <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2">{t('personalNote')}</p>
+            <TextArea
+              className="w-full bg-white/5 border border-white/10 rounded-xl text-white resize-none focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+              rows={3}
+              placeholder={t('makeNoteForClip')}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '0.75rem'
+              }}
+            />
+          </div>
+          
+          <button
+            onClick={handleCreateClip}
+            className="w-full bg-[#80ec13] hover:bg-[#80ec13]/90 text-[#0a0d08] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#80ec13]/20 relative z-10"
+          >
+            {isSignedIn ? t('createClip') : t('loginToCreateClip')}
+          </button>
         </div>
       </ConfigProvider>
+      
+      {/* Sign In Modal */}
+      <Modal
+        open={showSignInModal}
+        onCancel={() => setShowSignInModal(false)}
+        footer={null}
+        centered
+        styles={{
+          content: {
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            border: '1px solid rgba(255, 255, 255, 0)',
+            borderRadius: '16px',
+            backdropFilter: 'blur(10px)',
+          },
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)'
+          }
+        }}
+      >
+        
+          <SignIn 
+            appearance={{
+              elements: {
+                rootBox: "w-full",
+                cardBox: "w-full",
+                card: "bg-transparent w-full",
+                headerTitle: "text-white",
+                headerSubtitle: "text-white/70",
+                socialButtonsBlockButton: "bg-white/10 border-white/20 text-white hover:bg-white/20 w-full",
+                formFieldInput: "bg-white/10 border-white/20 text-white",
+                formButtonPrimary: "bg-[#80ec13] hover:bg-[#80ec13]/90 text-black w-full",
+                footerActionLink: "text-[#80ec13] hover:text-[#80ec13]/80",
+                dividerLine: "bg-white/20",
+                dividerText: "text-white/60",
+                formFieldLabel: "text-white/80",
+                identityPreviewText: "text-white",
+                formResendCodeLink: "text-[#80ec13] hover:text-[#80ec13]/80"
+              }
+            }}
+            redirectUrl={window.location.href}
+          />
+      </Modal>
     </>
   );
 }

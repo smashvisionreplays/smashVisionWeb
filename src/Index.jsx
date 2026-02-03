@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import NavBarTW from '../components/NavBarTW';
 import TopNotification from '../components/TopNotification';
+import Footer from '../components/Footer';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import '../stylesheet/index.css';
 import Home from './pages/Home';
@@ -11,6 +12,8 @@ import ClipView from './pages/ClipView';
 import Login from './pages/Login';
 import Tournaments from './pages/Tournaments';
 import Lives from './pages/Lives';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 import {ConfigProvider, Steps, theme } from 'antd';
 
 const Index = () => {
@@ -70,7 +73,11 @@ const Index = () => {
               </ProtectedRoute>
             } 
           />
-        </Routes>      
+          <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms/terms-and-conditions" element={<TermsAndConditions />} />
+        </Routes>
+        
+        <Footer />
       </div>
     </ConfigProvider>
   );

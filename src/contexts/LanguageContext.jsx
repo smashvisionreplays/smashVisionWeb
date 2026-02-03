@@ -72,6 +72,11 @@ const translations = {
     
     // Video view
     createClip: 'Create Clip of my Game!',
+    createClipSimple: 'Create Clip',
+    bestPoints: 'Best Points',
+    loginToCreateClip: 'Login to Create Clip',
+    signInRequired: 'Sign In Required',
+    signInToCreateClips: 'You need to sign in to create clips',
     startTime: 'Start Time',
     endTime: 'End Time',
     personalNote: 'Personal Note',
@@ -165,6 +170,10 @@ const translations = {
     signIn: 'Sign in',
     enterPassword: 'Enter your password',
     enterPasswordSubtitle: 'Enter the password associated with your account',
+    
+    // Footer
+    privacyPolicy: 'Privacy Policy',
+    termsOfUse: 'Terms of Use',
   },
 
   es: {
@@ -232,6 +241,11 @@ const translations = {
     
     // Video view
     createClip: '¡Crear Clip de mi Juego!',
+    createClipSimple: 'Crear Clip',
+    bestPoints: 'Mejores Puntos',
+    loginToCreateClip: 'Inicia Sesión para Crear Clip',
+    signInRequired: 'Inicio de Sesión Requerido',
+    signInToCreateClips: 'Necesitas iniciar sesión para crear clips',
     startTime: 'Tiempo Inicial',
     endTime: 'Tiempo Final',
     tag: 'Etiqueta',
@@ -326,6 +340,10 @@ const translations = {
     signIn: 'Iniciar sesión',
     enterPassword: 'Ingresa tu contraseña',
     enterPasswordSubtitle: 'Ingresa la contraseña asociada a tu cuenta',
+    
+    // Footer
+    privacyPolicy: 'Política de Privacidad',
+    termsOfUse: 'Términos de Uso',
   }
 };
 

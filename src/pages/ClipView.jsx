@@ -148,8 +148,8 @@ const ClipView = ({ triggerNotification }) => {
 
 
   return (
-    <div className="main-page w-full">
-      <div className="mx-auto lg:w-4/6 md:w-5/6 h-3/6">
+    <div className="main-page w-full  ">
+      <div className="mx-auto lg:w-4/6 md:w-5/6 h-3/6" >
       {/* <ProgressBar items={items} current={2} percent={80}/> */}
         <div className=" mb-5 rounded-md px-6 py-2">
           {showProgressBar ? (
@@ -162,7 +162,7 @@ const ClipView = ({ triggerNotification }) => {
         {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
 
         {isVideoLoaded && (
-          <div className="mt-5 w-full max-w-lg px-4 mx-auto flex justify-center gap-4">
+          <div className="mt-5 w-full max-w-lg px-4 mx-auto flex justify-center gap-4 " >
             <Button
               className="self-center inline-flex items-center gap-2 rounded-md bg-[#DDF31A] py-1.5 px-3 text-sm font-semibold text-black shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 disabled:opacity-50"
               disabled={!downloadURL}

@@ -148,32 +148,53 @@ const BlurredContainer = ({ triggerNotification }) => {
   };
 
   return (
-    <div className="backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl p-8 mx-auto">
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none rounded-3xl"></div>
+    <div className="relative backdrop-blur-sm rounded-3xl border border-t-white/10 border-l-white/10 border-b-white/25 border-r-white/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.6)] p-8 mx-auto overflow-hidden">
+      {/* Liquid glass effect overlays */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 pointer-events-none rounded-3xl"></div>
+      <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent pointer-events-none rounded-t-3xl"></div>
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+      <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/5 rounded-full blur-lg pointer-events-none"></div>
       
       <div className="relative z-10">
         <ConfigProvider
           theme={{
-            algorithm: theme.defaultAlgorithm,
+            algorithm: theme.darkAlgorithm,
             components: {
               Select: {
-                colorTextPlaceholder: "rgba(0,0,0,0.6)",
-                colorBorder: "rgba(255,255,255,0.2)",
-
+                colorBgContainer: 'rgba(255, 255, 255, 0.05)',
+                colorBorder: 'rgba(255, 255, 255, 0.1)',
+                colorText: 'white',
+                colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                controlOutline: 'rgba(128, 236, 19, 0.2)',
+                colorPrimaryHover: '#80ec13',
+                colorPrimary: '#80ec13',
               },
               DatePicker: {
-                colorTextPlaceholder: "rgba(0,0,0,0.6)",
-                colorBorder: "rgba(255,255,255,0.2)",
-                
+                colorBgContainer: 'rgba(255, 255, 255, 0.05)',
+                colorBorder: 'rgba(255, 255, 255, 0.1)',
+                colorText: 'white',
+                colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                controlOutline: 'rgba(128, 236, 19, 0.2)',
+                colorPrimaryHover: '#80ec13',
+                colorPrimary: '#80ec13',
               },
               TimePicker: {
-                colorTextPlaceholder: "rgba(0,0,0,0.6)",
-                colorBorder: "rgba(255,255,255,0.2)",
+                colorBgContainer: 'rgba(255, 255, 255, 0.05)',
+                colorBorder: 'rgba(255, 255, 255, 0.1)',
+                colorText: 'white',
+                colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                controlOutline: 'rgba(128, 236, 19, 0.2)',
+                colorPrimaryHover: '#80ec13',
+                colorPrimary: '#80ec13',
               },
               Button: {
-                colorPrimary: "#DDF31A",
-                colorPrimaryHover: "#c9de17",
+                colorPrimary: "#80ec13",
+                colorPrimaryHover: "rgba(128, 236, 19, 0.9)",
+              },
+              Form: {
+                colorError: "#80ec13",
+                colorErrorText: "#80ec13",
+                colorErrorOutline: "#80ec13",
               }
             },
           }}
@@ -188,9 +209,10 @@ const BlurredContainer = ({ triggerNotification }) => {
           >
             {/* Club Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">{t('club')}</span>}
+              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('club')}</span>}
               name="club"
               rules={[{ required: true, message: t('selectClub') }]}
+              required={false}
             >
               <Select
                 size="large"
@@ -210,14 +232,22 @@ const BlurredContainer = ({ triggerNotification }) => {
                     </span>
                   </Space>
                 )}
+                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+                dropdownStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '0.75rem'
+                }}
               />
             </Form.Item>
 
             {/* Court Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">{t('court')}</span>}
+              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('court')}</span>}
               name="court"
               rules={[{ required: true, message: t('selectCourt') }]}
+              required={false}
             >
               <Select
                 size="large"
@@ -225,14 +255,22 @@ const BlurredContainer = ({ triggerNotification }) => {
                 onChange={setSelectedCourt}
                 options={courts.map((court) => ({ label: `Court ${court}`, value: court }))}
                 disabled={!selectedClubId}
+                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+                dropdownStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '0.75rem'
+                }}
               />
             </Form.Item>
 
             {/* Date Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">{t('date')}</span>}
+              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('date')}</span>}
               name="date"
               rules={[{ required: true, message: t('selectDate') }]}
+              required={false}
             >
               <DatePicker
                 size="large"
@@ -242,28 +280,26 @@ const BlurredContainer = ({ triggerNotification }) => {
                 maxDate={dayjs(todayString, dateFormat)}
                 onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
-                className="glass-input"
+                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-xl [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#80ec13] [&_.ant-picker-focused]:!border-[#80ec13] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#80ec13]"
               />
             </Form.Item>
 
             {/* Time Selection */}
             <Form.Item
-              label={<span className="text-white/90 font-medium text-base">{t('time')}</span>}
+              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('time')}</span>}
               name="time"
               rules={[{ required: true, message: t('selectTime') }]}
+              required={false}
             >
               <TimePicker
                 size="large"
-                style={{ width: '100%',  }}
+                style={{ width: '100%' }}
                 use12Hours
                 format="h:mm a"
                 minuteStep={30}
                 onChange={handleTimeSelect}
-                classNames={{
-                  popup: {
-                    root: 'timepicker-popup'
-                  }
-                }}
+                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-xl [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#80ec13] [&_.ant-picker-focused]:!border-[#80ec13] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#80ec13]"
+                popupClassName="[&_.ant-picker-dropdown]:!bg-white/5 [&_.ant-picker-dropdown]:!backdrop-blur-[10px] [&_.ant-picker-dropdown]:!border-white/10 [&_.ant-picker-dropdown]:!rounded-xl"
               />
             </Form.Item>
 
@@ -274,9 +310,27 @@ const BlurredContainer = ({ triggerNotification }) => {
                 htmlType="submit"
                 size="large"
                 loading={loading}
-                className="w-full h-12 bg-[#DDF31A] hover:bg-[#c9de17] border-none text-black font-semibold rounded-xl shadow-lg transition-all duration-200"
+                className="w-full h-12 bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] border-none text-black font-semibold rounded-xl  hover:shadow-[0_6px_20px_0_rgba(221,243,26,0.6)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
               >
-                {loading ? t('searching') : t('findMyGame')}
+                <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t('searching')}
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      {t('findMyGame')}
+                    </>
+                  )}
+                </span>
               </Button>
             </Form.Item>
           </Form>

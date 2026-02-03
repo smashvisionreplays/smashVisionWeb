@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
-import BestPointsTable from "../../components/videoView/TableActions";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime } from "../scripts/utils";
 import { fetchBestPoints } from "../../src/controllers/serverController";
@@ -74,7 +73,11 @@ const VideoView = ({ triggerNotification }) => {
     
     const startTimeFormatted = formatTime(startTime.hour, startTime.minute, startTime.second);
     const seekTime = getVideoSeekTime(record.bestPoint, startTimeFormatted);
-    videoRef.current.currentTime = seekTime;
+    
+    // Ensure seek time is within video bounds
+    const clampedSeekTime = Math.max(0, Math.min(seekTime, videoRef.current.duration));
+    
+    videoRef.current.currentTime = clampedSeekTime;
   };
 
   // Effects
@@ -115,8 +118,8 @@ const VideoView = ({ triggerNotification }) => {
   }, [isVideoLoaded, updateClock]);
 
   return (
-    <div className="main-page w-full">
-      <div className="mx-auto lg:w-4/6 md:w-5/6 h-3/6">
+    <div className=" w-[80%] mx-auto flex flex-col gap-10 sm:flex-row" style={{ marginTop: '6rem', marginBottom: '4rem' }}>
+      <div className="mx-auto w-full">
         <h3 id="clock" className="text-white text-center text-xl mb-2">
           {clockTime}
         </h3>
@@ -127,57 +130,120 @@ const VideoView = ({ triggerNotification }) => {
           uid={videoUID} 
         />
         
-        {!isVideoLoaded ? (
-          <div className="w-full h-full flex justify-center items-center">
-            <Notification type="info" message="Loading Video" />
+        {/* Best Points Tags - Desktop Only */}
+        {bestPoints.length > 0 && (
+          <div className="mt-6 hidden md:block">
+            <h4 className="text-white/80 text-sm font-semibold mb-4">Best Points</h4>
+            <div className="flex flex-wrap gap-3">
+              {bestPoints.map((point, index) => (
+                <button
+                  key={index}
+                  onClick={() => watchBestPoint(point)}
+                  className="relative overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#80ec13]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#80ec13]/10"
+                  style={{
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  <div 
+                    className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(128, 236, 19, 0.05) 0%, transparent 70%)'
+                    }}
+                  />
+                  <span className="relative z-10">{point.bestPoint}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        ) : (
+        )}
+      </div>
+      <div className=" flex items-center">  
+        {isVideoLoaded && (
           <>
             {/* Desktop Layout - Side by side */}
-            <div className="hidden md:flex flex-row mt-5 mx-auto justify-center gap-10">
+            <div className="hidden md:flex flex-col mt-5 mx-auto justify-center gap-10">
               <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
-              <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
             </div>
             
             {/* Mobile Layout - Tabs */}
-            <div className="md:hidden mt-5">
-              <div className="px-8 py-4">
-                <div className=" ">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setActiveTab('createClip')}
-                      className={`rounded-t-xl py-2 px-4 text-sm font-semibold text-white/90 focus:outline-none transition-all duration-200 ease-in-out ${
-                        activeTab === 'createClip'
-                          ? 'bg-white/5'
-                          : 'hover:bg-white/10'
-                      }`}
-                    >
-                      {'Create Clip'}
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('bestMoments')}
-                      className={`rounded-t-xl py-2 px-4 text-sm font-semibold text-white/90 focus:outline-none transition-all duration-200 ease-in-out ${
-                        activeTab === 'bestMoments'
-                          ? 'bg-white/5'
-                          : 'hover:bg-white/10'
-                      }`}
-                    >
-                      {t('bestMoments') || 'Best Moments'}
-                    </button>
-                  </div>
+            <div className="md:hidden mt-5 w-full">
+              <div className="px-4">
+                {/* Tab Navigation */}
+                <div className="flex mb-2">
+                  <button
+                    onClick={() => setActiveTab('createClip')}
+                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-l-xl transition-all ${
+                      activeTab === 'createClip'
+                        ? 'bg-[#80ec13] text-black/70'
+                        : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('createClipSimple')}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('bestPoints')}
+                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-r-xl transition-all ${
+                      activeTab === 'bestPoints'
+                        ? 'bg-[#80ec13] text-black'
+                        : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('bestPoints')}
+                  </button>
                 </div>
-              </div>
-              
-              <div className="px-4 -mt-4">
+
+                {/* Tab Content */}
                 {activeTab === 'createClip' ? (
                   <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
                 ) : (
-                  <div className="w-full max-w-lg px-4 mx-auto">
-                    <div className="space-y-6 rounded-b-xl bg-white/5 p-6 sm:p-10 flex flex-col justify-center align-middle">
-                      <h2 className="text-base/7 font-semibold text-white self-center mb-3">
-                        {t('bestMoments') || 'Best Moments'}
-                      </h2>
-                      <BestPointsTable data={bestPoints} onWatch={watchBestPoint} />
+                  <div className="liquid-glass iridescent-border rounded-2xl p-6" style={{
+                    backdropFilter: 'blur(2px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    background: 'transparent',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      content: '',
+                      position: 'absolute',
+                      top: '-50%',
+                      left: '-50%',
+                      width: '200%',
+                      height: '200%',
+                      background: 'radial-gradient(circle, rgba(128, 236, 19, 0.05) 0%, transparent 70%)',
+                      pointerEvents: 'none'
+                    }}></div>
+                    
+                    
+                    <div className=" flex flex-col items-center justify-center gap-10 z-10">
+                      <h2 className="text-white text-xl font-bold tracking-tight">Best Points</h2>
+                      {bestPoints.length > 0 ? (
+                        <div className="flex flex-wrap justify-center gap-3">
+                          {bestPoints.map((point, index) => (
+                            <button
+                              key={index}
+                              onClick={() => watchBestPoint(point)}
+                              className="overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#80ec13]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#80ec13]/10"
+                              style={{
+                                backdropFilter: 'blur(10px)',
+                                boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
+                              }}
+                            >
+                              <div 
+                                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                                style={{
+                                  background: 'radial-gradient(circle at center, rgba(128, 236, 19, 0.05) 0%, transparent 70%)'
+                                }}
+                              />
+                              <span className="relative z-10">{point.bestPoint}</span>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-white/60 text-center py-8">No best points available</p>
+                      )}
                     </div>
                   </div>
                 )}

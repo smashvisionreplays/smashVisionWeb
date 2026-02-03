@@ -24,7 +24,8 @@ export default function NavBar() {
   const navigation = getNavigation(t);
   
   return (
-    <Disclosure as="nav" className="m-auto bg-transparent flex flex-col mb-10">
+    <Disclosure as="nav" className="fixed top-0 left-0 right-0 z-50">
+      <div className="bg-gradient-to-b from-black/50 via-black/30 to-transparent backdrop-blur-sm">
       <div className="mx-auto w-full max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           
@@ -40,17 +41,11 @@ export default function NavBar() {
             
             <div className="flex shrink-0 items-center align-bottom">
               <Link to="/" className="flex items-center space-x-3 group">
-                <div className="relative">
-                  <img
-                    alt="SmashVision"
-                    src="./logo.webp"
-                    className="h-10 w-auto transition-transform group-hover:scale-105"
-                  />
-                  <div className="absolute -inset-1 bg-white/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <span className="text-lg font-light text-white/90 max-sm:text-sm tracking-wide">
-                  SmashVision
-                </span>
+                <img
+                  alt="SmashVision"
+                  src="./word-logo.png"
+                  className="h-8 w-auto transition-transform group-hover:scale-105"
+                />
               </Link>
             </div>
               
@@ -100,8 +95,9 @@ export default function NavBar() {
           </div>
         </div>
       </div>
+      </div>
 
-      <DisclosurePanel className="sm:hidden transition-all duration-300 ease-in-out">
+      <DisclosurePanel className="sm:hidden transition-all duration-300 ease-in-out bg-gradient-to-b from-black/30 via-black/20 to-transparent backdrop-blur-sm">
         <div className="space-y-1 px-2 pb-3 pt-2 text-center">
           {navigation.map((item) => (
             <Link
