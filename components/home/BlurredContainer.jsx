@@ -165,36 +165,41 @@ const BlurredContainer = ({ triggerNotification }) => {
                 colorBorder: 'rgba(255, 255, 255, 0.1)',
                 colorText: 'white',
                 colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
-                controlOutline: 'rgba(128, 236, 19, 0.2)',
-                colorPrimaryHover: '#80ec13',
-                colorPrimary: '#80ec13',
+                controlOutline: 'rgba(221, 243, 26, 0.2)',
+                colorPrimaryHover: '#DDF31A',
+                colorPrimary: '#DDF31A',
+                borderRadius: 12,
+                borderRadiusLG: 12,
               },
               DatePicker: {
                 colorBgContainer: 'rgba(255, 255, 255, 0.05)',
                 colorBorder: 'rgba(255, 255, 255, 0.1)',
                 colorText: 'white',
                 colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
-                controlOutline: 'rgba(128, 236, 19, 0.2)',
-                colorPrimaryHover: '#80ec13',
-                colorPrimary: '#80ec13',
+                controlOutline: 'rgba(221, 243, 26, 0.2)',
+                colorPrimaryHover: '#DDF31A',
+                colorPrimary: '#DDF31A',
               },
               TimePicker: {
                 colorBgContainer: 'rgba(255, 255, 255, 0.05)',
                 colorBorder: 'rgba(255, 255, 255, 0.1)',
                 colorText: 'white',
                 colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
-                controlOutline: 'rgba(128, 236, 19, 0.2)',
-                colorPrimaryHover: '#80ec13',
-                colorPrimary: '#80ec13',
+                controlOutline: 'rgba(221, 243, 26, 0.2)',
+                colorPrimaryHover: '#DDF31A',
+                colorPrimary: '#DDF31A',
+                colorError: 'rgba(255, 255, 255, 0.1)',
+                colorErrorBorder: 'rgba(255, 255, 255, 0.1)',
+                colorErrorOutline: 'rgba(255, 255, 255, 0.1)',
               },
               Button: {
-                colorPrimary: "#80ec13",
-                colorPrimaryHover: "rgba(128, 236, 19, 0.9)",
+                colorPrimary: "#DDF31A",
+                colorPrimaryHover: "rgba(221, 243, 26, 0.9)",
               },
               Form: {
-                colorError: "#80ec13",
-                colorErrorText: "#80ec13",
-                colorErrorOutline: "#80ec13",
+                colorError: "#DDF31A",
+                colorErrorText: "#DDF31A",
+                colorErrorOutline: "#DDF31A",
               }
             },
           }}
@@ -209,7 +214,7 @@ const BlurredContainer = ({ triggerNotification }) => {
           >
             {/* Club Selection */}
             <Form.Item
-              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('club')}</span>}
+              label={<span className="text-white/90 text-sm font-bold uppercase tracking-wider">{t('club')}</span>}
               name="club"
               rules={[{ required: true, message: t('selectClub') }]}
               required={false}
@@ -232,19 +237,19 @@ const BlurredContainer = ({ triggerNotification }) => {
                     </span>
                   </Space>
                 )}
-                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-[7px] [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#DDF31A]"
                 dropdownStyle={{ 
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '0.75rem'
+                  borderRadius: '12px'
                 }}
               />
             </Form.Item>
 
             {/* Court Selection */}
             <Form.Item
-              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('court')}</span>}
+              label={<span className="text-white/90 text-sm font-bold uppercase tracking-wider">{t('court')}</span>}
               name="court"
               rules={[{ required: true, message: t('selectCourt') }]}
               required={false}
@@ -255,19 +260,19 @@ const BlurredContainer = ({ triggerNotification }) => {
                 onChange={setSelectedCourt}
                 options={courts.map((court) => ({ label: `Court ${court}`, value: court }))}
                 disabled={!selectedClubId}
-                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+                className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-[7px] [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#DDF31A]"
                 dropdownStyle={{ 
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '0.75rem'
+                  borderRadius: '12px'
                 }}
               />
             </Form.Item>
 
             {/* Date Selection */}
             <Form.Item
-              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('date')}</span>}
+              label={<span className="text-white/90 text-sm font-bold uppercase tracking-wider">{t('date')}</span>}
               name="date"
               rules={[{ required: true, message: t('selectDate') }]}
               required={false}
@@ -280,13 +285,13 @@ const BlurredContainer = ({ triggerNotification }) => {
                 maxDate={dayjs(todayString, dateFormat)}
                 onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
-                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-xl [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#80ec13] [&_.ant-picker-focused]:!border-[#80ec13] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#80ec13]"
+                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-[12px] [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#DDF31A] [&_.ant-picker-focused]:!border-[#DDF31A] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#DDF31A]"
               />
             </Form.Item>
 
             {/* Time Selection */}
             <Form.Item
-              label={<span className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('time')}</span>}
+              label={<span className="text-white/90 text-sm font-bold uppercase tracking-wider">{t('time')}</span>}
               name="time"
               rules={[{ required: true, message: t('selectTime') }]}
               required={false}
@@ -298,7 +303,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 format="h:mm a"
                 minuteStep={30}
                 onChange={handleTimeSelect}
-                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-xl [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#80ec13] [&_.ant-picker-focused]:!border-[#80ec13] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#80ec13]"
+                className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-[12px] [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#DDF31A] [&_.ant-picker-focused]:!border-[#DDF31A] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#DDF31A] [&_.ant-picker-status-error]:!border-white/10 [&_.ant-picker-status-error]:!shadow-none [&_.ant-picker-status-error.ant-picker-focused]:!border-[#DDF31A] [&_.ant-picker-status-error.ant-picker-focused]:!shadow-[0_0_0_1px_#DDF31A] [&_.ant-form-item-has-error_.ant-picker]:!border-white/10 [&_.ant-form-item-has-error_.ant-picker]:!shadow-none"
                 popupClassName="[&_.ant-picker-dropdown]:!bg-white/5 [&_.ant-picker-dropdown]:!backdrop-blur-[10px] [&_.ant-picker-dropdown]:!border-white/10 [&_.ant-picker-dropdown]:!rounded-xl"
               />
             </Form.Item>

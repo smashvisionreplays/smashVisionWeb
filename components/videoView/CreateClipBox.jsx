@@ -162,7 +162,29 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
         />
       )}
       
-      <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+      <ConfigProvider theme={{ 
+        algorithm: theme.darkAlgorithm,
+        components: {
+          Select: {
+            colorBgContainer: 'rgba(255, 255, 255, 0.05)',
+            colorBorder: 'rgba(255, 255, 255, 0.1)',
+            colorText: 'white',
+            colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
+            controlOutline: 'rgba(221, 243, 26, 0.2)',
+            colorPrimaryHover: '#DDF31A',
+            colorPrimary: '#DDF31A',
+          },
+          Input: {
+            colorBgContainer: 'rgba(255, 255, 255, 0.05)',
+            colorBorder: 'rgba(255, 255, 255, 0.1)',
+            colorText: 'white',
+            colorTextPlaceholder: 'rgba(255, 255, 255, 0.5)',
+            controlOutline: 'rgba(221, 243, 26, 0.2)',
+            colorPrimaryHover: '#DDF31A',
+            colorPrimary: '#DDF31A',
+          }
+        }
+      }}>
         <div className="liquid-glass iridescent-border rounded-2xl p-6" style={{
           backdropFilter: 'blur(2px)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -179,7 +201,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
             left: '-50%',
             width: '200%',
             height: '200%',
-            background: 'radial-gradient(circle, rgba(128, 236, 19, 0.05) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(221, 243, 26, 0.05) 0%, transparent 70%)',
             pointerEvents: 'none'
           }}></div>
           
@@ -195,13 +217,13 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                   ref={startTimeRef}
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
                   type="text"
                   placeholder="00:00:00"
                 />
                 <button
                   onClick={() => setCurrentTime(startTimeRef)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6bbe18] hover:text-[#d9ff00] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#DDF31A] hover:text-[#B8E016] transition-colors"
                 >
                   <span className="text-sm">Set</span>
                 </button>
@@ -215,13 +237,13 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                   ref={endTimeRef}
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
                   type="text"
                   placeholder="00:00:00"
                 />
                 <button
                   onClick={() => setCurrentTime(endTimeRef)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2  text-[#6bbe18] hover:text-[#d9ff00] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2  text-[#DDF31A] hover:text-[#B8E016] transition-colors"
                 >
                   <span className="material-symbols-outlined text-sm">Set</span>
                 </button>
@@ -236,7 +258,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
             <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2">{t('tag')}</p>
             <Select
               onChange={setTag}
-              className="w-full [&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!py-3 [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!border-[#80ec13] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#80ec13]"
+              className="w-full [&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!py-3 [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#DDF31A]"
               dropdownStyle={{ 
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
@@ -258,7 +280,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
           <div className="mb-6 relative z-10">
             <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2">{t('personalNote')}</p>
             <TextArea
-              className="w-full bg-white/5 border border-white/10 rounded-xl text-white resize-none focus:border-[#80ec13] focus:ring-1 focus:ring-[#80ec13] transition-all outline-none"
+              className="w-full bg-white/5 border border-white/10 rounded-xl text-white resize-none focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
               rows={3}
               placeholder={t('makeNoteForClip')}
               style={{
@@ -271,9 +293,12 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
           
           <button
             onClick={handleCreateClip}
-            className="w-full bg-[#80ec13] hover:bg-[#80ec13]/90 text-[#0a0d08] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#80ec13]/20 relative z-10"
+            className="w-full bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] text-black font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group shadow-lg hover:shadow-[0_6px_20px_0_rgba(221,243,26,0.6)] relative z-10"
           >
-            {isSignedIn ? t('createClip') : t('loginToCreateClip')}
+            <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+            <span className="relative z-10">
+              {isSignedIn ? t('createClip') : t('loginToCreateClip')}
+            </span>
           </button>
         </div>
       </ConfigProvider>
@@ -307,13 +332,13 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                 headerSubtitle: "text-white/70",
                 socialButtonsBlockButton: "bg-white/10 border-white/20 text-white hover:bg-white/20 w-full",
                 formFieldInput: "bg-white/10 border-white/20 text-white",
-                formButtonPrimary: "bg-[#80ec13] hover:bg-[#80ec13]/90 text-black w-full",
-                footerActionLink: "text-[#80ec13] hover:text-[#80ec13]/80",
+                formButtonPrimary: "bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] text-black font-semibold w-full",
+                footerActionLink: "text-[#DDF31A] hover:text-[#B8E016]",
                 dividerLine: "bg-white/20",
                 dividerText: "text-white/60",
                 formFieldLabel: "text-white/80",
                 identityPreviewText: "text-white",
-                formResendCodeLink: "text-[#80ec13] hover:text-[#80ec13]/80"
+                formResendCodeLink: "text-[#DDF31A] hover:text-[#B8E016]"
               }
             }}
             redirectUrl={window.location.href}

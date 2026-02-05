@@ -133,13 +133,13 @@ const VideoView = ({ triggerNotification }) => {
         {/* Best Points Tags - Desktop Only */}
         {bestPoints.length > 0 && (
           <div className="mt-6 hidden md:block">
-            <h4 className="text-white/80 text-sm font-semibold mb-4">Best Points</h4>
+            <h4 className="text-white/80 text-sm font-semibold mb-4">{t('bestPoints')}</h4>
             <div className="flex flex-wrap gap-3">
               {bestPoints.map((point, index) => (
                 <button
                   key={index}
                   onClick={() => watchBestPoint(point)}
-                  className="relative overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#80ec13]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#80ec13]/10"
+                  className="relative overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#DDF31A]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#DDF31A]/10"
                   style={{
                     backdropFilter: 'blur(10px)',
                     boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
@@ -148,7 +148,7 @@ const VideoView = ({ triggerNotification }) => {
                   <div 
                     className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
                     style={{
-                      background: 'radial-gradient(circle at center, rgba(128, 236, 19, 0.05) 0%, transparent 70%)'
+                      background: 'radial-gradient(circle at center, rgba(221, 243, 26, 0.05) 0%, transparent 70%)'
                     }}
                   />
                   <span className="relative z-10">{point.bestPoint}</span>
@@ -173,9 +173,9 @@ const VideoView = ({ triggerNotification }) => {
                 <div className="flex mb-2">
                   <button
                     onClick={() => setActiveTab('createClip')}
-                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-l-xl transition-all ${
+                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-l-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group ${
                       activeTab === 'createClip'
-                        ? 'bg-[#80ec13] text-black/70'
+                        ? 'bg-gradient-to-r from-[#acbb22] to-[#B8E016] text-black font-semibold shadow-lg'
                         : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -183,9 +183,9 @@ const VideoView = ({ triggerNotification }) => {
                   </button>
                   <button
                     onClick={() => setActiveTab('bestPoints')}
-                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-r-xl transition-all ${
+                    className={`flex-1 py-3 px-4 text-sm font-medium rounded-r-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group ${
                       activeTab === 'bestPoints'
-                        ? 'bg-[#80ec13] text-black'
+                        ? 'bg-gradient-to-r from-[#acbb22] to-[#B8E016] text-black font-semibold shadow-lg'
                         : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -212,20 +212,20 @@ const VideoView = ({ triggerNotification }) => {
                       left: '-50%',
                       width: '200%',
                       height: '200%',
-                      background: 'radial-gradient(circle, rgba(128, 236, 19, 0.05) 0%, transparent 70%)',
+                      background: 'radial-gradient(circle, rgba(221, 243, 26, 0.05) 0%, transparent 70%)',
                       pointerEvents: 'none'
                     }}></div>
                     
                     
                     <div className=" flex flex-col items-center justify-center gap-10 z-10">
-                      <h2 className="text-white text-xl font-bold tracking-tight">Best Points</h2>
+                      <h2 className="text-white text-xl font-bold tracking-tight">{t('bestPoints')}</h2>
                       {bestPoints.length > 0 ? (
                         <div className="flex flex-wrap justify-center gap-3">
                           {bestPoints.map((point, index) => (
                             <button
                               key={index}
                               onClick={() => watchBestPoint(point)}
-                              className="overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#80ec13]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#80ec13]/10"
+                              className="overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#DDF31A]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#DDF31A]/10"
                               style={{
                                 backdropFilter: 'blur(10px)',
                                 boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
@@ -234,7 +234,7 @@ const VideoView = ({ triggerNotification }) => {
                               <div 
                                 className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
                                 style={{
-                                  background: 'radial-gradient(circle at center, rgba(128, 236, 19, 0.05) 0%, transparent 70%)'
+                                  background: 'radial-gradient(circle at center, rgba(221, 243, 26, 0.05) 0%, transparent 70%)'
                                 }}
                               />
                               <span className="relative z-10">{point.bestPoint}</span>

@@ -59,8 +59,8 @@ export default function NavBar() {
                     to={item.to}
                     aria-current={isActive ? 'page' : undefined}
                     className={classNames(
-                      isActive ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'rounded-md px-3 py-2 text-sm font-medium',
+                      isActive ? 'bg-white/20 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white',
+                      'rounded-md px-3 py-2 text-sm font-medium transition-all duration-200',
                     )}
                   >
                     {item.name}
@@ -86,9 +86,10 @@ export default function NavBar() {
               ) : (
                 <Link
                   to="/login"
-                  className="bg-[#DDF31A] hover:bg-[#c9de17] text-black px-4 py-2 rounded-lg font-medium transition-colors"
+                  className="bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] text-black px-4 py-2 rounded-lg  transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group shadow-lg"
                 >
-                  Sign In
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                  <span className="relative z-10">Sign In</span>
                 </Link>
               )}
             </div>
@@ -105,8 +106,8 @@ export default function NavBar() {
               to={item.to}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
-                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                'block rounded-md px-3 py-2 text-base max-sm:text-xs font-medium mx-auto max-w-xs',
+                item.current ? 'bg-white/20 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white',
+                'block rounded-md px-3 py-2 text-base max-sm:text-xs font-medium mx-auto max-w-xs transition-all duration-200',
               )}
             >
               {item.name}
