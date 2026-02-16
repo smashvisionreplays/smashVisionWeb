@@ -36,7 +36,7 @@ const translations = {
     failedToFetchVideo: 'Failed to fetch video',
     
     // Dashboard
-    myClips: 'My Clips',
+    myClips: 'Clips',
     descriptionPanel: 'Manage and monitor activity on your',
     clipName: 'Clip Name',
     createdAt: 'Created At',
@@ -206,7 +206,7 @@ const translations = {
     failedToFetchVideo: 'Error al obtener video',
     
     // Dashboard
-    myClips: 'Mis Clips',
+    myClips: 'Clips',
     descriptionPanel: 'Gestiona y monitorea la actividad en tus',
     clipName: 'Nombre del Clip',
     createdAt: 'Creado el',
