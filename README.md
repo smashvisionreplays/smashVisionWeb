@@ -24,16 +24,7 @@ CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
 
 ## Local Development
 
-### Option 1: Using Node.js directly
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Access at http://localhost:5173
-```
+> Look at DEVELOPMENT_TESTING_INSTRUCTIONS.md on how to set the development environment for api, db and frontend to interact also with clerk development user management.
 
 ## Production Deployment with Cloudflare Tunnel
 
