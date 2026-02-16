@@ -12,10 +12,10 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
   }, []);
 
   const getAllCategories = () => [
-    { name: 'Clips', label: t('myClips'), roles: ['member', 'club'] },
-    { name: 'Videos', label: 'Videos', roles: ['club'] },
-    { name: 'Lives', label: t('lives'), roles: ['club'] },
-    { name: 'Statistics', label: t('statistics'), roles: ['club'] },
+    { name: 'Clips', label: t('myClips'), roles: ['member', 'club'], icon: '/clips.svg' },
+    { name: 'Videos', label: 'Videos', roles: ['club'], icon: '/videocam.svg' },
+    { name: 'Lives', label: t('lives'), roles: ['club'], icon: '/live_tv.svg' },
+    { name: 'Statistics', label: t('statistics'), roles: ['club'], icon: '/statistics.svg' },
   ];
 
   const allCategories = getAllCategories();
@@ -61,10 +61,10 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
             <div className="flex-1 flex flex-col justify-center">
               <TabGroup className="flex flex-col space-y-3">
                 <TabList className="flex flex-col space-y-3">
-                  {categories.map(({ name, label }) => (
+                  {categories.map(({ name, label, icon }) => (
                     <Tab
                       key={name}
-                      className="group relative rounded-2xl py-4 px-6 text-left font-semibold text-white/80 
+                      className="group relative rounded-2xl py-4 px-6 text-left font-medium text-white/80 
                                 focus:outline-none transition-all duration-300 ease-in-out
                                 data-[selected]:bg-white/15 data-[selected]:backdrop-blur-sm 
                                 data-[selected]:shadow-lg data-[selected]:text-white
@@ -73,7 +73,12 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
                       onClick={() => onSelect(name)}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-2 h-2 rounded-full bg-current opacity-60 group-data-[selected]:opacity-100 transition-opacity"></div>
+                        <img 
+                          src={icon} 
+                          alt={label}
+                          className="w-5 h-5 opacity-60 group-data-[selected]:opacity-100 transition-opacity"
+                          style={{ filter: 'brightness(0) invert(1)' }}
+                        />
                         <span className="text-base">{label}</span>
                       </div>
                       
