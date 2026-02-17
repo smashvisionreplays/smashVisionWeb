@@ -281,7 +281,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     if (loading) {
       return (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#acbb22]/20 border-t-[#B8E016]"></div>
         </div>
       );
     }
@@ -289,15 +289,15 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     // Member role can only see clips
     if (userRole === 'member' && selectedButton !== 'Clips') {
       return (
-        <div className="flex flex-col items-center justify-center h-64 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10">
-          <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        <div className="flex flex-col items-center justify-center h-64">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-white/80 mb-2">Access Restricted</h3>
-          <p className="text-white/50 text-center max-w-sm">
-            This section is only available for club accounts. Please contact your club administrator for access.
+          <h3 className="text-base font-semibold text-white/50 mb-1">Access Restricted</h3>
+          <p className="text-white/30 text-sm text-center max-w-xs leading-relaxed">
+            This section is only available for club accounts.
           </p>
         </div>
       );
@@ -306,12 +306,13 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     switch (selectedButton) {
       case "Clips":
         return clips.length > 0 ? (
-          <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
-            <TableAnt 
-              columns={clipsColumns(clips, handleShowModal, t)} 
-              data={clips} 
-              needsExpand={false} 
-              needsVirtual={true} 
+          <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+            <TableAnt
+              columns={clipsColumns(clips, handleShowModal, t)}
+              data={clips}
+              needsExpand={false}
+              needsVirtual={true}
             />
           </div>
         ) : (
@@ -320,12 +321,13 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 
       case "Videos":
         return videos.length > 0 ? (
-          <div className="backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
-            <TableAnt 
-              columns={videosColumns(videos, handleShowModal, handleBlockVideo, handleUnblockVideo, t)} 
-              data={videos} 
-              needsExpand={false} 
-              needsVirtual={true} 
+          <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+            <TableAnt
+              columns={videosColumns(videos, handleShowModal, handleBlockVideo, handleUnblockVideo, t)}
+              data={videos}
+              needsExpand={false}
+              needsVirtual={true}
             />
           </div>
         ) : (
@@ -336,25 +338,32 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
         return (
           <div className="space-y-4">
             {/* YouTube Status Card */}
-            <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 p-4">
+            <div className="backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-3 h-3 rounded-full ${youtubeStatus.connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  <span className="text-white/90 font-medium">
-                    YouTube: {youtubeStatus.connected ? t('youtubeConnected') : t('youtubeNotConnected')}
-                  </span>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${youtubeStatus.connected ? 'bg-[#B8E016]/10 border border-[#B8E016]/20' : 'bg-white/5 border border-white/10'}`}>
+                    <svg className={`w-4 h-4 ${youtubeStatus.connected ? 'text-[#B8E016]' : 'text-white/30'}`} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-white/80 font-medium text-sm leading-tight">YouTube</p>
+                    <p className={`text-xs mt-0.5 ${youtubeStatus.connected ? 'text-[#B8E016]/70' : 'text-white/30'}`}>
+                      {youtubeStatus.connected ? t('youtubeConnected') : t('youtubeNotConnected')}
+                    </p>
+                  </div>
                 </div>
                 {youtubeStatus.connected ? (
                   <button
                     onClick={handleDisconnectYouTube}
-                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-colors"
+                    className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-xs font-medium hover:bg-red-500/20 transition-all duration-200"
                   >
                     {t('disconnect')}
                   </button>
                 ) : (
                   <button
                     onClick={() => youtubeStatus.authUrl && window.open(youtubeStatus.authUrl, 'youtube-auth', 'width=500,height=600')}
-                    className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm hover:bg-blue-500/30 transition-colors"
+                    className="px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-xs font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200"
                   >
                     {t('connect')}
                   </button>
@@ -365,20 +374,22 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             {/* Cameras Table */}
             {cameras.length > 0 ? (
               <>
-                <div className="sm:hidden backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
-                  <TableAnt 
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)} 
-                    data={cameras} 
-                    needsExpand={true} 
-                    needsVirtual={true} 
+                <div className="relative sm:hidden backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+                  <TableAnt
+                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)}
+                    data={cameras}
+                    needsExpand={true}
+                    needsVirtual={true}
                   />
                 </div>
-                <div className="hidden lg:block backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
-                  <TableAnt 
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)} 
-                    data={cameras} 
-                    needsExpand={false} 
-                    needsVirtual={false} 
+                <div className="relative hidden lg:block backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+                  <TableAnt
+                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)}
+                    data={cameras}
+                    needsExpand={false}
+                    needsVirtual={false}
                   />
                 </div>
               </>
@@ -407,14 +418,14 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 const EmptyState = ({ type }) => {
   const { t } = useLanguage();
   return (
-    <div className="flex flex-col items-center justify-center h-64 backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10">
-      <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-        <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
+    <div className="flex flex-col items-center justify-center h-64">
+      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/8 to-white/3 border border-white/10 flex items-center justify-center mb-4 shadow-inner">
+        <svg className="w-6 h-6 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
         </svg>
       </div>
-      <h3 className="text-lg font-semibold text-white/80 mb-2">{t('noTypeAvailable').replace('{type}', type)}</h3>
-      <p className="text-white/50 text-center max-w-sm">
+      <h3 className="text-sm font-semibold text-white/40 mb-1">{t('noTypeAvailable').replace('{type}', type)}</h3>
+      <p className="text-white/25 text-xs text-center max-w-xs leading-relaxed">
         {t('noTypeCurrently').replace('{type}', type)}
       </p>
     </div>

@@ -7,7 +7,12 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
+        <div className="text-center">
+          <div className="relative mx-auto mb-4 w-12 h-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-[#acbb22]/20 border-t-[#B8E016]"></div>
+          </div>
+          <p className="text-white/40 text-sm font-medium tracking-wide">Loading…</p>
+        </div>
       </div>
     );
   }

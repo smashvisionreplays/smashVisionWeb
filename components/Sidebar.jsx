@@ -44,7 +44,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
                     }
                   }}
                 />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white/20"></div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#B8E016] rounded-full border-2 border-[#05070B] shadow-[0_0_8px_rgba(184,224,22,0.5)]"></div>
                 </div>
                 
                 <div className="flex flex-col">
@@ -66,35 +66,39 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
                   {categories.map(({ name, label, icon }) => (
                     <Tab
                       key={name}
-                      className="group relative rounded-2xl py-4 px-6 text-left font-medium text-white/80 
+                      className="group relative rounded-2xl py-3.5 px-5 text-left font-medium text-white/50
                                 focus:outline-none transition-all duration-300 ease-in-out
-                                data-[selected]:bg-white/15 data-[selected]:backdrop-blur-sm 
-                                data-[selected]:shadow-lg data-[selected]:text-white
-                                data-[hover]:bg-white/10 data-[hover]:text-white/90
-                                data-[selected]:data-[hover]:bg-white/20"
+                                data-[selected]:text-white data-[selected]:shadow-md"
                       onClick={() => onSelect(name)}
                     >
-                      <div className="flex items-center space-x-3">
-                        <img 
-                          src={icon} 
+                      <div className="flex items-center space-x-3 relative z-10">
+                        <img
+                          src={icon}
                           alt={label}
-                          className="w-5 h-5 opacity-60 group-data-[selected]:opacity-100 transition-opacity"
+                          className="w-5 h-5 opacity-40 group-data-[selected]:opacity-100 transition-opacity duration-300"
                           style={{ filter: 'brightness(0) invert(1)' }}
                         />
-                        <span className="text-base">{label}</span>
+                        <span className="text-sm">{label}</span>
                       </div>
-                      
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                      {/* Brand accent left bar */}
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] opacity-0 group-data-[selected]:opacity-100 transition-opacity duration-300"></div>
+
+                      {/* Selected: brand gradient background */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#acbb22]/15 to-[#B8E016]/5 border border-[#acbb22]/20 opacity-0 group-data-[selected]:opacity-100 transition-all duration-300 pointer-events-none"></div>
+
+                      {/* Hover background (hidden when selected) */}
+                      <div className="absolute inset-0 rounded-2xl bg-white/5 opacity-0 group-hover:opacity-100 group-data-[selected]:opacity-0 transition-opacity duration-300 pointer-events-none"></div>
                     </Tab>
                   ))}
                 </TabList>
               </TabGroup>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/10">
+            <div className="mt-8 pt-6 border-t border-white/[0.07]">
               <div className="text-center">
-                <p className="text-xs text-white/40">
-                  SmashVision Dashboard
+                <p className="text-xs font-semibold tracking-widest uppercase">
+                  <span className="text-[#acbb22]/50">Smash</span><span className="text-[#B8E016]/50">Vision</span>
                 </p>
               </div>
             </div>

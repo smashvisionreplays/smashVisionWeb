@@ -52,7 +52,7 @@ const StatisticsContent = ({ userId }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#acbb22]/20 border-t-[#B8E016]"></div>
       </div>
     );
   }
@@ -60,9 +60,10 @@ const StatisticsContent = ({ userId }) => {
   return (
     <div className="space-y-6">
       {/* Date Range Picker */}
-      <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 p-4">
+      <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-4">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/25 to-transparent pointer-events-none"></div>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white/90">{t('selectDateRange')}</h3>
+          <h3 className="text-sm font-semibold text-white/70">{t('selectDateRange')}</h3>
           <RangePicker
             value={dateRange}
             onChange={handleDateRangeChange}
@@ -81,24 +82,25 @@ const StatisticsContent = ({ userId }) => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Clips Statistics */}
-        <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 p-6">
-          <h3 className="text-xl font-semibold text-white/90 mb-4">{t('clipsGenerated')}</h3>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-blue-400 mb-2">
+        <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-6">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B8E016]/30 to-transparent pointer-events-none"></div>
+          <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">{t('clipsGenerated')}</h3>
+          <div className="text-center mb-4">
+            <div className="text-5xl font-bold text-[#B8E016] mb-1 drop-shadow-[0_0_12px_rgba(184,224,22,0.3)]">
               {statisticsData.clips?.length || 0}
             </div>
-            <p className="text-white/60">{t('totalClips')}</p>
+            <p className="text-white/35 text-xs">{t('totalClips')}</p>
           </div>
           {statisticsData.clips?.length > 0 && (
-            <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
+            <div className="mt-4 space-y-1.5 max-h-40 overflow-y-auto">
               {statisticsData.clips.slice(0, 5).map((clip, index) => (
-                <div key={index} className="text-sm text-white/70 p-2 bg-white/5 rounded">
+                <div key={index} className="text-xs text-white/50 px-3 py-2 bg-white/5 rounded-xl border border-white/5">
                   {clip.Clip_Name || `Clip ${index + 1}`}
                 </div>
               ))}
               {statisticsData.clips.length > 5 && (
-                <div className="text-sm text-white/50 text-center">
-                  +{statisticsData.clips.length - 5} more clips
+                <div className="text-xs text-white/30 text-center py-1">
+                  +{statisticsData.clips.length - 5} more
                 </div>
               )}
             </div>
@@ -106,24 +108,25 @@ const StatisticsContent = ({ userId }) => {
         </div>
 
         {/* Best Points Statistics */}
-        <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 p-6">
-          <h3 className="text-xl font-semibold text-white/90 mb-4">{t('bestPointsGenerated')}</h3>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-green-400 mb-2">
+        <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-6">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+          <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">{t('bestPointsGenerated')}</h3>
+          <div className="text-center mb-4">
+            <div className="text-5xl font-bold text-[#acbb22] mb-1 drop-shadow-[0_0_12px_rgba(172,187,34,0.3)]">
               {statisticsData.bestPoints?.length || 0}
             </div>
-            <p className="text-white/60">{t('totalBestPoints')}</p>
+            <p className="text-white/35 text-xs">{t('totalBestPoints')}</p>
           </div>
           {statisticsData.bestPoints?.length > 0 && (
-            <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
+            <div className="mt-4 space-y-1.5 max-h-40 overflow-y-auto">
               {statisticsData.bestPoints.slice(0, 5).map((point, index) => (
-                <div key={index} className="text-sm text-white/70 p-2 bg-white/5 rounded">
+                <div key={index} className="text-xs text-white/50 px-3 py-2 bg-white/5 rounded-xl border border-white/5">
                   {point.Point_Name || `Best Point ${index + 1}`}
                 </div>
               ))}
               {statisticsData.bestPoints.length > 5 && (
-                <div className="text-sm text-white/50 text-center">
-                  +{statisticsData.bestPoints.length - 5} more points
+                <div className="text-xs text-white/30 text-center py-1">
+                  +{statisticsData.bestPoints.length - 5} more
                 </div>
               )}
             </div>
