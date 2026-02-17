@@ -320,7 +320,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 
       case "Videos":
         return videos.length > 0 ? (
-          <div className="backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+          <div className="backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
             <TableAnt 
               columns={videosColumns(videos, handleShowModal, handleBlockVideo, handleUnblockVideo, t)} 
               data={videos} 

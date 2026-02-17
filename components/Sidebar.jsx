@@ -6,6 +6,8 @@ import { useLanguage } from '../src/contexts/LanguageContext';
 
 export default function Sidebar({ onSelect, userRole = 'member' }) {
   const { t } = useLanguage();
+  const { user } = useUser();
+  const userName = user?.fullName || user?.firstName || user?.username || '';
   
   useEffect(() => {
     initFlowbite();
@@ -27,7 +29,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
   return (
     <div className="relative">
       <aside className="max-sm:hidden mt-14 lg:mt-0 w-72 h-screen transition-all duration-300 ease-in-out">
-        <div className="h-full backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+        <div className="h-full backdrop-blur-sm bg-white/5 rounded-2xl border border-white/20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
           
           <div className="relative z-10 h-full px-6 py-8 flex flex-col">
@@ -47,7 +49,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
                 
                 <div className="flex flex-col">
                   <span className="text-lg font-bold text-white/90">
-                    {userRole === 'club' ? t('clubDashboard') : t('memberDashboard')}
+                    {userName}
                   </span>
                   <span className="text-sm text-white/60 font-medium capitalize">
                     {userRole === 'club' ? t('clubAccount') : t('memberAccount')}

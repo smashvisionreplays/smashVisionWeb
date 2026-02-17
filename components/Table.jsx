@@ -18,7 +18,7 @@ const Table = ({ columns, data }) => {
       // Block 
       <div className="block sm:absolute "> 
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full backdrop-blur-sm  text-sm max-sm:text-xs text-left rtl:text-right text-gray-400">
+        <table className="w-full backdrop-blur-sm text-sm max-sm:text-xs text-left rtl:text-right text-gray-400">
           <thead className="text-xs text-white-700 uppercase rounded-xl bg-white/10 p-3 text-gray-400">
             <tr>
               {columns.map((column, index) => (
