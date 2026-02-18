@@ -29,7 +29,9 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
   return (
     <div className="relative">
       <aside className="max-sm:hidden mt-14 lg:mt-0 w-72 h-screen transition-all duration-300 ease-in-out">
-        <div className="h-full backdrop-blur-sm bg-white/5 rounded-2xl border border-white/20 overflow-hidden">
+        <div className="h-full backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          {/* Top shimmer line */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
           
           <div className="relative z-10 h-full px-6 py-8 flex flex-col">
