@@ -28,7 +28,7 @@ const TagDisplay = ({ tags }) => {
       {tagArray.map((tag, index) => (
         <span
           key={index}
-          className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded border truncate max-w-full"
+          className="inline-block px-2 py-0.5 text-xs font-medium bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20 rounded-lg truncate max-w-full"
           title={tag}
         >
           {tag}

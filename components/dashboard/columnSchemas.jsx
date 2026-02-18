@@ -133,29 +133,28 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         key: 'downloadURL',
         render: (_, record) => (
           <div className="flex gap-2">
-            <Button 
+            <button
               disabled={!record.URL}
-              onClick={()=>showVideoInModal({
-                videoUID:record.UID,
-                id_club:record.id_club,
-                Clip_Name:record.Clip_Name,
-                weekday:record.Weekday, 
-                court_number:record.Court_Number, 
-                hour:record.originalHour, 
-                section:record.Hour_Section
-              })} 
-              target="_blank" 
-              className="bg-blue-500 flex-1" 
+              onClick={() => showVideoInModal({
+                videoUID: record.UID,
+                id_club: record.id_club,
+                Clip_Name: record.Clip_Name,
+                weekday: record.Weekday,
+                court_number: record.Court_Number,
+                hour: record.originalHour,
+                section: record.Hour_Section
+              })}
+              className={`px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-sm font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200 ${!record.URL ? 'opacity-30 cursor-not-allowed' : ''}`}
             >
               {t('watch') || 'Watch'}
-            </Button>
+            </button>
             {record.downloadURL && (
-              <Button 
-                className="flex-1" 
+              <a
                 href={record.downloadURL}
+                className="px-3 py-1.5 bg-sky-500/10 text-sky-300 border border-sky-400/25 rounded-xl text-sm font-medium hover:bg-sky-500/20 hover:text-sky-200 transition-all duration-200"
               >
                 {t('download') || 'Download'}
-              </Button>
+              </a>
             )}
           </div>
         ),
