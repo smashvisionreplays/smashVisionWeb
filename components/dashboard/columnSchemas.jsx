@@ -54,23 +54,21 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
           filterMultiple:true,
           onFilter: (value, record) => {return record.URL ? value : !value},
           render: (_, record) => (
-            <>
-            <Button disabled={!record.URL}
-                    onClick={()=>showVideoInModal({
-                      videoUID:record.UID,
-                      id_club:record.id_club, 
-                      weekday:record.Weekday, 
-                      court_number:record.Court_Number, 
-                      hour:record.originalHour, 
-                      section:record.Hour_Section
-                    })} 
-                    target="_blank" 
-                    className="mr-2 bg-blue-500" 
+            <button
+              disabled={!record.URL}
+              onClick={() => showVideoInModal({
+                videoUID: record.UID,
+                id_club: record.id_club,
+                weekday: record.Weekday,
+                court_number: record.Court_Number,
+                hour: record.originalHour,
+                section: record.Hour_Section
+              })}
+              className={`px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-sm font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200 ${!record.URL ? 'opacity-30 cursor-not-allowed' : ''}`}
             >
-                  {t('watch') || 'Watch'}
-            </Button>
-            </>
-          ),    
+              {t('watch') || 'Watch'}
+            </button>
+          ),
         },
         {
           title: t('status') || 'Status',
@@ -85,15 +83,16 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
           filterMultiple:true,
           onFilter: (value, record) => {return record.Blocked===value},
           render: (_, record) => (
-            <>
-              <Button
-                onClick={() => record.Blocked=="No" ? blockVideo(record.ID): unblockVideo(record.ID)}
-                className={record.Blocked=="No" ? "bg-red-500" : "bg-green-500"}
-              >
-                {record.Blocked=="No" ? (t('block') || 'Block') : (t('unblock') || 'Unblock')}
-              </Button>
-            </>
-          ),    
+            <button
+              onClick={() => record.Blocked === "No" ? blockVideo(record.ID) : unblockVideo(record.ID)}
+              className={record.Blocked === "No"
+                ? "px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-medium hover:bg-red-500/20 transition-all duration-200"
+                : "px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-sm font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200"
+              }
+            >
+              {record.Blocked === "No" ? (t('block') || 'Block') : (t('unblock') || 'Unblock')}
+            </button>
+          ),
         },
 
       ]    
@@ -209,37 +208,29 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         render: (_, record) => {
           const isConnecting = connectingCameras.has(record.ID);
           return record.status !== "Live" ? (
-            <Button
-              onClick={() =>
-                handleStartLive(
-                  record.ID,
-                  record.court_number,
-                  record.ip,
-                  rtmpKeys[record.court_number] || "auto",
-                  record.endpoint
-                )
-              }
-              className="bg-green-500"
+            <button
+              onClick={() => handleStartLive(
+                record.ID,
+                record.court_number,
+                record.ip,
+                rtmpKeys[record.court_number] || "auto",
+                record.endpoint
+              )}
               disabled={isConnecting}
-              loading={isConnecting}
+              className="px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-xs font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {isConnecting && <span className="w-3 h-3 rounded-full border border-[#B8E016]/40 border-t-[#B8E016] animate-spin inline-block"></span>}
               {isConnecting ? (t('connecting') || 'Connecting...') : (t('startLive') || 'Start Live')}
-            </Button>
+            </button>
           ) : (
-            <Button 
-              className="bg-red-500"
-              onClick={() =>
-                handleStopLive(
-                  record.ID,
-                  record.ip,
-                  record.endpoint
-                )
-              }
+            <button
+              onClick={() => handleStopLive(record.ID, record.ip, record.endpoint)}
               disabled={isConnecting}
-              loading={isConnecting}
+              className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-xs font-medium hover:bg-red-500/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {isConnecting && <span className="w-3 h-3 rounded-full border border-red-400/40 border-t-red-400 animate-spin inline-block"></span>}
               {isConnecting ? (t('stopping') || 'Stopping...') : (t('stopLive') || 'Stop Live')}
-            </Button>
+            </button>
           );
         }
       },

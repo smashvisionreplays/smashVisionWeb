@@ -22,6 +22,13 @@ const App = ({ data, columns, needsExpand, needsVirtual }) => {
     <ConfigProvider
       theme={{
         algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: '#acbb22',
+          colorBgElevated: 'rgba(8, 10, 16, 0.96)',
+          colorBorder: 'rgba(255,255,255,0.1)',
+          borderRadius: 12,
+          borderRadiusLG: 16,
+        },
         components: {
           Table: {
             bodySortBg: "rgba(0,0,0,0)",
