@@ -185,28 +185,13 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
           }
         }
       }}>
-        <div className="liquid-glass iridescent-border rounded-2xl p-6" style={{
-          backdropFilter: 'blur(2px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-          background: 'transparent',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          {/* Liquid glass radial gradient overlay */}
-          <div style={{
-            content: '',
-            position: 'absolute',
-            top: '-50%',
-            left: '-50%',
-            width: '200%',
-            height: '200%',
-            background: 'radial-gradient(circle, rgba(221, 243, 26, 0.05) 0%, transparent 70%)',
-            pointerEvents: 'none'
-          }}></div>
-          
-          <div className="flex items-center gap-2 mb-6 relative z-10">
-            <h2 className="text-white text-xl font-bold tracking-tight">{t('createClip')}</h2>
+        <div className="relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-6">
+          {/* Top shimmer line */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+
+          <div className="flex items-center gap-3 mb-6 relative z-10">
+            <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+            <h2 className="text-white/90 text-base font-semibold">{t('createClip')}</h2>
           </div>
           
           <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
@@ -293,12 +278,9 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
           
           <button
             onClick={handleCreateClip}
-            className="w-full bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] text-black font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group shadow-lg hover:shadow-[0_6px_20px_0_rgba(221,243,26,0.6)] relative z-10"
+            className="w-full bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-3.5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 relative z-10"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            <span className="relative z-10">
-              {isSignedIn ? t('createClip') : t('loginToCreateClip')}
-            </span>
+            {isSignedIn ? t('createClip') : t('loginToCreateClip')}
           </button>
         </div>
       </ConfigProvider>

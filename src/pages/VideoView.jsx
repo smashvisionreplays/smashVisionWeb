@@ -133,25 +133,15 @@ const VideoView = ({ triggerNotification }) => {
         {/* Best Points Tags - Desktop Only */}
         {bestPoints.length > 0 && (
           <div className="mt-6 hidden md:block">
-            <h4 className="text-white/80 text-sm font-semibold mb-4">{t('bestPoints')}</h4>
-            <div className="flex flex-wrap gap-3">
+            <h4 className="text-[#B8E016] text-xs font-semibold uppercase tracking-wider mb-3">{t('bestPoints')}</h4>
+            <div className="flex flex-wrap gap-2">
               {bestPoints.map((point, index) => (
                 <button
                   key={index}
                   onClick={() => watchBestPoint(point)}
-                  className="relative overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#DDF31A]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#DDF31A]/10"
-                  style={{
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
-                  }}
+                  className="px-3 py-1 text-xs font-medium bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20 rounded-lg hover:bg-[#acbb22]/20 hover:border-[#acbb22]/35 transition-all duration-200"
                 >
-                  <div 
-                    className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                      background: 'radial-gradient(circle at center, rgba(221, 243, 26, 0.05) 0%, transparent 70%)'
-                    }}
-                  />
-                  <span className="relative z-10">{point.bestPoint}</span>
+                  {point.bestPoint}
                 </button>
               ))}
             </div>
@@ -197,54 +187,29 @@ const VideoView = ({ triggerNotification }) => {
                 {activeTab === 'createClip' ? (
                   <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
                 ) : (
-                  <div className="liquid-glass iridescent-border rounded-2xl p-6" style={{
-                    backdropFilter: 'blur(2px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-                    background: 'transparent',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      content: '',
-                      position: 'absolute',
-                      top: '-50%',
-                      left: '-50%',
-                      width: '200%',
-                      height: '200%',
-                      background: 'radial-gradient(circle, rgba(221, 243, 26, 0.05) 0%, transparent 70%)',
-                      pointerEvents: 'none'
-                    }}></div>
-                    
-                    
-                    <div className=" flex flex-col items-center justify-center gap-10 z-10">
-                      <h2 className="text-white text-xl font-bold tracking-tight">{t('bestPoints')}</h2>
-                      {bestPoints.length > 0 ? (
-                        <div className="flex flex-wrap justify-center gap-3">
-                          {bestPoints.map((point, index) => (
-                            <button
-                              key={index}
-                              onClick={() => watchBestPoint(point)}
-                              className="overflow-hidden bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#DDF31A]/40 rounded-xl px-4 py-3 text-white/90 hover:text-white text-sm font-mono transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#DDF31A]/10"
-                              style={{
-                                backdropFilter: 'blur(10px)',
-                                boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
-                              }}
-                            >
-                              <div 
-                                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                                style={{
-                                  background: 'radial-gradient(circle at center, rgba(221, 243, 26, 0.05) 0%, transparent 70%)'
-                                }}
-                              />
-                              <span className="relative z-10">{point.bestPoint}</span>
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-white/60 text-center py-8">No best points available</p>
-                      )}
+                  <div className="relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-6">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+                      <h2 className="text-white/90 text-base font-semibold">{t('bestPoints')}</h2>
                     </div>
+
+                    {bestPoints.length > 0 ? (
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {bestPoints.map((point, index) => (
+                          <button
+                            key={index}
+                            onClick={() => watchBestPoint(point)}
+                            className="px-3 py-1 text-xs font-medium bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20 rounded-lg hover:bg-[#acbb22]/20 hover:border-[#acbb22]/35 transition-all duration-200"
+                          >
+                            {point.bestPoint}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-white/35 text-sm text-center py-6">No best points available</p>
+                    )}
                   </div>
                 )}
               </div>

@@ -3,6 +3,7 @@ import { Select, ConfigProvider, theme, Modal } from 'antd';
 import { fetchClubs, fetchClubCameras } from '../controllers/serverController';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useWebSocketStatus } from '../hooks/useWebSocketStatus';
+import '../../stylesheet/lives.css';
 
 const Lives = () => {
   const { t } = useLanguage();
@@ -12,8 +13,7 @@ const Lives = () => {
   const [loading, setLoading] = useState(false);
   const [selectedStream, setSelectedStream] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // Use WebSocket hook to get real-time updates
+
   const updatedCameras = useWebSocketStatus(cameras);
 
   useEffect(() => {
@@ -73,19 +73,23 @@ const Lives = () => {
 
   const renderCameraCard = (camera) => {
     const isLive = camera.status === 'Live';
-    const isClickable = isLive && camera.url && camera.url!="null";
-    const embedUrl= camera.url?.replace("watch?v=", "embed/");
-    
+    const isClickable = isLive && camera.url && camera.url !== "null";
+    const embedUrl = camera.url?.replace("watch?v=", "embed/");
+
     return (
-      <div 
-        key={camera.ID} 
-        className={`backdrop-blur-sm bg-white/5 rounded-2xl border border-white/10 overflow-hidden transition-all duration-200 ${
-          isClickable ? 'cursor-pointer hover:bg-white/10 hover:scale-105' : ''
+      <div
+        key={camera.ID}
+        className={`relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-xl overflow-hidden transition-all duration-300 ${
+          isClickable ? 'cursor-pointer hover:border-white/20 hover:shadow-2xl hover:scale-[1.02]' : ''
         }`}
         onClick={() => handleStreamClick(camera)}
       >
+        {/* Top shimmer line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+
+        {/* Video area */}
         <div className="aspect-video relative">
-          {isLive && embedUrl && embedUrl!="null" ? (
+          {isLive && embedUrl && embedUrl !== "null" ? (
             <iframe
               src={embedUrl}
               className="w-full h-full pointer-events-none"
@@ -94,56 +98,55 @@ const Lives = () => {
               allowFullScreen
             />
           ) : (
-            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-white/[0.02] to-transparent flex items-center justify-center">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <p className="text-white/60 text-sm">{t('noLiveStreamingFound')}</p>
+                <p className="text-white/30 text-xs font-medium">{t('noLiveStreamingFound')}</p>
               </div>
             </div>
           )}
-          
-          {/* Live indicator */}
+
+          {/* LIVE badge */}
           {isLive && (
-            <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-              <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+            <div className="absolute top-3 left-3 backdrop-blur-sm bg-red-500/20 border border-red-500/30 text-red-400 px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center gap-1.5 z-10">
+              <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
               {t('lives').toUpperCase()}
             </div>
           )}
 
-          {/* Click indicator for live streams */}
+          {/* Hover play overlay */}
           {isClickable && (
-            <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div className="bg-white/20 rounded-full p-4">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-white/15 border border-white/20 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
             </div>
           )}
         </div>
-        
-        <div className="p-4 flex flex-row justify-between">
-          <h3 className="text-lg font-semibold text-white/90 mb-2">
+
+        {/* Card footer */}
+        <div className="px-4 py-3 border-t border-white/[0.06] flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-white/80">
             {t('court')} {camera.court_number}
           </h3>
-          <div className="flex items-center justify-between">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              isLive 
-                ? 'bg-green-500/20 text-green-400' 
-                : 'bg-gray-500/20 text-gray-400'
-            }`}>
-              {camera.status || t('offline')}
-            </span>
-          </div>
-          
+          <span className={`px-2.5 py-0.5 rounded-lg text-xs font-medium ${
+            isLive
+              ? 'bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20'
+              : 'bg-white/5 text-white/35 border border-white/10'
+          }`}>
+            {camera.status || t('offline')}
+          </span>
         </div>
+
         {isClickable && (
-            <p className="text-white/40 text-xs px-4 pb-1">{t('clickToWatchFullScreen')}</p>
-          )}
+          <p className="text-white/25 text-xs px-4 pb-3 -mt-1">{t('clickToWatchFullScreen')}</p>
+        )}
       </div>
     );
   };
@@ -152,103 +155,148 @@ const Lives = () => {
     <ConfigProvider
       theme={{
         algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: '#acbb22',
+          colorBgElevated: 'rgba(15, 20, 30, 0.85)',
+          colorBorder: 'rgba(255,255,255,0.1)',
+          borderRadius: 12,
+          borderRadiusLG: 16,
+        },
         components: {
           Select: {
-            colorBgContainer: "rgba(255,255,255,0.95)",
-            colorText: "rgba(0,0,0,0.85)",
-            colorTextPlaceholder: "rgba(0,0,0,0.6)",
-            colorBorder: "rgba(255,255,255,0.2)",
-            optionSelectedBg: "rgba(255,255,255,0.9)",
-            optionActiveBg: "rgba(255,255,255,0.8)",
-            colorBgElevated: "rgba(255,255,255,0.95)",
-          },
-          Modal: {
-            contentBg: "rgba(15, 23, 42, 0.95)",
-            headerBg: "rgba(15, 23, 42, 0.95)",
-            colorText: "rgba(255, 255, 255, 0.9)",
-            colorIcon: "rgba(255, 255, 255, 0.6)",
-            colorIconHover: "rgba(255, 255, 255, 0.8)",
+            colorBgContainer: 'rgba(255,255,255,0.05)',
+            colorBgElevated: 'rgba(15, 20, 30, 0.85)',
+            colorText: 'rgba(255,255,255,0.85)',
+            colorTextPlaceholder: 'rgba(255,255,255,0.3)',
+            colorBorder: 'rgba(255,255,255,0.1)',
+            optionSelectedBg: 'rgba(172,187,34,0.12)',
+            optionActiveBg: 'rgba(255,255,255,0.05)',
+            selectorBg: 'rgba(255,255,255,0.05)',
           },
         },
       }}
     >
-      <div className="min-h-screen p-4 lg:p-8">
-        <div className="max-w-7xl mx-auto" style={{ marginTop: '6rem' }}>
+      <div className="min-h-screen p-4 lg:p-8" style={{ marginTop: '6rem' }}>
+        <div className="max-w-7xl mx-auto">
+
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-white/90 mb-4">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold mb-4">
+              <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+              LIVE
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-white/90 mb-3">
               {t('liveStreams')}
             </h1>
-            <p className="text-lg text-white/60 max-w-2xl mx-auto">
+            <p className="text-white/45 max-w-xl mx-auto text-base">
               {t('liveStreamsDescription')}
             </p>
           </div>
 
           {/* Club Selection */}
-          <div className="backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl p-8 mb-8">
-            <div className="max-w-md mx-auto">
-              <label className="block text-white/90 text-lg font-medium mb-4">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+              <label className="text-[#B8E016] text-sm font-semibold">
                 {t('selectClubLive')}
               </label>
-              <Select
-                placeholder={t('chooseClubPlaceholder')}
-                className="w-full"
-                size="large"
-                value={selectedClubId}
-                onChange={setSelectedClubId}
-                options={clubs.map(club => ({
-                  value: club.ID,
-                  label: club.Name
-                }))}
-              />
             </div>
+            <Select
+              placeholder={t('chooseClubPlaceholder')}
+              size="large"
+              value={selectedClubId}
+              onChange={setSelectedClubId}
+              options={clubs.map(club => ({
+                value: club.ID,
+                label: club.Name
+              }))}
+              style={{ width: 300 }}
+            />
           </div>
 
-          {/* Live Streams Grid */}
-          {selectedClubId && (
-            <div className="backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 shadow-2xl p-8">
-              <h2 className="text-2xl font-bold text-white/90 mb-6">
-                {clubs.find(club => club.ID === selectedClubId)?.Name} - {t('liveCourts')}
-              </h2>
-              
-              {loading ? (
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
-                </div>
-              ) : updatedCameras.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {updatedCameras.map(renderCameraCard)}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-white/80 mb-2">{t('noCamerasFound')}</h3>
-                  <p className="text-white/50">{t('noCamerasDescription')}</p>
-                </div>
-              )}
+          {/* No club selected state */}
+          {!selectedClubId && (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <svg className="w-7 h-7 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p className="text-white/35 text-sm">{t('selectClubToSeeLives')}</p>
             </div>
+          )}
+
+          {/* Camera Grid */}
+          {selectedClubId && (
+            loading ? (
+              <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <div className="relative w-12 h-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-2 border-[#acbb22]/20 border-t-[#B8E016]"></div>
+                </div>
+                <p className="text-white/30 text-sm font-medium tracking-wide">{t('loading')}</p>
+              </div>
+            ) : updatedCameras.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {updatedCameras.map(renderCameraCard)}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-semibold text-white/60 mb-1">{t('noCamerasFound')}</h3>
+                <p className="text-white/30 text-sm">{t('noCamerasDescription')}</p>
+              </div>
+            )
           )}
         </div>
       </div>
 
       {/* Full Screen Video Modal */}
       <Modal
-        title={`${t('court')} ${selectedStream?.court_number} - ${t('liveStreamTitle')}`}
+        title={
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+            <span className="text-white/90 font-semibold text-base">
+              {t('court')} {selectedStream?.court_number} — {t('liveStreamTitle')}
+            </span>
+          </div>
+        }
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
         width="90vw"
         style={{ top: 20 }}
+        closeIcon={
+          <span className="text-white/40 hover:text-white/80 transition-colors duration-200 text-lg leading-none">✕</span>
+        }
         styles={{
+          mask: {
+            backdropFilter: 'blur(20px)',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+          },
+          content: {
+            background: 'rgba(15, 20, 30, 0.35)',
+            backdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+            WebkitBackdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 24,
+            boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset',
+            padding: 0,
+            overflow: 'hidden',
+          },
+          header: {
+            background: 'transparent',
+            borderBottom: '1px solid rgba(255,255,255,0.07)',
+            padding: '20px 24px 16px',
+            marginBottom: 0,
+          },
           body: { padding: 0 },
-          content: { backgroundColor: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(20px)' }
         }}
       >
-        {selectedStream?.url && selectedStream.url!="null" && (
+        {selectedStream?.url && selectedStream.url !== "null" && (
           <div className="aspect-video">
             <iframe
               src={selectedStream?.url?.replace("watch?v=", "embed/")}

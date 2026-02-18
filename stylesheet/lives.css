@@ -1,0 +1,27 @@
+/* ── Select dropdown panel ── */
+.ant-select-dropdown {
+  background: rgba(15, 20, 30, 0.2) !important;
+  backdrop-filter: blur(40px) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(40px) brightness(1.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 1px 0 rgba(255, 255, 255, 0.08) inset !important;
+}
+
+.ant-select-item {
+  color: rgba(255, 255, 255, 0.65) !important;
+  border-radius: 8px !important;
+  transition: background 0.15s ease !important;
+}
+.ant-select-item:hover,
+.ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.ant-select-item-option-selected {
+  background: rgba(172, 187, 34, 0.12) !important;
+  color: #B8E016 !important;
+}
