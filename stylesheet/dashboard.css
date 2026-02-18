@@ -7,16 +7,28 @@
     font-family: 'Poppins', sans-serif;
   }
 
+  /* ── Filter dropdown animation override ── */
+  .ant-slide-up-enter,
+  .ant-slide-up-appear {
+    animation-duration: 0.12s !important;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1) !important;
+  }
+  .ant-slide-up-leave {
+    animation-duration: 0.08s !important;
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+
   /* ── Filter dropdown container ── */
   .ant-table-filter-dropdown {
-    background: rgba(8, 10, 16, 0.92) !important;
-    backdrop-filter: blur(20px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    background: rgba(26, 30, 15, 0.2) !important;
+    backdrop-filter: blur(40px)  brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 16px !important;
     box-shadow:
-      0 16px 48px rgba(0, 0, 0, 0.6),
-      0 0 0 1px rgba(255, 255, 255, 0.04) inset !important;
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      0 1px 0 rgba(255, 255, 255, 0.08) inset !important;
     overflow: hidden;
   }
 
@@ -60,7 +72,6 @@
   }
   .ant-table-filter-dropdown .ant-dropdown-menu-item {
     color: rgba(255, 255, 255, 0.65) !important;
-    border-radius: 8px !important;
     transition: background 0.15s ease !important;
   }
   .ant-table-filter-dropdown .ant-dropdown-menu-item:hover {
@@ -89,19 +100,24 @@
   }
 
   /* ── Checkboxes ── */
-  .ant-table-filter-dropdown .ant-checkbox-inner {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+  .ant-table-filter-dropdown .ant-checkbox-inner,
+  .ant-table-filter-dropdown .ant-tree-checkbox-inner {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
     border-radius: 5px !important;
   }
-  .ant-table-filter-dropdown .ant-checkbox-checked .ant-checkbox-inner {
+  .ant-table-filter-dropdown .ant-checkbox-checked .ant-checkbox-inner,
+  .ant-table-filter-dropdown .ant-tree-checkbox-checked .ant-tree-checkbox-inner {
     background: #acbb22 !important;
     border-color: #acbb22 !important;
   }
-  .ant-table-filter-dropdown .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+  .ant-table-filter-dropdown .ant-checkbox-indeterminate .ant-checkbox-inner::after,
+  .ant-table-filter-dropdown .ant-tree-checkbox-indeterminate .ant-tree-checkbox-inner::after {
     background-color: #acbb22 !important;
   }
-  .ant-table-filter-dropdown .ant-checkbox-wrapper:hover .ant-checkbox-inner {
+  .ant-table-filter-dropdown .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+  .ant-table-filter-dropdown .ant-tree-checkbox-wrapper:hover .ant-tree-checkbox-inner,
+  .ant-table-filter-dropdown .ant-tree-checkbox:hover .ant-tree-checkbox-inner {
     border-color: rgba(172, 187, 34, 0.5) !important;
   }
 
