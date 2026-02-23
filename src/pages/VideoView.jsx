@@ -6,6 +6,7 @@ import CreateClipBox from "../../components/videoView/CreateClipBox";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime } from "../scripts/utils";
 import { fetchBestPoints } from "../../src/controllers/serverController";
+import { fetchUserMetadata } from "../controllers/userController";
 import { useLanguage } from '../contexts/LanguageContext';
 
 // Constants
@@ -18,11 +19,10 @@ const VideoView = ({ triggerNotification }) => {
   const location = useLocation();
   const { user } = useUser();
   const { id_club, weekday, hour, court_number, section, videoUID } = location.state;
-  
-  const userId = user?.privateMetadata?.id;
 
   // State
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [bestPoints, setBestPoints] = useState([]);
   const [startTime, setStartTime] = useState({ hour: 0, minute: 0, second: 0 });
   const [clockTime, setClockTime] = useState("00:00:00");
@@ -81,6 +81,20 @@ const VideoView = ({ triggerNotification }) => {
   };
 
   // Effects
+  useEffect(() => {
+    const loadUserId = async () => {
+      if (user?.id) {
+        try {
+          const metadata = await fetchUserMetadata(user.id);
+          setUserId(metadata?.id ?? null);
+        } catch (error) {
+          console.error("Error fetching user metadata:", error);
+        }
+      }
+    };
+    loadUserId();
+  }, [user?.id]);
+
   useEffect(() => {
     const loadBestPoints = async () => {
       const params = { id_club, weekday, hour, court_number, section };

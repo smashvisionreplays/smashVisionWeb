@@ -131,10 +131,12 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
       // Get authentication token
       const token = await getToken();
       
+      const tagString = Array.isArray(tag) ? JSON.stringify(tag) : tag;
+
       const clipRegistered = await registerClip(
-        videoRef.current.src, 
-        tag, 
-        clubId, 
+        videoRef.current.src,
+        tagString,
+        clubId,
         userId, 
         startTimeSeconds, 
         endTimeSeconds,
