@@ -86,7 +86,10 @@ const VideoView = ({ triggerNotification }) => {
       if (user?.id) {
         try {
           const metadata = await fetchUserMetadata(user.id);
-          setUserId(metadata?.id ?? null);
+          const resolvedUserId = metadata?.role === 'club'
+            ? (metadata?.userId ?? null)
+            : (metadata?.id ?? null);
+          setUserId(resolvedUserId);
         } catch (error) {
           console.error("Error fetching user metadata:", error);
         }
