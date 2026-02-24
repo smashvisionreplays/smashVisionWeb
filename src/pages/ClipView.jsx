@@ -23,7 +23,7 @@ const ClipView = ({ triggerNotification }) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [downloadURL, setDownloadURL] = useState(null);
   const [progressMessage, setProgressMessage] = useState(null);
-  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [showProgressBar, setShowProgressBar] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [percent, setPercent] = useState(0);
   const location = useLocation();
@@ -59,8 +59,6 @@ const ClipView = ({ triggerNotification }) => {
           if (firstCheck.result.readyToStream) { //First check to not display progressBar but a notification
             triggerNotification("info", "Loading Clip");
           } else { //Show progress bar with steps
-            setShowProgressBar(true);
-            setCurrentStep(0);
             await waitForClipReady(clipUID);
             setCurrentStep(1);
           }
