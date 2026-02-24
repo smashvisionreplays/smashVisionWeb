@@ -148,7 +148,7 @@ const ClipView = ({ triggerNotification }) => {
 
 
   return (
-    <div className="main-page w-full  ">
+    <div className="main-page w-full"  style={{marginTop:'6rem'}}>
       <div className="mx-auto lg:w-4/6 md:w-5/6 h-3/6" >
       {/* <ProgressBar items={items} current={2} percent={80}/> */}
         <div className=" mb-5 rounded-md px-6 py-2">
