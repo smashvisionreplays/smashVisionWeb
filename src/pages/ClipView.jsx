@@ -11,13 +11,14 @@ const useIsMobile = () => {
 };
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import ProgressBar from "../../components/ProgressBar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchVideoData, createDownload, fetchDownload, selectDownload, updateDownload } from "../controllers/serverController";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const ClipView = ({ triggerNotification }) => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const [isClipReady, setIsClipReady] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -48,7 +49,10 @@ const ClipView = ({ triggerNotification }) => {
 
 
   useEffect(() => {
-    if (!clipUID) return;
+    if (!clipUID) {
+      setShowProgressBar(false);
+      return;
+    }
 
     const checkClipAndDownload = async () => {
       try {
@@ -160,32 +164,52 @@ const ClipView = ({ triggerNotification }) => {
       style={{ marginTop: isMobile ? '4rem' : '6rem', minHeight: !isClipReady ? '60vh' : 'auto' }}
     >
       <div className="mx-auto lg:w-4/6 md:w-5/6 w-full px-4 sm:px-6">
-        <div className="mb-5 rounded-md py-2">
-          {showProgressBar ? (
-            <ProgressBar
-              items={items}
-              current={currentStep}
-              percent={percent}
-              direction={isMobile ? 'vertical' : 'horizontal'}
-            />
-          ) : (
-            <p className="text-center text-gray-500">{progressMessage}</p>
-          )}
-        </div>
 
-        {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
-
-        {isVideoLoaded && (
-          <div className="mt-5 mx-auto flex justify-center">
+        {!clipUID ? (
+          <div className="flex flex-col items-center justify-center text-center gap-4 py-12">
+            <div className="w-16 h-16 rounded-full bg-[#acbb22]/10 border border-[#acbb22]/25 flex items-center justify-center text-3xl">
+              ✓
+            </div>
+            <h2 className="text-xl font-semibold text-[#B8E016]">{t('clipReadyTitle')}</h2>
+            <p className="text-gray-400 max-w-sm text-sm leading-relaxed">{t('clipReadyDescription')}</p>
             <button
-              disabled={!downloadURL}
-              onClick={() => handleDownloadVideo(downloadURL)}
-              className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => navigate('/dashboard')}
+              className="mt-2 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-6 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200"
             >
-              {t('downloadVideo')}
+              {t('goToDashboard')}
             </button>
           </div>
+        ) : (
+          <>
+            <div className="mb-5 rounded-md py-2">
+              {showProgressBar ? (
+                <ProgressBar
+                  items={items}
+                  current={currentStep}
+                  percent={percent}
+                  direction={isMobile ? 'vertical' : 'horizontal'}
+                />
+              ) : (
+                <p className="text-center text-gray-500">{progressMessage}</p>
+              )}
+            </div>
+
+            {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
+
+            {isVideoLoaded && (
+              <div className="mt-5 mx-auto flex justify-center">
+                <button
+                  disabled={!downloadURL}
+                  onClick={() => handleDownloadVideo(downloadURL)}
+                  className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {t('downloadVideo')}
+                </button>
+              </div>
+            )}
+          </>
         )}
+
       </div>
     </div>
   );
