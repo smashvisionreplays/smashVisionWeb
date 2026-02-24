@@ -13,23 +13,8 @@ export const fetchClubs = async () => {
 };
 export const fetchBestPoints = async (params) => {
   try {
-    // Mock data for testing
-    const mockData = [
-      { Time: "19:38:15" },
-      { Time: "19:42:30" },
-      { Time: "19:47:18" },
-      { Time: "19:51:45" },
-      { Time: "19:56:12" },
-      { Time: "20:02:33" }
-    ];
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return mockData;
-    
-    // Original API call (commented out for now)
-    // const response = await axios.post(`${API_BASE_URL}/videos/bestPoints`, params);
-    // return response.data;
+    const response = await axios.post(`${API_BASE_URL}/videos/bestPoints`, params);
+    return response.data;
   } catch (error) {
     console.error("Error fetching best points:", error);
     throw error;
