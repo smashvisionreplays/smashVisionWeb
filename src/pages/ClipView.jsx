@@ -1,14 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+};
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import ProgressBar from "../../components/ProgressBar";
 import { useLocation } from "react-router-dom";
-import { Button } from "@headlessui/react";
-import clockIcon from "../../src/assets/clock.svg";
 import { fetchVideoData, createDownload, fetchDownload, selectDownload, updateDownload } from "../controllers/serverController";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const ClipView = ({ triggerNotification }) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const videoRef = useRef(null);
   const [isClipReady, setIsClipReady] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -148,31 +157,35 @@ const ClipView = ({ triggerNotification }) => {
 
 
   return (
-    <div className="main-page w-full"  style={{marginTop:'6rem'}}>
-      <div className="mx-auto lg:w-4/6 md:w-5/6 h-3/6" >
-      {/* <ProgressBar items={items} current={2} percent={80}/> */}
-        <div className=" mb-5 rounded-md px-6 py-2">
+    <div
+      className={`w-full ${!isClipReady ? 'flex items-center justify-center' : ''}`}
+      style={{ marginTop: isMobile ? '4rem' : '6rem', minHeight: !isClipReady ? '60vh' : 'auto' }}
+    >
+      <div className="mx-auto lg:w-4/6 md:w-5/6 w-full px-4 sm:px-6">
+        <div className="mb-5 rounded-md py-2">
           {showProgressBar ? (
-            <ProgressBar items={items} current={currentStep} percent={percent}/>
+            <ProgressBar
+              items={items}
+              current={currentStep}
+              percent={percent}
+              direction={isMobile ? 'vertical' : 'horizontal'}
+            />
           ) : (
             <p className="text-center text-gray-500">{progressMessage}</p>
           )}
         </div>
-        
+
         {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
 
         {isVideoLoaded && (
-          <div className="mt-5 w-full max-w-lg px-4 mx-auto flex justify-center gap-4 " >
-            <Button
-              className="self-center inline-flex items-center gap-2 rounded-md bg-[#DDF31A] py-1.5 px-3 text-sm font-semibold text-black shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 disabled:opacity-50"
+          <div className="mt-5 mx-auto flex justify-center">
+            <button
               disabled={!downloadURL}
               onClick={() => handleDownloadVideo(downloadURL)}
+              className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t('downloadVideo')}
-            </Button>
-            <Button className="ml-1 flex-end inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-2 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600">
-              <img src={clockIcon} alt="" className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         )}
       </div>

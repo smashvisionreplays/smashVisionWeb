@@ -2,7 +2,7 @@ import React from 'react';
 import {ConfigProvider, Steps, theme, Spin } from 'antd';
 import { LoadingOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 
-const ProgressBar = ({items, current, percent, status}) => {
+const ProgressBar = ({items, current, percent, status, direction = 'horizontal'}) => {
   // Create enhanced items with custom icons
   const enhancedItems = items.map((item, index) => {
     let icon = null;
@@ -37,6 +37,7 @@ const ProgressBar = ({items, current, percent, status}) => {
           }
         `}
       </style>
+      <div style={direction === 'vertical' ? { display: 'flex', justifyContent: 'center' } : {}}>
       <ConfigProvider
         theme={{
           algorithm: theme.darkAlgorithm,
@@ -50,16 +51,17 @@ const ProgressBar = ({items, current, percent, status}) => {
           }
         }}
       >
-        <Steps 
-          items={enhancedItems} 
-          current={current} 
-          percent={percent} 
-          size="small" 
-          labelPlacement="horizontal"
+        <Steps
+          items={enhancedItems}
+          current={current}
+          size="small"
+          direction={direction}
+          labelPlacement={direction === 'vertical' ? 'horizontal' : 'horizontal'}
           status={current < items.length ? 'process' : 'finish'}
         />
         <br />
       </ConfigProvider>
+      </div>
     </>
   );
 };

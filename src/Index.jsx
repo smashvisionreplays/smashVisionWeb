@@ -38,45 +38,47 @@ const Index = () => {
         },
       }}
     >
-      <div>
+      <div className="flex flex-col min-h-screen">
         <NavBarTW />
-        
+
         {notification && (
-          <TopNotification 
-            type={notification.type} 
-            message={notification.message} 
+          <TopNotification
+            type={notification.type}
+            message={notification.message}
             description={notification.description}
             timing={notification.timing}
             onClose={() => setNotification(null)}
           />
         )}
 
-        <Routes>
-          <Route path="/" element={<Home triggerNotification={triggerNotification} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/tournaments" element={<Tournaments />} />
-          <Route path="/lives" element={<Lives />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard triggerNotification={triggerNotification} />
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/videoView" element={<VideoView triggerNotification={triggerNotification} />} />
-          <Route 
-            path="/clipView" 
-            element={
-              <ProtectedRoute>
-                <ClipView triggerNotification={triggerNotification} />
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms/terms-and-conditions" element={<TermsAndConditions />} />
-        </Routes>
-        
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home triggerNotification={triggerNotification} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/lives" element={<Lives />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard triggerNotification={triggerNotification} />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/videoView" element={<VideoView triggerNotification={triggerNotification} />} />
+            <Route
+              path="/clipView"
+              element={
+                <ProtectedRoute>
+                  <ClipView triggerNotification={triggerNotification} />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms/terms-and-conditions" element={<TermsAndConditions />} />
+          </Routes>
+        </div>
+
         <Footer />
       </div>
     </ConfigProvider>
