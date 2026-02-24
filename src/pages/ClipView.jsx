@@ -11,16 +11,16 @@ const useIsMobile = () => {
 };
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import ProgressBar from "../../components/ProgressBar";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { fetchVideoData, createDownload, fetchDownload, selectDownload, updateDownload } from "../controllers/serverController";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const ClipView = ({ triggerNotification }) => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const videoRef = useRef(null);
   const [isClipReady, setIsClipReady] = useState(false);
+  const [clipAlreadyReady, setClipAlreadyReady] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [downloadURL, setDownloadURL] = useState(null);
   const [progressMessage, setProgressMessage] = useState(null);
@@ -49,10 +49,7 @@ const ClipView = ({ triggerNotification }) => {
 
 
   useEffect(() => {
-    if (!clipUID) {
-      setShowProgressBar(false);
-      return;
-    }
+    if (!clipUID) return;
 
     const checkClipAndDownload = async () => {
       try {
@@ -60,8 +57,9 @@ const ClipView = ({ triggerNotification }) => {
         const firstCheck = await fetchVideoData(clipUID);
         // console.log(firstCheck)
         if(firstCheck.success){
-          if (firstCheck.result.readyToStream) { //First check to not display progressBar but a notification
-            triggerNotification("info", "Loading Clip");
+          if (firstCheck.result.readyToStream) {
+            setShowProgressBar(false);
+            setClipAlreadyReady(true);
           } else { //Show progress bar with steps
             await waitForClipReady(clipUID);
             setCurrentStep(1);
@@ -165,49 +163,45 @@ const ClipView = ({ triggerNotification }) => {
     >
       <div className="mx-auto lg:w-4/6 md:w-5/6 w-full px-4 sm:px-6">
 
-        {!clipUID ? (
-          <div className="flex flex-col items-center justify-center text-center gap-4 py-12">
-            <div className="w-16 h-16 rounded-full bg-[#acbb22]/10 border border-[#acbb22]/25 flex items-center justify-center text-3xl">
-              ✓
+        {clipAlreadyReady && (
+          <div className="flex flex-col items-center text-center gap-2 pb-6">
+            <div className="w-12 h-12 rounded-full bg-[#acbb22]/10 border border-[#acbb22]/25 flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B8E016" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
             </div>
-            <h2 className="text-xl font-semibold text-[#B8E016]">{t('clipReadyTitle')}</h2>
+            <h2 className="text-lg font-semibold text-[#B8E016]">{t('clipReadyTitle')}</h2>
             <p className="text-gray-400 max-w-sm text-sm leading-relaxed">{t('clipReadyDescription')}</p>
+          </div>
+        )}
+
+        {!clipAlreadyReady && (
+          <div className="mb-5 rounded-md py-2">
+            {showProgressBar ? (
+              <ProgressBar
+                items={items}
+                current={currentStep}
+                percent={percent}
+                direction={isMobile ? 'vertical' : 'horizontal'}
+              />
+            ) : (
+              <p className="text-center text-gray-500">{progressMessage}</p>
+            )}
+          </div>
+        )}
+
+        {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
+
+        {isVideoLoaded && (
+          <div className="mt-5 mx-auto flex justify-center">
             <button
-              onClick={() => navigate('/dashboard')}
-              className="mt-2 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-6 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200"
+              disabled={!downloadURL}
+              onClick={() => handleDownloadVideo(downloadURL)}
+              className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {t('goToDashboard')}
+              {t('downloadVideo')}
             </button>
           </div>
-        ) : (
-          <>
-            <div className="mb-5 rounded-md py-2">
-              {showProgressBar ? (
-                <ProgressBar
-                  items={items}
-                  current={currentStep}
-                  percent={percent}
-                  direction={isMobile ? 'vertical' : 'horizontal'}
-                />
-              ) : (
-                <p className="text-center text-gray-500">{progressMessage}</p>
-              )}
-            </div>
-
-            {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
-
-            {isVideoLoaded && (
-              <div className="mt-5 mx-auto flex justify-center">
-                <button
-                  disabled={!downloadURL}
-                  onClick={() => handleDownloadVideo(downloadURL)}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {t('downloadVideo')}
-                </button>
-              </div>
-            )}
-          </>
         )}
 
       </div>

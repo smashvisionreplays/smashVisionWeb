@@ -74,7 +74,7 @@ const Index = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
+<Route path="/terms/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms/terms-and-conditions" element={<TermsAndConditions />} />
           </Routes>
         </div>
