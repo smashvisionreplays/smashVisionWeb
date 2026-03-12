@@ -66,8 +66,8 @@ const BlurredContainer = ({ triggerNotification }) => {
         try {
           const clubData = await fetchClubById(selectedClubId);
           if (clubData && clubData[0]) {
-            const courtsSplit = clubData[0]["courts_number"].split(",");
-            const courtsNumbers = courtsSplit.map(court => parseInt(court));
+            const courtsCount = parseInt(clubData[0]["courts_number"]);
+            const courtsNumbers = Array.from({ length: courtsCount }, (_, i) => i + 1);
             setCourts(courtsNumbers);
           }
         } catch (error) {
