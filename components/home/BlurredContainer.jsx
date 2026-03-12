@@ -43,9 +43,9 @@ const BlurredContainer = ({ triggerNotification }) => {
         const fetchedClubs = await fetchClubs();
         const filteredClubs = fetchedClubs.filter(club => club.status === "active");
         const formattedClubs = filteredClubs.map((club) => ({
-          value: club.ID,
-          label: club.Name,
-          icon: club.Logo && <img alt="" src={club.Logo} className="w-5 h-5 rounded-full" />,
+          value: club.id,
+          label: club.name,
+          icon: club.logo && <img alt="" src={club.logo} className="w-5 h-5 rounded-full" />,
         }));
         setClubs(formattedClubs);
       } catch (error) {
@@ -66,7 +66,7 @@ const BlurredContainer = ({ triggerNotification }) => {
         try {
           const clubData = await fetchClubById(selectedClubId);
           if (clubData && clubData[0]) {
-            const courtsSplit = clubData[0]["Courts_Number"].split(",");
+            const courtsSplit = clubData[0]["courts_number"].split(",");
             const courtsNumbers = courtsSplit.map(court => parseInt(court));
             setCourts(courtsNumbers);
           }
@@ -112,12 +112,12 @@ const BlurredContainer = ({ triggerNotification }) => {
 
       const video = await fetchVideos(params);
       
-      if (video.length === 0 || video[0].URL === null) {
+      if (video.length === 0 || video[0].url === null) {
         triggerNotification?.("error", t('videoNotFound'), t('noVideoAvailable'));
       } else {
         navigate(`/videoView`, {
           state: {
-            videoUID: video[0].UID,
+            videoUID: video[0].uid,
             id_club: selectedClubId,
             weekday: selectedDate.toDate().toLocaleString('en', { weekday: 'long' }),
             court_number: selectedCourt,

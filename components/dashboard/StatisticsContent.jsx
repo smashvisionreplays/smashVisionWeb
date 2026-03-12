@@ -95,7 +95,7 @@ const StatisticsContent = ({ userId }) => {
             <div className="mt-4 space-y-1.5 max-h-40 overflow-y-auto">
               {statisticsData.clips.slice(0, 5).map((clip, index) => (
                 <div key={index} className="text-xs text-white/50 px-3 py-2 bg-white/5 rounded-xl border border-white/5">
-                  {clip.Clip_Name || `Clip ${index + 1}`}
+                  {clip.clip_name || `Clip ${index + 1}`}
                 </div>
               ))}
               {statisticsData.clips.length > 5 && (

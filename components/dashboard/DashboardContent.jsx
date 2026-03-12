@@ -136,15 +136,15 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
         
         if (clubData) {
           const formattedClips = clubData.map((clip) => ({
-            ID: clip.ID,
-            Weekday: clip.Weekday,
-            date: clip.Clip_Name.split(" - ")[1],
-            Clip_Name: clip.Clip_Name,
-            tag: clip.Tag,
+            ID: clip.id,
+            Weekday: clip.weekday,
+            date: clip.clip_name.split(" - ")[1],
+            Clip_Name: clip.clip_name,
+            tag: clip.tag,
             id_club: clip.id_club,
-            UID: clip.UID,
-            URL: clip.URL || null,
-            downloadURL: clip.downloadURL || null,
+            UID: clip.uid,
+            URL: clip.url || null,
+            downloadURL: clip.downloadurl || null,
           }));
           // // console.log("formattedClips", formattedClips);
           setClips(formattedClips);
@@ -166,13 +166,13 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       const clubData = await fetchClubCameras(userId);
       if (clubData) {
         const formattedCameras = clubData.map((camera) => ({
-          ID: camera.ID,
-          court_number: camera.Court_Number,
-          status: camera.liveStatus,
-          url: camera.liveUrl || null,
-          notes: camera.liveNotes || null,
-          ip: camera.IP || null,
-          endpoint: camera.serverEndpoint || null
+          ID: camera.id,
+          court_number: camera.court_number,
+          status: camera.livestatus,
+          url: camera.liveurl || null,
+          notes: camera.livenotes || null,
+          ip: camera.ip || null,
+          endpoint: camera.serverendpoint || null
         }));
         setCameras(formattedCameras);
       }
@@ -250,17 +250,17 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       const clubData = await fetchClubVideos(userId);
       if (clubData) {
         const formattedVideos = clubData.map((video) => ({
-          ID: video.ID,
+          ID: video.id,
           id_club: userId,
-          Weekday: video.Weekday,
-          Court_Number: video.Court_Number,
-          originalHour: video.Hour,
-          Hour: `${video.Hour}:${video.Hour_Section == 0 ? '00' : '30'}`,
-          Hour_Section: video.Hour_Section,
-          URL: video.URL || null,
-          Blocked: video.Blocked,
-          videoStatus: video.URL ? "Sí" : "No",
-          UID: video.UID,
+          Weekday: video.weekday,
+          Court_Number: video.court_number,
+          originalHour: video.hour,
+          Hour: `${video.hour}:${video.hour_section == 0 ? '00' : '30'}`,
+          Hour_Section: video.hour_section,
+          URL: video.url || null,
+          Blocked: video.blocked,
+          videoStatus: video.url ? "Sí" : "No",
+          UID: video.uid,
         }));
         setVideos(formattedVideos);
       }

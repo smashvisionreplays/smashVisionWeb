@@ -75,8 +75,8 @@ const ClipView = ({ triggerNotification }) => {
 
         // Check if a download URL exists, if not, create it
         let download = await selectDownload(clipUID);
-        if (download[0]?.downloadURL) {
-          setDownloadURL(download[0].downloadURL);
+        if (download[0]?.downloadurl) {
+          setDownloadURL(download[0].downloadurl);
           setProgressMessage(`Clip ready to be played, and clip can be downloaded`);
         } else {
           const newDownload = await createDownload(clipUID);

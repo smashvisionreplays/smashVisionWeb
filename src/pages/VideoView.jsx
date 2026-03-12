@@ -107,7 +107,7 @@ const VideoView = ({ triggerNotification }) => {
         setBestPoints(
           fetchedBestPoints.map((point, index) => ({ 
             key: index, 
-            bestPoint: point.Time 
+            bestPoint: point.time
           }))
         );
       } catch (error) {

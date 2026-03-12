@@ -42,13 +42,13 @@ const Lives = () => {
       const camerasData = await fetchClubCameras(selectedClubId);
       if (camerasData) {
         const formattedCameras = camerasData.map((camera) => ({
-          ID: camera.ID,
-          court_number: camera.Court_Number,
-          status: camera.liveStatus,
-          url: camera.liveUrl || null,
-          notes: camera.liveNotes || null,
-          ip: camera.IP || null,
-          endpoint: camera.serverEndpoint || null,
+          ID: camera.id,
+          court_number: camera.court_number,
+          status: camera.livestatus,
+          url: camera.liveurl || null,
+          notes: camera.livenotes || null,
+          ip: camera.ip || null,
+          endpoint: camera.serverendpoint || null,
         }));
         setCameras(formattedCameras);
       }
@@ -207,8 +207,8 @@ const Lives = () => {
               value={selectedClubId}
               onChange={setSelectedClubId}
               options={clubs.map(club => ({
-                value: club.ID,
-                label: club.Name
+                value: club.id,
+                label: club.name
               }))}
               style={{ width: 300 }}
             />
