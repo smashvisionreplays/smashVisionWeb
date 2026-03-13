@@ -20,13 +20,6 @@ const VideoView = ({ triggerNotification }) => {
   const navigate = useNavigate();
   const { user } = useUser();
 
-  if (!location.state) {
-    navigate("/", { replace: true });
-    return null;
-  }
-
-  const { id_club, weekday, hour, court_number, section, videoUID } = location.state;
-
   // State
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -35,6 +28,22 @@ const VideoView = ({ triggerNotification }) => {
   const [clockTime, setClockTime] = useState("00:00:00");
   const [activeTab, setActiveTab] = useState('createClip');
   const { t } = useLanguage();
+
+  const state = location.state;
+  const { id_club, weekday, hour, court_number, section, videoUID } = state || {};
+
+  useEffect(() => {
+    if (state) {
+      sessionStorage.setItem("videoViewState", JSON.stringify(state));
+    } else {
+      const saved = sessionStorage.getItem("videoViewState");
+      if (saved) {
+        navigate("/videoView", { replace: true, state: JSON.parse(saved) });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [state, navigate]);
 
   // Utility functions
   const formatTime = (hours, minutes, seconds) =>

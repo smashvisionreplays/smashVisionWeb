@@ -325,7 +325,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
                 formResendCodeLink: "text-[#DDF31A] hover:text-[#B8E016]"
               }
             }}
-            redirectUrl={window.location.href}
+            fallbackRedirectUrl={window.location.pathname}
           />
       </Modal>
     </>
