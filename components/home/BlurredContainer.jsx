@@ -25,6 +25,7 @@ const lastWeekString = formatDateString(lastWeekDate);
 
 const BlurredContainer = ({ triggerNotification }) => {
   const { t } = useLanguage();
+  const [form] = Form.useForm();
   const [clubs, setClubs] = useState([]);
   const [selectedClubId, setSelectedClubId] = useState(null);
   const [selectedClub, setSelectedClub] = useState({});
@@ -67,7 +68,6 @@ const BlurredContainer = ({ triggerNotification }) => {
           const clubData = await fetchClubById(selectedClubId);
           if (clubData && clubData[0]) {
             const courtsNumbers = clubData[0]["courts_number"].map(court => parseInt(court));
-            console.log("Loaded courts for club ID", selectedClubId, ":", courtsNumbers);
             setCourts(courtsNumbers);
           }
         } catch (error) {
@@ -205,6 +205,7 @@ const BlurredContainer = ({ triggerNotification }) => {
           }}
         >
           <Form
+            form={form}
             layout="vertical"
             onFinish={handleSeeVideo}
             className="space-y-6"
@@ -226,6 +227,8 @@ const BlurredContainer = ({ triggerNotification }) => {
                   const club = clubs.find(item => item.value === parseInt(value));
                   setSelectedClub(club);
                   setSelectedClubId(parseInt(value));
+                  setSelectedCourt(null);
+                  form.setFieldValue('court', null);
                 }}
                 options={clubs}
                 labelRender={labelRender}
@@ -258,7 +261,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 size="large"
                 placeholder={t('selectCourt')}
                 onChange={setSelectedCourt}
-                options={courts.map((court) => ({ label: `Court ${court}`, value: court }))}
+                options={courts.map((court) => ({ label: `${t('court')} ${court}`, value: court }))}
                 disabled={!selectedClubId}
                 className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-[7px] [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#DDF31A]"
                 dropdownStyle={{ 
