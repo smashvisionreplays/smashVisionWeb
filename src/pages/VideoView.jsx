@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
@@ -17,7 +17,14 @@ const MINUTES_TO_SECONDS = 60;
 const VideoView = ({ triggerNotification }) => {
   const videoRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useUser();
+
+  if (!location.state) {
+    navigate("/", { replace: true });
+    return null;
+  }
+
   const { id_club, weekday, hour, court_number, section, videoUID } = location.state;
 
   // State
