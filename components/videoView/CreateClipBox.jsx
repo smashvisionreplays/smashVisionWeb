@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Input, Select, Button, ConfigProvider, theme, Modal } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
@@ -27,9 +27,23 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [tag, setTag] = useState(null);
+  const [note, setNote] = useState('');
   const [errors, setErrors] = useState({});
   const [notification, setNotification] = useState(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
+
+  // Restore form values saved before Clerk login redirect
+  useEffect(() => {
+    const saved = sessionStorage.getItem("clipFormState");
+    if (saved) {
+      const { startTime: st, endTime: et, tag: tg, note: nt } = JSON.parse(saved);
+      if (st) { setStartTime(st); if (startTimeRef.current) startTimeRef.current.value = st; }
+      if (et) { setEndTime(et); if (endTimeRef.current) endTimeRef.current.value = et; }
+      if (tg) setTag(tg);
+      if (nt) setNote(nt);
+      sessionStorage.removeItem("clipFormState");
+    }
+  }, []);
 
   // Validation functions
   const validateClipTiming = (startClip, endClip, videoDuration) => {
@@ -105,6 +119,7 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
   const handleCreateClip = async () => {
     // Check if user is authenticated before proceeding
     if (!isSignedIn) {
+      sessionStorage.setItem("clipFormState", JSON.stringify({ startTime, endTime, tag, note }));
       setShowSignInModal(true);
       return;
     }
@@ -270,6 +285,8 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
               className="w-full bg-white/5 border border-white/10 rounded-xl text-white resize-none focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
               rows={3}
               placeholder={t('makeNoteForClip')}
+              value={note}
+              onChange={e => setNote(e.target.value)}
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -306,22 +323,31 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
         }}
       >
         
-          <SignIn 
+          <SignIn
             appearance={{
+              variables: {
+                colorText: '#ffffff',
+                colorTextSecondary: 'rgba(255,255,255,0.7)',
+                colorInputText: '#ffffff',
+                colorInputBackground: 'rgba(255,255,255,0.08)',
+                colorBackground: 'transparent',
+                colorPrimary: '#DDF31A',
+              },
               elements: {
                 rootBox: "w-full",
                 cardBox: "w-full",
-                card: "bg-transparent w-full",
-                headerTitle: "text-white",
-                headerSubtitle: "text-white/70",
+                card: "bg-transparent w-full shadow-none",
+                headerTitle: { color: '#ffffff' },
+                headerSubtitle: { color: 'rgba(255,255,255,0.7)' },
                 socialButtonsBlockButton: "bg-white/10 border-white/20 text-white hover:bg-white/20 w-full",
-                formFieldInput: "bg-white/10 border-white/20 text-white",
+                formFieldInput: { color: '#ffffff', backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' },
+                otpCodeFieldInput: { color: '#ffffff', backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' },
                 formButtonPrimary: "bg-gradient-to-r from-[#acbb22] to-[#B8E016] hover:from-[#c9de17] hover:to-[#a3c614] text-black font-semibold w-full",
                 footerActionLink: "text-[#DDF31A] hover:text-[#B8E016]",
                 dividerLine: "bg-white/20",
-                dividerText: "text-white/60",
-                formFieldLabel: "text-white/80",
-                identityPreviewText: "text-white",
+                dividerText: { color: 'rgba(255,255,255,0.6)' },
+                formFieldLabel: { color: 'rgba(255,255,255,0.8)' },
+                identityPreviewText: { color: '#ffffff' },
                 formResendCodeLink: "text-[#DDF31A] hover:text-[#B8E016]"
               }
             }}
