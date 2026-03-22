@@ -23,6 +23,7 @@ const VideoView = ({ triggerNotification }) => {
   // State
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [bestPoints, setBestPoints] = useState([]);
   const [startTime, setStartTime] = useState({ hour: 0, minute: 0, second: 0 });
   const [clockTime, setClockTime] = useState("00:00:00");
@@ -102,9 +103,10 @@ const VideoView = ({ triggerNotification }) => {
       if (user?.id) {
         try {
           const metadata = await fetchUserMetadata(user.id);
-          const resolvedUserId = metadata?.role === 'club'
-            ? (metadata?.userId ?? null)
-            : (metadata?.id ?? null);
+          setUserRole(metadata?.role ?? 'member');
+          // For clubs, id_user is null (clips are attributed to the club, not an individual user).
+          // For members, id is the users table PK.
+          const resolvedUserId = metadata?.role === 'club' ? null : (metadata?.id ?? null);
           setUserId(resolvedUserId);
         } catch (error) {
           console.error("Error fetching user metadata:", error);
@@ -186,7 +188,7 @@ const VideoView = ({ triggerNotification }) => {
           <>
             {/* Desktop Layout - Side by side */}
             <div className="hidden md:flex flex-col mt-5 mx-auto justify-center gap-10">
-              <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
+              <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} />
             </div>
             
             {/* Mobile Layout - Tabs */}
@@ -218,7 +220,7 @@ const VideoView = ({ triggerNotification }) => {
 
                 {/* Tab Content */}
                 {activeTab === 'createClip' ? (
-                  <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} />
+                  <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} />
                 ) : (
                   <div className="relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-6">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>

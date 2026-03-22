@@ -14,7 +14,7 @@ const { TextArea } = Input;
 const MAX_TIME_FOR_CLIPS = 60;
 const MIN_TIME_FOR_CLIPS = 5;
 
-export default function CreateClipBox({ videoRef, clubId, userId }) {
+export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { isSignedIn, getToken } = useAuth();
@@ -124,8 +124,8 @@ export default function CreateClipBox({ videoRef, clubId, userId }) {
       return;
     }
 
-    // Check if userId is available
-    if (!userId) {
+    // For members, userId must be resolved. For clubs, null is correct (no individual user).
+    if (!userId && userRole !== 'club') {
       showNotification('error', 'User information not available. Please try logging in again.');
       return;
     }
