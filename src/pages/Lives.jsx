@@ -45,10 +45,7 @@ const Lives = () => {
           ID: camera.id,
           court_number: camera.court_number,
           status: camera.livestatus,
-          url: camera.liveurl || null,
-          notes: camera.livenotes || null,
-          ip: camera.ip || null,
-          endpoint: camera.serverendpoint || null,
+          live_tunnel_url: camera.live_tunnel_url || null,
         }));
         setCameras(formattedCameras);
       }
@@ -60,7 +57,7 @@ const Lives = () => {
   };
 
   const handleStreamClick = (camera) => {
-    if (camera.status === 'Live' && camera.url) {
+    if (camera.status === 'Live' && camera.live_tunnel_url) {
       setSelectedStream(camera);
       setIsModalOpen(true);
     }
@@ -73,8 +70,8 @@ const Lives = () => {
 
   const renderCameraCard = (camera) => {
     const isLive = camera.status === 'Live';
-    const isClickable = isLive && camera.url && camera.url !== "null";
-    const embedUrl = camera.url?.replace("watch?v=", "embed/");
+    const isClickable = isLive && camera.live_tunnel_url;
+    const streamUrl = camera.live_tunnel_url ? `${camera.live_tunnel_url}/stream.html?src=court${camera.court_number}` : null;
 
     return (
       <div
@@ -89,12 +86,11 @@ const Lives = () => {
 
         {/* Video area */}
         <div className="aspect-video relative">
-          {isLive && embedUrl && embedUrl !== "null" ? (
+          {isLive && streamUrl ? (
             <iframe
-              src={embedUrl}
+              src={streamUrl}
               className="w-full h-full pointer-events-none"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           ) : (
@@ -255,59 +251,60 @@ const Lives = () => {
       </div>
 
       {/* Full Screen Video Modal */}
-      <Modal
-        title={
-          <div className="flex items-center gap-3">
-            <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
-            <span className="text-white/90 font-semibold text-base">
-              {t('court')} {selectedStream?.court_number} — {t('liveStreamTitle')}
-            </span>
-          </div>
-        }
-        open={isModalOpen}
-        onCancel={handleCloseModal}
-        footer={null}
-        width="90vw"
-        style={{ top: 20 }}
-        closeIcon={
-          <span className="text-white/40 hover:text-white/80 transition-colors duration-200 text-lg leading-none">✕</span>
-        }
-        styles={{
-          mask: {
-            backdropFilter: 'blur(20px)',
-            backgroundColor: 'rgba(0,0,0,0.6)',
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+          token: {
+            colorBgElevated: 'rgba(15, 20, 30, 0.15)',
+            colorBorder: 'rgba(255,255,255,0.1)',
+            borderRadiusLG: 20,
           },
-          content: {
-            background: 'rgba(15, 20, 30, 0.35)',
-            backdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
-            WebkitBackdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 24,
-            boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset',
-            padding: 0,
-            overflow: 'hidden',
+        }}
+        modal={{
+          styles: {
+            mask: { backdropFilter: 'blur(20px)', backgroundColor: 'rgba(0, 0, 0, 0.55)' },
+            content: {
+              background: 'rgba(15, 20, 30, 0.35)',
+              backdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+              WebkitBackdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: 24,
+              boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset',
+              padding: 0,
+              overflow: 'hidden',
+            },
+            header: { background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '20px 24px 16px', marginBottom: 0 },
+            body: { padding: 0 },
           },
-          header: {
-            background: 'transparent',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            padding: '20px 24px 16px',
-            marginBottom: 0,
-          },
-          body: { padding: 0 },
         }}
       >
-        {selectedStream?.url && selectedStream.url !== "null" && (
-          <div className="aspect-video">
-            <iframe
-              src={selectedStream?.url?.replace("watch?v=", "embed/")}
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )}
-      </Modal>
+        <Modal
+          title={
+            <div className="flex items-center gap-3">
+              <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+              <span className="text-white/90 font-semibold text-base">
+                {t('court')} {selectedStream?.court_number} — {t('liveStreamTitle')}
+              </span>
+            </div>
+          }
+          open={isModalOpen}
+          onCancel={handleCloseModal}
+          footer={null}
+          width={{ xs: '90%', sm: '80%', md: '70%', lg: '60%', xl: '50%', xxl: '40%' }}
+          closeIcon={<span className="text-white/40 hover:text-white/80 transition-colors duration-200 text-lg leading-none">✕</span>}
+          styles={{ body: { padding: 0 } }}
+        >
+          {selectedStream?.live_tunnel_url && (
+            <div style={{ aspectRatio: '16/9', width: '100%' }}>
+              <iframe
+                src={`${selectedStream.live_tunnel_url}/stream.html?src=court${selectedStream.court_number}`}
+                style={{ display: 'block', width: '100%', height: '100%', border: 'none' }}
+                allowFullScreen
+              />
+            </div>
+          )}
+        </Modal>
+      </ConfigProvider>
     </ConfigProvider>
   );
 };

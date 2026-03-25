@@ -1,30 +1,22 @@
 import TableAnt from "../TableAnt";
-import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchStartStream, fetchBlockVideo, fetchUnblockVideo, createYoutubeLive, fetchClubById, fetchStopStream, checkYouTubeStatus, disconnectYouTube } from '../../src/controllers/serverController';
+import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchBlockVideo, fetchUnblockVideo, toggleCameraLive } from '../../src/controllers/serverController';
 import { useState, useEffect } from "react";
-import { useAuth } from '@clerk/clerk-react';
 import { useLanguage } from '../../src/contexts/LanguageContext';
 import { useWebSocket } from '../../src/contexts/WebSocketContext';
-import { useWebSocketStatus } from '../../src/hooks/useWebSocketStatus';
+import { Modal, ConfigProvider, theme } from 'antd';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 import StatisticsContent from "./StatisticsContent";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
-  const { getToken } = useAuth();
   const { t } = useLanguage();
   const { liveUpdates } = useWebSocket();
   const [videos, setVideos] = useState([]);
   const [clips, setClips] = useState([]);
   const [cameras, setCameras] = useState([]);
-  const [rtmpKeys, setRtmpKeys] = useState({});
   const [loading, setLoading] = useState(true);
-  const [clubData, setClubData] = useState(null);
-  const [connectingCameras, setConnectingCameras] = useState(new Set());
-  const [youtubeStatus, setYoutubeStatus] = useState({ connected: false, authUrl: null });
-
-  const handleInputChange = (court_number, value) => {
-    setRtmpKeys((prev) => ({ ...prev, [court_number]: value }));
-  };
+  const [togglingCameras, setTogglingCameras] = useState(new Set());
+  const [watchCamera, setWatchCamera] = useState(null);
 
   const handleShowModal = (videoUID) => {
     renderModal(videoUID);
@@ -42,77 +34,17 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     loadVideos();
   };
 
-  const handleStartLive = async (cameraId, court, cameraIp, rtmpKey, clubEndpoint) => {
-    // console.log("handle start live", cameraId, court, cameraIp, rtmpKey, clubEndpoint);
-    
-    setConnectingCameras(prev => new Set([...prev, cameraId]));
-    
+  const handleToggleLive = async (cameraId, courtNumber, currentStatus) => {
+    const newStatus = currentStatus === 'Live' ? 'Off' : 'Live';
+    setTogglingCameras(prev => new Set([...prev, cameraId]));
     try {
-      const authToken = await getToken();
-      const clubName = clubData?.Name || 'Club';
-      const youtubeResponse = await createYoutubeLive(clubName, court, authToken);
-      
-      if (youtubeResponse?.success) {
-        const autoRtmpKey = youtubeResponse.data.rtmpKey;
-        const watchUrl = youtubeResponse.data.watchUrl;
-        // console.log('YouTube live created:', youtubeResponse.data);
-        
-        const response = await fetchStartStream(userId, cameraId, cameraIp, court, autoRtmpKey, clubEndpoint, watchUrl);
-        // console.log("response fetch start stream", response);
-        loadCameras();
-      } else if (youtubeResponse?.needsAuth) {
-        // console.log('Opening YouTube OAuth...');
-        const popup = window.open(youtubeResponse.authUrl, 'youtube-auth', 'width=500,height=600');
-        
-        // Listen for auth completion
-        const messageListener = (event) => {
-          if (event.data === 'youtube-auth-complete') {
-            window.removeEventListener('message', messageListener);
-            popup.close();
-            // Retry after auth
-            handleStartLive(cameraId, court, cameraIp, rtmpKey, clubEndpoint);
-          }
-        };
-        window.addEventListener('message', messageListener);
-      } else {
-        console.error('Failed to create YouTube live:', youtubeResponse?.error);
-        const errorMessage = youtubeResponse?.error?.error?.message || youtubeResponse?.error || 'Failed to create YouTube live stream';
-        triggerNotification?.('error', 'YouTube Live Creation Failed', errorMessage, true);
-      }
-    } catch (error) {
-      console.error('Error in handleStartLive:', error);
-      if (error.isClubServerDown) {
-        triggerNotification?.('error', t('clubServerUnavailable'), error.message, true);
-      } else {
-        triggerNotification?.('error', t('streamStartFailed'), error.message || 'An unexpected error occurred while starting the stream', true);
-      }
-    } finally {
-      setConnectingCameras(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(cameraId);
-        return newSet;
-      });
-    }
-  };
-
-  const handleStopLive = async (cameraId, cameraIp, clubEndpoint) => {
-    // console.log("handle stop live", cameraId, cameraIp, clubEndpoint);
-    
-    setConnectingCameras(prev => new Set([...prev, cameraId]));
-    
-    try {
-      const response = await fetchStopStream(userId, cameraId, cameraIp, clubEndpoint);
-      // console.log("response fetch stop stream", response);
+      await toggleCameraLive(cameraId, userId, courtNumber, newStatus);
       loadCameras();
     } catch (error) {
-      console.error('Error in handleStopLive:', error);
-      if (error.isClubServerDown) {
-        triggerNotification?.('error', t('clubServerUnavailable'), error.message, true);
-      } else {
-        triggerNotification?.('error', t('streamStopFailed'), error.message || 'An unexpected error occurred while stopping the stream', true);
-      }
+      console.error('Error toggling live:', error);
+      triggerNotification?.('error', t('streamStartFailed'), error.message || 'Failed to toggle live status', true);
     } finally {
-      setConnectingCameras(prev => {
+      setTogglingCameras(prev => {
         const newSet = new Set(prev);
         newSet.delete(cameraId);
         return newSet;
@@ -169,10 +101,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
           ID: camera.id,
           court_number: camera.court_number,
           status: camera.livestatus,
-          url: camera.liveurl || null,
-          notes: camera.livenotes || null,
-          ip: camera.ip || null,
-          endpoint: camera.serverendpoint || null
+          live_tunnel_url: camera.live_tunnel_url || null,
         }));
         setCameras(formattedCameras);
       }
@@ -184,65 +113,15 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   useEffect(() => {
     if (userRole === 'club' && userId) {
       loadCameras();
-      loadClubData();
-      loadYouTubeStatus();
     }
   }, [userId, userRole]);
 
   // Reload cameras when WebSocket reload signal is received
   useEffect(() => {
     if (liveUpdates._reloadTrigger && userRole === 'club' && userId) {
-      // console.log('Reloading cameras due to WebSocket signal');
       loadCameras();
     }
   }, [liveUpdates._reloadTrigger, userRole, userId]);
-
-
-
-  // Listen for YouTube auth completion
-  useEffect(() => {
-    const messageListener = (event) => {
-      if (event.data === 'youtube-auth-complete') {
-        loadYouTubeStatus(); // Refresh YouTube status
-      }
-    };
-    window.addEventListener('message', messageListener);
-    return () => window.removeEventListener('message', messageListener);
-  }, []);
-
-  const loadYouTubeStatus = async () => {
-    try {
-      const authToken = await getToken();
-      const status = await checkYouTubeStatus(authToken);
-      if (status) {
-        setYoutubeStatus(status);
-      }
-    } catch (error) {
-      console.error('Error loading YouTube status:', error);
-    }
-  };
-
-  const handleDisconnectYouTube = async () => {
-    try {
-      const authToken = await getToken();
-      const result = await disconnectYouTube(authToken);
-      if (result?.success) {
-        setYoutubeStatus({ connected: false, authUrl: null });
-        loadYouTubeStatus(); // Refresh status
-      }
-    } catch (error) {
-      console.error('Error disconnecting YouTube:', error);
-    }
-  };
-
-  const loadClubData = async () => {
-    try {
-      const data = await fetchClubById(userId);
-      setClubData(data);
-    } catch (error) {
-      console.error('Error loading club data:', error);
-    }
-  };
 
   const loadVideos = async () => {
     setLoading(true);
@@ -337,47 +216,12 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       case "Lives":
         return (
           <div className="space-y-4">
-            {/* YouTube Status Card */}
-            <div className="backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${youtubeStatus.connected ? 'bg-[#B8E016]/10 border border-[#B8E016]/20' : 'bg-white/5 border border-white/10'}`}>
-                    <svg className={`w-4 h-4 ${youtubeStatus.connected ? 'text-[#B8E016]' : 'text-white/30'}`} viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white/80 font-medium text-sm leading-tight">YouTube</p>
-                    <p className={`text-xs mt-0.5 ${youtubeStatus.connected ? 'text-[#B8E016]/70' : 'text-white/30'}`}>
-                      {youtubeStatus.connected ? t('youtubeConnected') : t('youtubeNotConnected')}
-                    </p>
-                  </div>
-                </div>
-                {youtubeStatus.connected ? (
-                  <button
-                    onClick={handleDisconnectYouTube}
-                    className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-xs font-medium hover:bg-red-500/20 transition-all duration-200"
-                  >
-                    {t('disconnect')}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => youtubeStatus.authUrl && window.open(youtubeStatus.authUrl, 'youtube-auth', 'width=500,height=600')}
-                    className="px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-xs font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200"
-                  >
-                    {t('connect')}
-                  </button>
-                )}
-              </div>
-            </div>
-            
-            {/* Cameras Table */}
             {cameras.length > 0 ? (
               <>
                 <div className="relative sm:hidden backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
                   <TableAnt
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)}
+                    columns={livesColumns(cameras, handleToggleLive, setWatchCamera, togglingCameras, t)}
                     data={cameras}
                     needsExpand={true}
                     needsVirtual={true}
@@ -386,7 +230,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
                 <div className="relative hidden lg:block backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
                   <TableAnt
-                    columns={livesColumns(cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t)}
+                    columns={livesColumns(cameras, handleToggleLive, setWatchCamera, togglingCameras, t)}
                     data={cameras}
                     needsExpand={false}
                     needsVirtual={false}
@@ -396,6 +240,62 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             ) : (
               <EmptyState type="cameras" />
             )}
+
+            {/* Watch Live Modal */}
+            <ConfigProvider
+              theme={{
+                algorithm: theme.darkAlgorithm,
+                token: {
+                  colorBgElevated: 'rgba(15, 20, 30, 0.15)',
+                  colorBorder: 'rgba(255,255,255,0.1)',
+                  borderRadiusLG: 20,
+                },
+              }}
+              modal={{
+                styles: {
+                  mask: { backdropFilter: 'blur(20px)', backgroundColor: 'rgba(0, 0, 0, 0.55)' },
+                  content: {
+                    background: 'rgba(15, 20, 30, 0.35)',
+                    backdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: 24,
+                    boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset',
+                    padding: 0,
+                    overflow: 'hidden',
+                  },
+                  header: { background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '20px 24px 16px', marginBottom: 0 },
+                  body: { padding: 0 },
+                },
+              }}
+            >
+              <Modal
+                title={
+                  <div className="flex items-center gap-3">
+                    <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+                    <span className="text-white/90 font-semibold text-base">
+                      {t('court')} {watchCamera?.court_number} — Live
+                    </span>
+                  </div>
+                }
+                open={!!watchCamera}
+                onCancel={() => setWatchCamera(null)}
+                footer={null}
+                width={{ xs: '90%', sm: '80%', md: '70%', lg: '60%', xl: '50%', xxl: '40%' }}
+                closeIcon={<span className="text-white/40 hover:text-white/80 transition-colors duration-200 text-lg leading-none">✕</span>}
+                styles={{ body: { padding: 0 } }}
+              >
+                {watchCamera?.live_tunnel_url && (
+                  <div style={{ aspectRatio: '16/9', width: '100%' }}>
+                    <iframe
+                      src={`${watchCamera.live_tunnel_url}/stream.html?src=court${watchCamera.court_number}`}
+                      style={{ display: 'block', width: '100%', height: '100%', border: 'none' }}
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+              </Modal>
+            </ConfigProvider>
           </div>
         );
 
