@@ -215,86 +215,20 @@ export async function updateDownload(downloadURL, uid) {
   }
 }
 
-export async function createYoutubeLive(clubName, courtNumber, authToken) {
+export async function toggleCameraLive(cameraId, clubId, courtNumber, newStatus) {
   try {
-    const response = await fetch(`${API_BASE_URL}/youtube/create-live`, {
+    const response = await fetch(`${API_BASE_URL}/cameras/${cameraId}/toggleLive`, {
       method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-      },
-      body: JSON.stringify({ clubName, courtNumber }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clubId, courtNumber, newStatus }),
     });
-
     if (!response.ok) {
-        throw new Error('Failed to create YouTube live stream');
+      throw new Error('Failed to toggle live status');
     }
     return await response.json();
   } catch (error) {
-      console.error('Error creating YouTube live:', error);
-      return null;
-  }
-}
-
-export async function checkYouTubeStatus(authToken) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/youtube/status`, {
-      method: 'GET',
-      headers: {
-          'Authorization': `Bearer ${authToken}`
-      },
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to check YouTube status');
-    }
-    return await response.json();
-  } catch (error) {
-      console.error('Error checking YouTube status:', error);
-      return null;
-  }
-}
-
-export async function disconnectYouTube(authToken) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/youtube/disconnect`, {
-      method: 'POST',
-      headers: {
-          'Authorization': `Bearer ${authToken}`
-      },
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to disconnect YouTube');
-    }
-    return await response.json();
-  } catch (error) {
-      console.error('Error disconnecting YouTube:', error);
-      return null;
-  }
-}
-
-export async function fetchStartStream(clubId, cameraId, cameraIp, court, rtmpKey, clubEndpoint, watchUrl) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/cameras/${cameraId}/startLive`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({clubId, cameraId, court,cameraIp, rtmpKey, clubEndpoint, watchUrl}),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-      const error = new Error(errorData.message || 'Failed to start live stream');
-      error.isClubServerDown = errorData.isClubServerDown;
-      error.status = response.status;
-      throw error;
-    }
-    return await response.json();
-  } catch (error) {
-      console.error('Error fetching start live:', error);
-      throw error;
+    console.error('Error toggling camera live:', error);
+    throw error;
   }
 }
 
@@ -333,30 +267,6 @@ export async function fetchUnblockVideo(videoId) {
   } catch (error) {
       console.error('Error blocking video:', error);
       return null;
-  }
-}
-
-export async function fetchStopStream(clubId, cameraId, cameraIp, clubEndpoint) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/cameras/${cameraId}/stopLive`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({clubId, cameraId, cameraIp, clubEndpoint}),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-      const error = new Error(errorData.message || 'Failed to stop stream');
-      error.isClubServerDown = errorData.isClubServerDown;
-      error.status = response.status;
-      throw error;
-    }
-    return await response.json();
-  } catch (error) {
-      console.error('Error stopping stream:', error);
-      throw error;
   }
 }
 

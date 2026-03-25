@@ -1,7 +1,3 @@
-import { Button, Input, Table, Modal } from "antd";
-import { useState } from "react";
-import { useLanguage } from '../../src/contexts/LanguageContext';
-import VideoPlayer from "../videoView/VideoPlayer"; // Adjust the import path as needed
 import TagDisplay from "../TagDisplay";
 
 export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
@@ -164,7 +160,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
     ];
   }
 
-  export const livesColumns = (cameras, rtmpKeys, handleInputChange, handleStartLive, handleStopLive, connectingCameras, t) => {
+  export const livesColumns = (cameras, handleToggleLive, setWatchCamera, togglingCameras, t) => {
     return [
       {
         title: t('court') || 'Court',
@@ -176,62 +172,56 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
         })),
         filterMode: 'tree',
         filterSearch: true,
-        onFilter: (value, record) => {return record.Court_Number==value}
+        onFilter: (value, record) => record.court_number == value,
       },
       {
         title: t('status') || 'Status',
         dataIndex: 'status',
         key: 'status',
-      },
-      {
-        title: t('link') || 'Link',
-        dataIndex: 'url',
-        key: 'url',
-        render: (url) => (url && url!='null' ? <Button className="" href={url}>{t('link') || 'Link'}</Button> : 'No video'),
-      },
-      {
-        title: t('notes') || 'Notes',
-        dataIndex: 'notes',
-        key: 'notes',
-        responsive: ['lg', 'md'],
-      },
-      {
-        title: 'Endpoint',
-        dataIndex: 'endpoint',
-        key: 'endpoint',
-        hidden:true
+        render: (status) => (
+          <span className={`px-2.5 py-0.5 rounded-lg text-xs font-medium ${
+            status === 'Live'
+              ? 'bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20'
+              : 'bg-white/5 text-white/35 border border-white/10'
+          }`}>
+            {status || 'Off'}
+          </span>
+        ),
       },
       {
         title: t('actions') || 'Actions',
         key: 'actions',
         render: (_, record) => {
-          const isConnecting = connectingCameras.has(record.ID);
-          return record.status !== "Live" ? (
-            <button
-              onClick={() => handleStartLive(
-                record.ID,
-                record.court_number,
-                record.ip,
-                rtmpKeys[record.court_number] || "auto",
-                record.endpoint
+          const isToggling = togglingCameras.has(record.ID);
+          const isLive = record.status === 'Live';
+          return (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleToggleLive(record.ID, record.court_number, record.status)}
+                disabled={isToggling}
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 whitespace-nowrap transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isLive
+                    ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                    : 'bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 hover:from-[#acbb22]/30 hover:to-[#B8E016]/20'
+                }`}
+              >
+                {isToggling && <span className={`w-3 h-3 rounded-full border animate-spin inline-block ${isLive ? 'border-red-400/40 border-t-red-400' : 'border-[#B8E016]/40 border-t-[#B8E016]'}`}></span>}
+                {isToggling
+                  ? (isLive ? (t('stopping') || 'Stopping...') : (t('enabling') || 'Enabling...'))
+                  : (isLive ? (t('disableLive') || 'Disable Live') : (t('enableLive') || 'Enable Live'))
+                }
+              </button>
+              {record.live_tunnel_url && (
+                <button
+                  onClick={() => setWatchCamera(record)}
+                  className="px-3 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-xl text-xs font-medium hover:bg-white/10 hover:text-white/80 transition-all duration-200 whitespace-nowrap"
+                >
+                  {t('watch') || 'Watch'}
+                </button>
               )}
-              disabled={isConnecting}
-              className="px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-xs font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isConnecting && <span className="w-3 h-3 rounded-full border border-[#B8E016]/40 border-t-[#B8E016] animate-spin inline-block"></span>}
-              {isConnecting ? (t('connecting') || 'Connecting...') : (t('startLive') || 'Start Live')}
-            </button>
-          ) : (
-            <button
-              onClick={() => handleStopLive(record.ID, record.ip, record.endpoint)}
-              disabled={isConnecting}
-              className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-xs font-medium hover:bg-red-500/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isConnecting && <span className="w-3 h-3 rounded-full border border-red-400/40 border-t-red-400 animate-spin inline-block"></span>}
-              {isConnecting ? (t('stopping') || 'Stopping...') : (t('stopLive') || 'Stop Live')}
-            </button>
+            </div>
           );
-        }
+        },
       },
     ];
   }
