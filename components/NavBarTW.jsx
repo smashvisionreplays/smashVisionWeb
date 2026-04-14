@@ -11,6 +11,8 @@ const getNavigation = (t) => [
   // { name: t('tournaments'), to: '/tournaments', current: false }, Uncomment when tournaments page is ready
 ]
 
+const getFindGameButton = (t) => ({ name: t('findYourGame'), to: '/' })
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -22,6 +24,8 @@ export default function NavBar() {
   const { t } = useLanguage();
 
   const navigation = getNavigation(t);
+  const findGameButton = getFindGameButton(t);
+  const isFindGameActive = location.pathname === '/';
 
   return (
     <Disclosure as="nav" className="fixed top-0 left-0 right-0 z-50">
@@ -52,7 +56,16 @@ export default function NavBar() {
               </div>
 
               <div className="hidden my-auto sm:ml-6 sm:block">
-                <div className="flex space-x-4">
+                <div className="flex items-center space-x-4">
+                  <Link
+                    to={findGameButton.to}
+                    className={classNames(
+                      isFindGameActive ? 'bg-white/20 text-white font-bold' : 'text-gray-300 hover:bg-white/10 hover:text-white font-medium',
+                      'rounded-md px-3 py-2 text-sm transition-all duration-200',
+                    )}
+                  >
+                    {findGameButton.name}
+                  </Link>
                   {navigation.map((item) => {
                     const isActive = location.pathname === item.to;
                     return(
@@ -61,8 +74,8 @@ export default function NavBar() {
                       to={item.to}
                       aria-current={isActive ? 'page' : undefined}
                       className={classNames(
-                        isActive ? 'bg-white/20 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white',
-                        'rounded-md px-3 py-2 text-sm font-medium transition-all duration-200',
+                        isActive ? 'bg-white/20 text-white font-bold' : 'text-gray-300 hover:bg-white/10 hover:text-white font-medium',
+                        'rounded-md px-3 py-2 text-sm transition-all duration-200',
                       )}
                     >
                       {item.name}
@@ -102,15 +115,25 @@ export default function NavBar() {
         {/* No separate backdrop-blur — shares the parent's blur region seamlessly */}
         <DisclosurePanel className="sm:hidden transition-all duration-300 ease-in-out">
           <div className="space-y-1 px-2 pb-3 pt-2 text-center">
+            <Link
+              to={findGameButton.to}
+              onClick={() => close()}
+              className={classNames(
+                isFindGameActive ? 'bg-white/20 text-white font-bold' : 'text-gray-300 hover:bg-white/10 hover:text-white font-medium',
+                'block rounded-md px-3 py-2 text-base max-sm:text-xs mx-auto max-w-xs transition-all duration-200',
+              )}
+            >
+              {findGameButton.name}
+            </Link>
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.to}
                 onClick={() => close()}
-                aria-current={item.current ? 'page' : undefined}
+                aria-current={location.pathname === item.to ? 'page' : undefined}
                 className={classNames(
-                  item.current ? 'bg-white/20 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white',
-                  'block rounded-md px-3 py-2 text-base max-sm:text-xs font-medium mx-auto max-w-xs transition-all duration-200',
+                  location.pathname === item.to ? 'bg-white/20 text-white font-bold' : 'text-gray-300 hover:bg-white/10 hover:text-white font-medium',
+                  'block rounded-md px-3 py-2 text-base max-sm:text-xs mx-auto max-w-xs transition-all duration-200',
                 )}
               >
                 {item.name}

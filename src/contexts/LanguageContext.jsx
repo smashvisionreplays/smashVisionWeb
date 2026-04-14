@@ -181,6 +181,7 @@ const translations = {
     // Footer
     privacyPolicy: 'Privacy Policy',
     termsOfUse: 'Terms of Use',
+    contactUs: 'Contact Us',
   },
 
   es: {
@@ -358,6 +359,7 @@ const translations = {
     // Footer
     privacyPolicy: 'Política de Privacidad',
     termsOfUse: 'Términos de Uso',
+    contactUs: 'Contáctanos',
   }
 };
 
