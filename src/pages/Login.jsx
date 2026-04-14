@@ -28,7 +28,7 @@ const Login = () => {
       cardBox: 'bg-transparent shadow-none border-none',
       header: 'text-center',
       headerTitle: 'hidden',
-      headerSubtitle: 'text-white/75 text-sm mt-1',
+      headerSubtitle: 'hidden',
       footer: 'hidden',
       footerAction: 'hidden',
       main: 'gap-6',
@@ -51,7 +51,7 @@ const Login = () => {
       otpCodeFieldInput: 'text-white bg-white/10 border border-white/20',
       identityPreviewText: 'text-white',
       identityPreviewEditButton: 'text-white/70 hover:text-white',
-      formResendCodeLink: 'text-white hover:text-white/80',
+      formResendCodeLink: "text-white hover:text-white/80 flex flex-col items-center gap-2 before:content-[var(--otp-spam-note)] before:text-white/40 before:text-xs before:font-normal before:cursor-default before:[text-decoration:none] before:pointer-events-none",
       formHeaderSubtitle: 'text-white/80',
     },
     layout: {
@@ -62,12 +62,16 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <div className="w-full max-w-md backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl h-min py-8 flex flex-col items-center justify-center">
-        <div className="text-center mb-6">
-          <p className="text-white/70 text-lg font-medium">
-            {isSignUp ? t('createAccount') : t('signInToAccount')}
-          </p>
-        </div>
+      <div
+        className="w-full max-w-md backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl h-min py-8 px-6 flex flex-col"
+        style={{ '--otp-spam-note': `"${t('otpSpamNoteCss')}"` }}
+      >
+        <h1 className="text-2xl font-bold text-white mb-1">
+          {isSignUp ? t('signUp') : t('signIn')}
+        </h1>
+        <p className="text-white/50 text-sm mb-6">
+          {isSignUp ? t('signUpBoxSubtitle') : t('signInBoxSubtitle')}
+        </p>
         <div className="">
           {isSignUp ? (
             <SignUp
@@ -81,12 +85,15 @@ const Login = () => {
             />
           )}
         </div>
-        <div className="text-center mt-6">
+        <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-center gap-2">
+          <span className="text-white/40 text-sm">
+            {isSignUp ? t('haveAccount') : t('noAccount')}
+          </span>
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-white/70 hover:text-white underline transition-colors"
+            className="text-[#DDF31A] hover:text-white text-sm font-medium transition-colors"
           >
-            {isSignUp ? t('alreadyHaveAccount') : t('dontHaveAccount')}
+            {isSignUp ? t('signIn') : t('signUp')}
           </button>
         </div>
       </div>

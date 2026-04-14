@@ -20,13 +20,13 @@ const ClerkWithLocalization = ({ children }) => {
     signIn: {
       start: {
         title: t('signInTitle'),
-        subtitle: t('signInSubtitle'),
+        subtitle: '',
         actionText: t('noAccount'),
         actionLink: t('signUp'),
       },
       password: {
         title: t('enterPassword'),
-        subtitle: t('enterPasswordSubtitle'),
+        subtitle: '',
         actionLink: t('forgotPassword'),
       },
       emailCode: {
@@ -37,7 +37,7 @@ const ClerkWithLocalization = ({ children }) => {
     signUp: {
       start: {
         title: t('signUpTitle'),
-        subtitle: t('signUpSubtitle'),
+        subtitle: '',
         actionText: t('haveAccount'),
         actionLink: t('signIn'),
       },

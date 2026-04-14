@@ -175,9 +175,12 @@ const translations = {
     haveAccount: 'Already have an account?',
     signUp: 'Sign up',
     signIn: 'Sign in',
+    signInBoxSubtitle: 'Log in your account to access your dashboard and content',
+    signUpBoxSubtitle: 'Create an account to access your dashboard and content',
     enterPassword: 'Enter your password',
     enterPasswordSubtitle: 'Enter the password associated with your account',
     otpSpamNote: 'Check your spam folder if you don\'t see it in your inbox.',
+    otpSpamNoteCss: 'Check spam if not in inbox',
     otpResendButton: 'Didn\'t receive a code? Resend',
 
     // Footer
@@ -355,9 +358,12 @@ const translations = {
     haveAccount: '¿Ya tienes una cuenta?',
     signUp: 'Regístrate',
     signIn: 'Iniciar sesión',
+    signInBoxSubtitle: 'Inicia sesión para acceder a tu panel y contenido',
+    signUpBoxSubtitle: 'Crea una cuenta para acceder a tu panel y contenido',
     enterPassword: 'Ingresa tu contraseña',
     enterPasswordSubtitle: 'Ingresa la contraseña asociada a tu cuenta',
     otpSpamNote: 'Revisa tu carpeta de spam si no lo encuentras en tu bandeja de entrada.',
+    otpSpamNoteCss: 'Revisa tu carpeta de spam',
     otpResendButton: '¿No recibiste el código? Reenviar',
 
     // Footer
