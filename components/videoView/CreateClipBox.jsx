@@ -348,7 +348,10 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
                 dividerText: { color: 'rgba(255,255,255,0.6)' },
                 formFieldLabel: { color: 'rgba(255,255,255,0.8)' },
                 identityPreviewText: { color: '#ffffff' },
-                formResendCodeLink: "text-[#DDF31A] hover:text-[#B8E016]"
+                formResendCodeLink: "text-white hover:text-white/80",
+                identityPreviewText: { color: '#ffffff' },
+                identityPreviewEditButton: "text-white/70 hover:text-white",
+                formHeaderSubtitle: { color: 'rgba(255,255,255,0.8)' },
               }
             }}
             fallbackRedirectUrl={window.location.pathname}

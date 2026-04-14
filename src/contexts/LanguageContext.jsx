@@ -177,7 +177,9 @@ const translations = {
     signIn: 'Sign in',
     enterPassword: 'Enter your password',
     enterPasswordSubtitle: 'Enter the password associated with your account',
-    
+    otpSpamNote: 'Check your spam folder if you don\'t see it in your inbox.',
+    otpResendButton: 'Didn\'t receive a code? Resend',
+
     // Footer
     privacyPolicy: 'Privacy Policy',
     termsOfUse: 'Terms of Use',
@@ -355,7 +357,9 @@ const translations = {
     signIn: 'Iniciar sesión',
     enterPassword: 'Ingresa tu contraseña',
     enterPasswordSubtitle: 'Ingresa la contraseña asociada a tu cuenta',
-    
+    otpSpamNote: 'Revisa tu carpeta de spam si no lo encuentras en tu bandeja de entrada.',
+    otpResendButton: '¿No recibiste el código? Reenviar',
+
     // Footer
     privacyPolicy: 'Política de Privacidad',
     termsOfUse: 'Términos de Uso',

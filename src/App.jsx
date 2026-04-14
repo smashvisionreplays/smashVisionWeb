@@ -29,6 +29,10 @@ const ClerkWithLocalization = ({ children }) => {
         subtitle: t('enterPasswordSubtitle'),
         actionLink: t('forgotPassword'),
       },
+      emailCode: {
+        subtitle: t('otpSpamNote'),
+        resendButton: t('otpResendButton'),
+      },
     },
     signUp: {
       start: {
@@ -36,6 +40,11 @@ const ClerkWithLocalization = ({ children }) => {
         subtitle: t('signUpSubtitle'),
         actionText: t('haveAccount'),
         actionLink: t('signIn'),
+      },
+      emailCode: {
+        subtitle: t('otpSpamNote'),
+        formSubtitle: t('otpSpamNote'),
+        resendButton: t('otpResendButton'),
       },
     },
   };
