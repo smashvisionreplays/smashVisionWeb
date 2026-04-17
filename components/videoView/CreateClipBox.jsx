@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Input, Select, Button, ConfigProvider, theme, Modal } from "antd";
+import { Input, Select, Button, ConfigProvider, theme, Modal, Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { SignIn } from "@clerk/clerk-react";
@@ -24,8 +24,8 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
   const endTimeRef = useRef("");
   
   // State
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("00:00");
   const [tag, setTag] = useState(null);
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState({});
@@ -83,6 +83,24 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
     return newErrors;
   };
 
+  const handleTimeInputChange = (value, setter) => {
+    // Strip any character that is not a digit or colon
+    const cleaned = value.replace(/[^0-9:]/g, '');
+    setter(cleaned);
+  };
+
+  const handleTimeKeyDown = (e) => {
+    const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', ':'];
+    if (!allowed.includes(e.key) && !/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const isValidTimeFormat = (value) => {
+    // Accepts m:ss or mm:ss (e.g. 0:00 to 99:59)
+    return /^\d{1,2}:\d{2}$/.test(value);
+  };
+
   // Utility functions
   const convertSecondsToMinutes = (secs) => {
     const mins = Math.floor(secs / 60);
@@ -127,6 +145,11 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
     // For members, userId must be resolved. For clubs, null is correct (no individual user).
     if (!userId && userRole !== 'club') {
       showNotification('error', 'User information not available. Please try logging in again.');
+      return;
+    }
+
+    if (!isValidTimeFormat(startTime) || !isValidTimeFormat(endTime)) {
+      setErrors({ clipTime: "Please enter valid times in mm:ss format (e.g. 1:30)" });
       return;
     }
 
@@ -206,22 +229,31 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
           {/* Top shimmer line */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
 
-          <div className="flex items-center gap-3 mb-6 relative z-10">
-            <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
-            <h2 className="text-white/90 text-base font-semibold">{t('createClip')}</h2>
+          <div className="flex items-start gap-3 mb-6 relative z-10">
+            <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0 mt-0.5"></div>
+            <div>
+              <h2 className="text-white/90 text-base font-semibold">{t('createClip')}</h2>
+              <p className="text-white/40 text-xs mt-0.5">{t('clipTimesRelativeToVideo')}</p>
+            </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
             <div className="flex flex-col gap-2">
-              <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('startTime')}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('startTime')}</p>
+                <Tooltip title={t('useButtonToGetTime')} placement="top">
+                  <img src="/info_outline.svg" className="w-3.5 h-3.5 cursor-help opacity-30 hover:opacity-60 transition-opacity" />
+                </Tooltip>
+              </div>
               <div className="relative">
                 <input
                   ref={startTimeRef}
                   value={startTime}
-                  onChange={e => setStartTime(e.target.value)}
+                  onChange={e => handleTimeInputChange(e.target.value, setStartTime)}
+                  onKeyDown={handleTimeKeyDown}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
                   type="text"
-                  placeholder="00:00:00"
+                  placeholder="00:00"
                 />
                 <button
                   onClick={() => setCurrentTime(startTimeRef)}
@@ -233,15 +265,21 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
             </div>
             
             <div className="flex flex-col gap-2">
-              <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('endTime')}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{t('endTime')}</p>
+                <Tooltip title={t('useButtonToGetTime')} placement="top">
+                  <img src="/info_outline.svg" className="w-3.5 h-3.5 cursor-help opacity-30 hover:opacity-60 transition-opacity" />
+                </Tooltip>
+              </div>
               <div className="relative">
                 <input
                   ref={endTimeRef}
                   value={endTime}
-                  onChange={e => setEndTime(e.target.value)}
+                  onChange={e => handleTimeInputChange(e.target.value, setEndTime)}
+                  onKeyDown={handleTimeKeyDown}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono focus:border-[#DDF31A] focus:ring-1 focus:ring-[#DDF31A] transition-all outline-none"
                   type="text"
-                  placeholder="00:00:00"
+                  placeholder="00:00"
                 />
                 <button
                   onClick={() => setCurrentTime(endTimeRef)}
