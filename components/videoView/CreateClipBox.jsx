@@ -14,7 +14,7 @@ const { TextArea } = Input;
 const MAX_TIME_FOR_CLIPS = 60;
 const MIN_TIME_FOR_CLIPS = 5;
 
-export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
+export default function CreateClipBox({ videoRef, clubId, userId, userRole, presetClipTimes }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { isSignedIn, getToken } = useAuth();
@@ -31,6 +31,15 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole }) {
   const [errors, setErrors] = useState({});
   const [notification, setNotification] = useState(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
+
+  // Apply preset times when a best point is clicked
+  useEffect(() => {
+    if (!presetClipTimes) return;
+    setStartTime(presetClipTimes.start);
+    setEndTime(presetClipTimes.end);
+    if (startTimeRef.current) startTimeRef.current.value = presetClipTimes.start;
+    if (endTimeRef.current) endTimeRef.current.value = presetClipTimes.end;
+  }, [presetClipTimes]);
 
   // Restore form values saved before Clerk login redirect
   useEffect(() => {

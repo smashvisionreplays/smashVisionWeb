@@ -6,6 +6,7 @@ import CreateClipBox from "../../components/videoView/CreateClipBox";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime } from "../scripts/utils";
 import { fetchBestPoints } from "../../src/controllers/serverController";
+import { Tooltip } from "antd";
 import { fetchUserMetadata } from "../controllers/userController";
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -28,6 +29,7 @@ const VideoView = ({ triggerNotification }) => {
   const [startTime, setStartTime] = useState({ hour: 0, minute: 0, second: 0 });
   const [clockTime, setClockTime] = useState("00:00:00");
   const [activeTab, setActiveTab] = useState('createClip');
+  const [presetClipTimes, setPresetClipTimes] = useState(null);
   const { t } = useLanguage();
 
   const state = location.state;
@@ -87,14 +89,24 @@ const VideoView = ({ triggerNotification }) => {
 
   const watchBestPoint = (record) => {
     if (!videoRef.current) return;
-    
+
     const startTimeFormatted = formatTime(startTime.hour, startTime.minute, startTime.second);
     const seekTime = getVideoSeekTime(record.bestPoint, startTimeFormatted);
-    
-    // Ensure seek time is within video bounds
-    const clampedSeekTime = Math.max(0, Math.min(seekTime, videoRef.current.duration));
-    
+    const duration = videoRef.current.duration;
+
+    const clampedSeekTime = Math.max(0, Math.min(seekTime, duration));
     videoRef.current.currentTime = clampedSeekTime;
+
+    const toMmSs = (secs) => {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    };
+
+    setPresetClipTimes({
+      start: toMmSs(Math.max(0, clampedSeekTime - 60)),
+      end: toMmSs(Math.min(duration, clampedSeekTime + 60)),
+    });
   };
 
   // Effects
@@ -167,14 +179,21 @@ const VideoView = ({ triggerNotification }) => {
         
         {/* Best Points Tags - Desktop Only */}
         {bestPoints.length > 0 && (
-          <div className="mt-6 hidden md:block">
-            <h4 className="text-[#B8E016] text-xs font-semibold uppercase tracking-wider mb-3">{t('bestPoints')}</h4>
+          <div className="mt-6 hidden md:block relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-5">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
+              <h4 className="text-white/90 text-sm font-semibold">{t('bestPoints')}</h4>
+              <Tooltip title={t('bestPointsTooltip')} placement="top">
+                <img src="/info_outline.svg" className="w-3.5 h-3.5 cursor-help opacity-30 hover:opacity-60 transition-opacity" />
+              </Tooltip>
+            </div>
             <div className="flex flex-wrap gap-2">
               {bestPoints.map((point, index) => (
                 <button
                   key={index}
                   onClick={() => watchBestPoint(point)}
-                  className="px-3 py-1 text-xs font-medium bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20 rounded-lg hover:bg-[#acbb22]/20 hover:border-[#acbb22]/35 transition-all duration-200"
+                  className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-[#acbb22]/15 to-[#B8E016]/5 text-[#B8E016] border border-[#acbb22]/25 rounded-xl hover:from-[#acbb22]/30 hover:to-[#B8E016]/15 hover:border-[#acbb22]/50 hover:shadow-[0_0_12px_rgba(172,187,34,0.15)] transition-all duration-200"
                 >
                   {point.bestPoint}
                 </button>
@@ -188,7 +207,7 @@ const VideoView = ({ triggerNotification }) => {
           <>
             {/* Desktop Layout - Side by side */}
             <div className="hidden md:flex flex-col mt-5 mx-auto justify-center gap-10">
-              <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} />
+              <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} presetClipTimes={presetClipTimes} />
             </div>
             
             {/* Mobile Layout - Tabs */}
@@ -220,7 +239,7 @@ const VideoView = ({ triggerNotification }) => {
 
                 {/* Tab Content */}
                 {activeTab === 'createClip' ? (
-                  <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} />
+                  <CreateClipBox videoRef={videoRef} clubId={id_club} userId={userId} userRole={userRole} presetClipTimes={presetClipTimes} />
                 ) : (
                   <div className="relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-6">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
@@ -228,6 +247,9 @@ const VideoView = ({ triggerNotification }) => {
                     <div className="flex items-center gap-3 mb-5">
                       <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0"></div>
                       <h2 className="text-white/90 text-base font-semibold">{t('bestPoints')}</h2>
+                      <Tooltip title={t('bestPointsTooltip')} placement="top">
+                        <img src="/info_outline.svg" className="w-3.5 h-3.5 cursor-help opacity-30 hover:opacity-60 transition-opacity" />
+                      </Tooltip>
                     </div>
 
                     {bestPoints.length > 0 ? (
@@ -236,7 +258,7 @@ const VideoView = ({ triggerNotification }) => {
                           <button
                             key={index}
                             onClick={() => watchBestPoint(point)}
-                            className="px-3 py-1 text-xs font-medium bg-[#acbb22]/10 text-[#B8E016] border border-[#acbb22]/20 rounded-lg hover:bg-[#acbb22]/20 hover:border-[#acbb22]/35 transition-all duration-200"
+                            className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-[#acbb22]/15 to-[#B8E016]/5 text-[#B8E016] border border-[#acbb22]/25 rounded-xl hover:from-[#acbb22]/30 hover:to-[#B8E016]/15 hover:border-[#acbb22]/50 hover:shadow-[0_0_12px_rgba(172,187,34,0.15)] transition-all duration-200"
                           >
                             {point.bestPoint}
                           </button>
