@@ -270,4 +270,16 @@ export async function fetchUnblockVideo(videoId) {
   }
 }
 
+export async function deleteClip(clipId, token) {
+  const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Failed to delete clip');
+  return await response.json();
+}
+
 // Add other API functions as needed

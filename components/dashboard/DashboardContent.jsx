@@ -1,22 +1,28 @@
 import TableAnt from "../TableAnt";
-import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchBlockVideo, fetchUnblockVideo, toggleCameraLive } from '../../src/controllers/serverController';
-import { useState, useEffect } from "react";
+import { fetchClubVideos, fetchClubClips, fetchMemberClips, fetchClubCameras, fetchBlockVideo, fetchUnblockVideo, toggleCameraLive, deleteClip } from '../../src/controllers/serverController';
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from '../../src/contexts/LanguageContext';
 import { useWebSocket } from '../../src/contexts/WebSocketContext';
-import { Modal, ConfigProvider, theme } from 'antd';
+import { Modal, ConfigProvider, theme, Input } from 'antd';
+import { useAuth } from '@clerk/clerk-react';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 import StatisticsContent from "./StatisticsContent";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { liveUpdates } = useWebSocket();
+  const { getToken } = useAuth();
   const [videos, setVideos] = useState([]);
   const [clips, setClips] = useState([]);
   const [cameras, setCameras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [togglingCameras, setTogglingCameras] = useState(new Set());
   const [watchCamera, setWatchCamera] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ open: false, clip: null });
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const confirmWord = language === 'es' ? 'eliminar' : 'delete';
 
   const handleShowModal = (videoUID) => {
     renderModal(videoUID);
@@ -32,6 +38,27 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     const response = await fetchUnblockVideo(videoId);
     // console.log("response fetch unblock video", response);
     loadVideos();
+  };
+
+  const handleOpenDeleteModal = (clip) => {
+    setDeleteInput('');
+    setDeleteModal({ open: true, clip });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteInput !== confirmWord) return;
+    setDeleting(true);
+    try {
+      const token = await getToken();
+      await deleteClip(deleteModal.clip.ID, token);
+      setClips(prev => prev.filter(c => c.ID !== deleteModal.clip.ID));
+      setDeleteModal({ open: false, clip: null });
+      triggerNotification?.('success', t('deleteClipSuccess'), '', false);
+    } catch {
+      triggerNotification?.('error', t('deleteClipError'), '', true);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const handleToggleLive = async (cameraId, courtNumber, currentStatus) => {
@@ -74,6 +101,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             Clip_Name: clip.clip_name,
             tag: clip.tag,
             id_club: clip.id_club,
+            id_user: clip.id_user ?? null,
             UID: clip.uid,
             URL: clip.url || null,
             downloadURL: clip.downloadurl || null,
@@ -188,7 +216,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
           <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
             <TableAnt
-              columns={clipsColumns(clips, handleShowModal, t)}
+              columns={clipsColumns(clips, handleShowModal, handleOpenDeleteModal, t, userRole)}
               data={clips}
               needsExpand={false}
               needsVirtual={true}
@@ -310,6 +338,67 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   return (
     <div className="space-y-6">
       {renderContent()}
+
+      {/* Delete Clip Confirmation Modal */}
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+          token: { colorBgElevated: 'rgba(15, 20, 30, 0.15)', colorBorder: 'rgba(255,255,255,0.1)', borderRadiusLG: 20 },
+        }}
+        modal={{
+          styles: {
+            mask: { backdropFilter: 'blur(20px)', backgroundColor: 'rgba(0,0,0,0.6)' },
+            content: {
+              background: 'rgba(15, 20, 30, 0.55)',
+              backdropFilter: 'blur(40px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 20,
+              boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+              padding: 0,
+            },
+            header: { background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '20px 24px 16px', marginBottom: 0 },
+            body: { padding: '20px 24px 24px' },
+          },
+        }}
+      >
+        <Modal
+          title={
+            <div className="flex items-center gap-3">
+              <div className="w-1 h-6 rounded-full bg-gradient-to-b from-red-500 to-red-400 flex-shrink-0"></div>
+              <span className="text-white/90 font-semibold text-base">{t('deleteClipTitle')}</span>
+            </div>
+          }
+          open={deleteModal.open}
+          onCancel={() => !deleting && setDeleteModal({ open: false, clip: null })}
+          footer={null}
+          width={420}
+          closeIcon={<span className="text-white/40 hover:text-white/80 transition-colors text-lg leading-none">✕</span>}
+        >
+          <div className="flex flex-col gap-4">
+            <p className="text-white/50 text-sm leading-relaxed">{t('deleteClipWarning')}</p>
+            <div className="flex flex-col gap-2">
+              <label className="text-white/60 text-xs">{t('deleteClipConfirmLabel')}</label>
+              <Input
+                value={deleteInput}
+                onChange={e => setDeleteInput(e.target.value)}
+                placeholder={t('deleteClipConfirmPlaceholder')}
+                onPressEnter={deleteInput === confirmWord ? handleConfirmDelete : undefined}
+                className="bg-white/5 border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                style={{ background: 'rgba(255,255,255,0.05)', color: 'white', borderColor: 'rgba(255,255,255,0.12)' }}
+                autoFocus
+              />
+            </div>
+            <button
+              onClick={handleConfirmDelete}
+              disabled={deleteInput !== confirmWord || deleting}
+              className="w-full py-2.5 rounded-xl text-sm font-semibold bg-red-500/80 text-white hover:bg-red-500 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {deleting && <span className="w-4 h-4 rounded-full border-2 border-red-200/30 border-t-white animate-spin"></span>}
+              {t('deleteClipTitle')}
+            </button>
+          </div>
+        </Modal>
+      </ConfigProvider>
     </div>
   );
 };

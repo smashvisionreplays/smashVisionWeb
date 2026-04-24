@@ -96,7 +96,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
   ];
 }
 
-  export const clipsColumns = (clips, showVideoInModal, t) => {
+  export const clipsColumns = (clips, showVideoInModal, onDeleteClip, t, userRole) => {
     const uniqueDays = [...new Set(clips.map(item => item.Weekday))];
     return [
       {
@@ -152,9 +152,16 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
                 {t('download') || 'Download'}
               </a>
             )}
+            {(userRole !== 'club' || record.id_user == null) && (
+              <button
+                onClick={() => onDeleteClip(record)}
+                className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-medium hover:bg-red-500/20 transition-all duration-200"
+              >
+                {t('deleteClip') || 'Delete'}
+              </button>
+            )}
           </div>
         ),
-        // render: (url2 ) => (url2 ? <Button className="" href={url2}>Link</Button> : 'No video'),
       },
   
     ];
