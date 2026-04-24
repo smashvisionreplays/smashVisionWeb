@@ -41,7 +41,6 @@ smashVisionWeb/
 │   │   └── WebSocketContext.jsx# Real-time updates (camera status changes)
 │   ├── controllers/           # API call functions (axios)
 │   │   ├── serverController.js # Main API calls (clubs, videos, clips, cameras)
-│   │   ├── cloudflareController.js # Cloudflare Stream API (clips, downloads)
 │   │   ├── userController.js  # User metadata
 │   │   └── statisticsController.js
 │   ├── scripts/utils.js       # Time conversion helpers
