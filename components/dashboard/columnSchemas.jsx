@@ -146,7 +146,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
             </button>
             {record.downloadURL && (
               <a
-                href={record.downloadURL}
+                href={`${import.meta.env.VITE_API_URL}/api/clips/${record.UID}/download/file`}
                 className="px-3 py-1.5 bg-sky-500/10 text-sky-300 border border-sky-400/25 rounded-xl text-sm font-medium hover:bg-sky-500/20 hover:text-sky-200 transition-all duration-200"
               >
                 {t('download') || 'Download'}

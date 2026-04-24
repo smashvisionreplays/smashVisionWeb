@@ -91,18 +91,9 @@ const ClipView = ({ triggerNotification }) => {
     checkClipAndDownload();
   }, []);
 
-  const handleDownloadVideo = async (url) => {
-    try {
-      // console.log("Downloading video...");
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'clip.mp4');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleDownloadVideo = () => {
+    const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+    window.location.href = `${API_BASE_URL}/clips/${clipUID}/download/file`;
   };
 
   const waitForClipReady = async (id) => {
@@ -196,7 +187,7 @@ const ClipView = ({ triggerNotification }) => {
           <div className="mt-5 mx-auto flex justify-center">
             <button
               disabled={!downloadURL}
-              onClick={() => handleDownloadVideo(downloadURL)}
+              onClick={handleDownloadVideo}
               className="w-full sm:w-auto bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl py-2.5 px-5 text-sm font-semibold hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 hover:border-[#acbb22]/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t('downloadVideo')}
