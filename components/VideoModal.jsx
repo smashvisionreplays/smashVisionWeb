@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect} from 'react';
 import { Modal, ConfigProvider, theme  } from 'antd';
 import VideoPlayer from "../components/videoView/VideoPlayer";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from '../src/contexts/LanguageContext';
 
 const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
+    const { t } = useLanguage();
     const videoRef = useRef(null);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     let navigate = useNavigate();
@@ -114,6 +116,22 @@ const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
         }
     >
         <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={videoData?.videoUID} />
+
+        {videoData?.Clip_Name && (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
+            <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+            <div className="flex items-start gap-3 p-4">
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0 mt-0.5"></div>
+              <div>
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-1">{t('personalNote')}</p>
+                {videoData?.note
+                  ? <p className="text-white/80 text-sm leading-relaxed">{videoData.note}</p>
+                  : <p className="text-white/30 text-sm italic">{t('noNotesFound')}</p>
+                }
+              </div>
+            </div>
+          </div>
+        )}
     </Modal>
 
   </ConfigProvider>

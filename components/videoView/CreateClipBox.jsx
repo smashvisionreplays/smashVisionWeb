@@ -184,14 +184,15 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole, pres
         videoRef.current.src,
         tagString,
         clubId,
-        userId, 
-        startTimeSeconds, 
+        userId,
+        startTimeSeconds,
         endTimeSeconds,
-        token
+        token,
+        note
       );
-      
+
       if (clipRegistered?.success) {
-        navigate(`/clipView`, { state: { videoUID: clipRegistered.result.clipUID } });
+        navigate(`/clipView`, { state: { videoUID: clipRegistered.result.clipUID, note } });
       } else {
         showNotification('error', `Clip registration failed: ${clipRegistered?.error || 'Unknown error'}`);
       }

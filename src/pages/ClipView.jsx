@@ -29,6 +29,7 @@ const ClipView = ({ triggerNotification }) => {
   const [percent, setPercent] = useState(0);
   const location = useLocation();
   const clipUID = location.state?.videoUID;
+  const clipNote = location.state?.note;
 
   //Progress bar items
   let items=[
@@ -192,6 +193,19 @@ const ClipView = ({ triggerNotification }) => {
             >
               {t('downloadVideo')}
             </button>
+          </div>
+        )}
+
+        {isVideoLoaded && clipNote && (
+          <div className="mt-5 relative backdrop-blur-xl bg-white/[0.03] rounded-2xl border border-white/10 shadow-xl overflow-hidden p-5">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none"></div>
+            <div className="flex items-start gap-3">
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] shadow-[0_0_8px_rgba(172,187,34,0.4)] flex-shrink-0 mt-0.5"></div>
+              <div>
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-1">{t('personalNote')}</p>
+                <p className="text-white/80 text-sm leading-relaxed">{clipNote}</p>
+              </div>
+            </div>
           </div>
         )}
 

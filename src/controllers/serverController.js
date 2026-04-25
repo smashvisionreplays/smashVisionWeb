@@ -86,21 +86,21 @@ export async function fetchClubById(id) {
     }
 }
 
-export async function registerClip(uid, tag, clubId, userId, startTime, endTime, authToken = null) {
+export async function registerClip(uid, tag, clubId, userId, startTime, endTime, authToken = null, note = '') {
   try {
       const headers = {
           'Content-Type': 'application/json',
       };
-      
+
       // Add authorization header if token is provided
       if (authToken) {
           headers['Authorization'] = `Bearer ${authToken}`;
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/clips`, {
           method: 'POST',
           headers,
-          body: JSON.stringify({uid, tag, clubId, userId, startTime, endTime}),
+          body: JSON.stringify({uid, tag, clubId, userId, startTime, endTime, note}),
       });
 
       if (!response.ok) {

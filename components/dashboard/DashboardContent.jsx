@@ -100,6 +100,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
             date: clip.clip_name.split(" - ")[1],
             Clip_Name: clip.clip_name,
             tag: clip.tag,
+            note: clip.note || null,
             id_club: clip.id_club,
             id_user: clip.id_user ?? null,
             UID: clip.uid,

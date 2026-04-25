@@ -135,6 +135,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
                 videoUID: record.UID,
                 id_club: record.id_club,
                 Clip_Name: record.Clip_Name,
+                note: record.note,
                 weekday: record.Weekday,
                 court_number: record.Court_Number,
                 hour: record.originalHour,
