@@ -103,14 +103,14 @@ export async function registerClip(uid, tag, clubId, userId, startTime, endTime,
           body: JSON.stringify({uid, tag, clubId, userId, startTime, endTime, note}),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-          throw new Error('Failed to register clip');
+          return { success: false, reason: data.reason || 'unknown' };
       }
-
-      return await response.json();
+      return data;
   } catch (error) {
       console.error('Error registering clip:', error);
-      return null;
+      return { success: false, error: 'network' };
   }
 }
 

@@ -194,11 +194,16 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole, pres
       if (clipRegistered?.success) {
         navigate(`/clipView`, { state: { videoUID: clipRegistered.result.clipUID, note } });
       } else {
-        showNotification('error', `Clip registration failed: ${clipRegistered?.error || 'Unknown error'}`);
+        const reasonMap = {
+          database: 'clipCreationFailedDatabase',
+          cloudflare: 'clipCreationFailedCloudflare',
+        };
+        const errorKey = reasonMap[clipRegistered?.reason] || 'clipCreationFailed';
+        showNotification('error', t(errorKey));
       }
     } catch (error) {
       console.error("Error registering clip:", error);
-      showNotification('error', 'Failed to create clip. Please try again.');
+      showNotification('error', t('clipCreationFailed'));
     }
   };
 

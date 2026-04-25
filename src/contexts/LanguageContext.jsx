@@ -150,6 +150,9 @@ const translations = {
     clubServerUnavailable: 'Club Server Unavailable',
     streamStartFailed: 'Stream Start Failed',
     streamStopFailed: 'Stream Stop Failed',
+    clipCreationFailedCloudflare: 'Clip creation failed due to a problem with the cloud media provider. Please try again.',
+    clipCreationFailedDatabase: 'Clip creation failed due to a problem with the database. Please try again.',
+    clipCreationFailed: 'Clip creation failed. Please try again.',
     
     // Login page
     welcomeToSmashVision: 'Welcome to SmashVision',
@@ -343,6 +346,9 @@ const translations = {
     clubServerUnavailable: 'Servidor del Club No Disponible',
     streamStartFailed: 'Error al Iniciar Transmisión',
     streamStopFailed: 'Error al Detener Transmisión',
+    clipCreationFailedCloudflare: 'Error al crear el clip por un problema con el proveedor de medios en la nube. Inténtalo de nuevo.',
+    clipCreationFailedDatabase: 'Error al crear el clip por un problema con la base de datos. Inténtalo de nuevo.',
+    clipCreationFailed: 'Error al crear el clip. Inténtalo de nuevo.',
     
     // Login page
     welcomeToSmashVision: 'Bienvenido a SmashVision',
