@@ -66,7 +66,7 @@ const ClipView = ({ triggerNotification }) => {
             setCurrentStep(1);
           }
         }else{
-          triggerNotification("error", "There was an error loading the clip, you might want to reload page.");
+          triggerNotification("error", t('failedToLoadClip'));
           //We should reload the page and handle max limit of reloads (maybe put this in a while true and retries!= maxtries)
         }
         // Wait for Clip to be ready

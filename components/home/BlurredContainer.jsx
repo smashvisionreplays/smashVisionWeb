@@ -51,7 +51,7 @@ const BlurredContainer = ({ triggerNotification }) => {
         setClubs(formattedClubs);
       } catch (error) {
         console.error("Error loading clubs:", error);
-        triggerNotification?.("error", "Failed to load clubs");
+        triggerNotification?.("error", t('failedToLoadClubs'));
       }
     };
 
@@ -72,7 +72,7 @@ const BlurredContainer = ({ triggerNotification }) => {
           }
         } catch (error) {
           console.error("Error loading courts:", error);
-          triggerNotification?.("error", "Failed to load courts");
+          triggerNotification?.("error", t('failedToLoadCourts'));
         }
       }
     };
@@ -128,7 +128,7 @@ const BlurredContainer = ({ triggerNotification }) => {
       }
     } catch (error) {
       console.error("Error fetching video:", error);
-      triggerNotification?.("error", "Failed to fetch video");
+      triggerNotification?.("error", t('failedToFetchVideo'));
     } finally {
       setLoading(false);
     }

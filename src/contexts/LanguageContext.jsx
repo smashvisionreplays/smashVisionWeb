@@ -146,7 +146,21 @@ const translations = {
     totalClips: 'Total Clips',
     totalBestPoints: 'Total Best Points',
 
+    // CreateClipBox validation
+    clipTimeOutOfRange: 'Clip start or end time cannot be out of video total times',
+    videoDurationUnavailable: 'Video duration not available, reload the page',
+    clipTooShort: 'Clip duration must be longer than {min} seconds',
+    clipTooLong: 'Clip duration cannot be longer than {max} seconds',
+    startTimeRequired: 'Start time is required.',
+    endTimeRequired: 'End time is required.',
+    tagRequired: 'Tag is required.',
+    userInfoUnavailable: 'User information not available. Please try logging in again.',
+    invalidTimeFormat: 'Please enter valid times in m:ss format (e.g. 1:30)',
+
     // Error notifications
+    failedToLoadUserData: 'Failed to load user data',
+    failedToLoadClip: 'There was an error loading the clip, you might want to reload the page.',
+    failedToToggleLiveStatus: 'Failed to toggle live status',
     clubServerUnavailable: 'Club Server Unavailable',
     streamStartFailed: 'Stream Start Failed',
     streamStopFailed: 'Stream Stop Failed',
@@ -342,7 +356,21 @@ const translations = {
     totalClips: 'Total de Clips',
     totalBestPoints: 'Total de Mejores Puntos',
 
+    // CreateClipBox validation
+    clipTimeOutOfRange: 'El tiempo de inicio o fin del clip no puede estar fuera del video',
+    videoDurationUnavailable: 'Duración del video no disponible, recarga la página',
+    clipTooShort: 'La duración del clip debe ser mayor a {min} segundos',
+    clipTooLong: 'La duración del clip no puede ser mayor a {max} segundos',
+    startTimeRequired: 'El tiempo de inicio es obligatorio.',
+    endTimeRequired: 'El tiempo de fin es obligatorio.',
+    tagRequired: 'La etiqueta es obligatoria.',
+    userInfoUnavailable: 'Información de usuario no disponible. Por favor inicia sesión de nuevo.',
+    invalidTimeFormat: 'Por favor ingresa tiempos válidos en formato m:ss (ej. 1:30)',
+
     // Error notifications
+    failedToLoadUserData: 'Error al cargar los datos del usuario',
+    failedToLoadClip: 'Hubo un error al cargar el clip, puede que quieras recargar la página.',
+    failedToToggleLiveStatus: 'Error al cambiar el estado del streaming',
     clubServerUnavailable: 'Servidor del Club No Disponible',
     streamStartFailed: 'Error al Iniciar Transmisión',
     streamStopFailed: 'Error al Detener Transmisión',

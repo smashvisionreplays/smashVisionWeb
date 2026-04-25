@@ -33,7 +33,7 @@ export default function Dashboard({ triggerNotification }) {
           setUserMetadata(metadata);
         } catch (error) {
           console.error('Failed to load user metadata:', error);
-          triggerNotification?.('error', 'Failed to load user data');
+          triggerNotification?.('error', t('failedToLoadUserData'));
         } finally {
           setLoading(false);
         }

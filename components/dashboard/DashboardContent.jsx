@@ -69,7 +69,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       loadCameras();
     } catch (error) {
       console.error('Error toggling live:', error);
-      triggerNotification?.('error', t('streamStartFailed'), error.message || 'Failed to toggle live status', true);
+      triggerNotification?.('error', t('streamStartFailed'), error.message || t('failedToToggleLiveStatus'), true);
     } finally {
       setTogglingCameras(prev => {
         const newSet = new Set(prev);

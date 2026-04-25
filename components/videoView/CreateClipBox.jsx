@@ -57,30 +57,30 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole, pres
   // Validation functions
   const validateClipTiming = (startClip, endClip, videoDuration) => {
     if (startClip < 0 || startClip > videoDuration || endClip < 0 || endClip > videoDuration) {
-      return { success: false, message: "Clip start or end time cannot be out of video total times" };
+      return { success: false, message: t('clipTimeOutOfRange') };
     }
 
     const clipDuration = endClip - startClip;
-    
+
     if (!videoDuration) {
-      return { success: false, message: "Video Duration not available, reload page" };
+      return { success: false, message: t('videoDurationUnavailable') };
     }
     if (clipDuration < MIN_TIME_FOR_CLIPS) {
-      return { success: false, message: `Clip Duration must be longer than ${MIN_TIME_FOR_CLIPS} seconds` };
+      return { success: false, message: t('clipTooShort').replace('{min}', MIN_TIME_FOR_CLIPS) };
     }
     if (clipDuration > MAX_TIME_FOR_CLIPS) {
-      return { success: false, message: `Clip Duration cannot be longer than ${MAX_TIME_FOR_CLIPS} seconds` };
+      return { success: false, message: t('clipTooLong').replace('{max}', MAX_TIME_FOR_CLIPS) };
     }
-    
-    return { success: true, message: "Clip inputs are valid" };
+
+    return { success: true, message: "" };
   };
 
   const validateFormEntries = (startTime, endTime, tag, videoDuration) => {
     const newErrors = {};
-    
-    if (startTime == null) newErrors.startTime = "Start time is required.";
-    if (endTime == null) newErrors.endTime = "End Time is required.";
-    if (!tag) newErrors.tag = "Tag is required.";
+
+    if (startTime == null) newErrors.startTime = t('startTimeRequired');
+    if (endTime == null) newErrors.endTime = t('endTimeRequired');
+    if (!tag) newErrors.tag = t('tagRequired');
 
     if (Object.keys(newErrors).length > 0) return newErrors;
 
@@ -153,12 +153,12 @@ export default function CreateClipBox({ videoRef, clubId, userId, userRole, pres
 
     // For members, userId must be resolved. For clubs, null is correct (no individual user).
     if (!userId && userRole !== 'club') {
-      showNotification('error', 'User information not available. Please try logging in again.');
+      showNotification('error', t('userInfoUnavailable'));
       return;
     }
 
     if (!isValidTimeFormat(startTime) || !isValidTimeFormat(endTime)) {
-      setErrors({ clipTime: "Please enter valid times in mm:ss format (e.g. 1:30)" });
+      setErrors({ clipTime: t('invalidTimeFormat') });
       return;
     }
 
