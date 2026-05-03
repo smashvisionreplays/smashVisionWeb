@@ -1,9 +1,9 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = '/api/proxy';
 
 export const fetchStatistics = async (clubId, startDate, endDate, authToken) => {
     try {
         const response = await fetch(
-            `${API_URL}/api/statistics?clubId=${clubId}&startDate=${startDate}&endDate=${endDate}`,
+            `${API_URL}/statistics?clubId=${clubId}&startDate=${startDate}&endDate=${endDate}`,
             {
                 method: 'GET',
                 headers: {

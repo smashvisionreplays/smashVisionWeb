@@ -1,10 +1,11 @@
 import axios from "axios";
 
-const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+const API_BASE_URL = `/api/proxy`;
 
 export const fetchClubs = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/clubs`);
+    console.log("Fetched clubs in controller:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching clubs:", error);

@@ -93,7 +93,7 @@ const ClipView = ({ triggerNotification }) => {
   }, []);
 
   const handleDownloadVideo = () => {
-    const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+    const API_BASE_URL = `/api/proxy`;
     window.location.href = `${API_BASE_URL}/clips/${clipUID}/download/file`;
   };
 
