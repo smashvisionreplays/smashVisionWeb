@@ -1,30 +1,30 @@
+import { createClerkClient } from "@clerk/backend";
+
 let cachedToken = null;
 let tokenExpiry = 0;
 
 async function getM2MToken() {
   if (cachedToken && Date.now() < tokenExpiry - 60_000) return cachedToken;
-  console.log("Fetching new M2M token...");
-  const res = await fetch(`${process.env.CLERK_ISSUER_URL}/oauth/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: process.env.CLERK_M2M_CLIENT_ID,
-      client_secret: process.env.CLERK_M2M_CLIENT_SECRET,
-    }),
+
+  console.log("Fetching new M2M token via Clerk SDK...");
+  const clerk = createClerkClient({
+    secretKey: process.env.CLERK_M2M_CLIENT_SECRET,
   });
 
-  if (!res.ok) throw new Error(`Failed to get M2M token: ${res.status}`);
-  const { access_token, expires_in } = await res.json();
-  cachedToken = access_token;
-  tokenExpiry = Date.now() + expires_in * 1000;
+  const m2mToken = await clerk.m2m.createToken({ tokenFormat: "jwt" });
+  const expiresIn = m2mToken.expiration
+    ? m2mToken.expiration - Math.floor(Date.now() / 1000)
+    : 3600;
+
+  cachedToken = m2mToken.token;
+  tokenExpiry = Date.now() + expiresIn * 1000;
   return cachedToken;
 }
 
 export default async function handler(req, res) {
   try {
-    console.log("IN HANDLER..");
-    const { path: pathSegments, ...queryParams } = req.query;
+    const pathSegments = req.query["...path"] ?? req.query["path"];
+    const { "...path": _a, path: _b, ...queryParams } = req.query;
     const apiPath = Array.isArray(pathSegments)
       ? pathSegments.join("/")
       : pathSegments;
@@ -38,10 +38,10 @@ export default async function handler(req, res) {
 
     const headers = {
       "Content-Type": "application/json",
-      "x-app-token": token,
+      Authorization: `Bearer ${token}`,
     };
     if (req.headers.authorization)
-      headers["Authorization"] = req.headers.authorization;
+      headers["x-user-token"] = req.headers.authorization;
 
     const fetchOptions = { method: req.method, headers };
     if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
