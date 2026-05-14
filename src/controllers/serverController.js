@@ -74,15 +74,10 @@ export const fetchClubCameras= async (clubId) => {
 
 export async function fetchClubById(id) {
     try {
-      // // console.log(`sending to ${API_BASE_URL}/clubs/${id}` )
-        const response = await fetch(`${API_BASE_URL}/clubs/${id}`); // Update URL as needed
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch club data');
-        }
-        return await response.json();
+        const response = await axios.get(`${API_BASE_URL}/clubs/${id}`);
+        return response.data;
     } catch (error) {
-        console.error('Error fetching club:', error);
+        console.error('Error fetching club:', error.response?.data ?? error.message);
         return null;
     }
 }

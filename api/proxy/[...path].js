@@ -23,6 +23,7 @@ async function getM2MToken() {
 
 export default async function handler(req, res) {
   try {
+    // console.log("proxy req.query:", JSON.stringify(req.query));
     const pathSegments = req.query["...path"] ?? req.query["path"];
     const { "...path": _a, path: _b, ...queryParams } = req.query;
     const apiPath = Array.isArray(pathSegments)

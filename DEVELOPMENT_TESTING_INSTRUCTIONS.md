@@ -144,6 +144,91 @@ After the script completes, **hard-refresh** the browser (`Ctrl+Shift+R`) — th
 
 ---
 
+## Testing M2M Authentication (vercel dev)
+
+### Why the proxy exists
+
+The M2M client secret (`CLERK_M2M_CLIENT_SECRET`) is used to generate a signed JWT that authenticates the SmashVision frontend to the Railway API. The problem is that in a Vite/React app, any environment variable prefixed with `VITE_` gets bundled into the client-side JavaScript that the browser downloads — meaning it would be publicly readable by anyone. Vercel solves this with **serverless functions**: code that runs on Vercel's servers, not in the browser, and has access to environment variables that are never sent to the client. The proxy (`api/proxy/[...path].js`) is that serverless function — it reads the secret server-side, calls Clerk to get a JWT, and forwards the request to Railway with that JWT attached. The Railway API validates the JWT and, if valid, processes the request. Any developer with a properly generated Clerk M2M JWT can call the Railway API directly (e.g. from Postman) and it will work — the proxy is not a security gate, it is purely a **secret management solution for the Vercel deployment**. The reason this **only works with `vercel dev`** (not `npm run dev`) is that the proxy is a Vercel serverless function — it requires the Vercel runtime to execute. Vite has no concept of serverless functions; when you run `npm run dev`, Vite's dev server is the only thing running and it has no way to execute the function. Instead, Vite's proxy config rewrites `/api/proxy/*` directly to the local API, bypassing the function entirely. This is acceptable in development because the API's `requireAppToken` middleware is disabled when `NODE_ENV=development`, so requests reach the route handlers without needing a token.
+
+### When to use `vercel dev` vs `npm run dev`
+
+| Situation | Command |
+|-----------|---------|
+| Normal feature development (UI, logic, API calls) | `npm run dev` |
+| Testing the M2M proxy, token generation, or auth middleware | `vercel dev` |
+| Simulating the exact production request flow end-to-end | `vercel dev` |
+
+### Why `npm run dev` is enough for normal development
+
+When you run `npm run dev`, Vite starts with `NODE_ENV=development`. The API reads `api/.env_development` which also sets `NODE_ENV=development`. Because of this, the `requireAppToken` middleware in the API **skips validation entirely**:
+
+```js
+// api/src/middleware/requireAppToken.js
+if (process.env.NODE_ENV !== "production") return next(); // ← skips when NODE_ENV=development
+```
+
+This means all `/api/proxy/*` calls in the browser are handled by Vite's built-in proxy (configured in `vite.config.js`), which strips the `/api/proxy` prefix and forwards requests directly to the local API at `http://localhost:5000` — no M2M token needed, no Vercel function involved.
+
+```
+Browser → /api/proxy/clubs
+         ↓ (Vite proxy, dev only)
+         → http://localhost:5000/api/clubs
+         ↓ (API, NODE_ENV=development)
+         → requireAppToken skips → route handler responds
+```
+
+This is intentional. For day-to-day development you don't care about the token layer — you just want fast iteration on features.
+
+### When you need `vercel dev`
+
+Use `vercel dev` when you want to test the **full production auth flow** locally:
+
+- The Vercel serverless function (`api/proxy/[...path].js`) is actually executed
+- A real M2M JWT is fetched from Clerk and sent as `Authorization: Bearer` to the API
+- The API runs with `NODE_ENV=production`, so `requireAppToken` validates the token against JWKS
+- If the token is wrong, malformed, or the JWKS lookup fails — you see it locally before deploying
+
+```
+Browser → /api/proxy/clubs
+         ↓ (Vercel function, real execution)
+         → Clerk BAPI → M2M JWT fetched
+         → http://localhost:5000/api/clubs
+           Headers: Authorization: Bearer <M2M JWT>
+         ↓ (API, NODE_ENV=production)
+         → requireAppToken validates JWT via JWKS → route handler responds
+```
+
+### How to run `vercel dev`
+
+```bash
+cd C:\Users\tomas\Desktop\smashVisionReplays\smashVisionWeb
+vercel dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) (not 5173 — Vercel uses port 3000).
+
+> The Vercel CLI reads `.env.local` for server-side secrets. Make sure it contains:
+> ```
+> CLERK_M2M_CLIENT_SECRET=ak_...
+> RAILWAY_API_URL=http://localhost:5000
+> ```
+> `RAILWAY_API_URL` must point to your **local API** (`http://localhost:5000`), not the production one, so the M2M-authenticated requests hit the local API where `NODE_ENV=production` is set.
+
+### What to test with each mode
+
+| What you're testing | Use |
+|---------------------|-----|
+| UI components, pages, navigation | `npm run dev` |
+| API endpoints (clubs, videos, clips, cameras) | `npm run dev` |
+| User auth (Clerk sign-in, protected routes, roles) | `npm run dev` |
+| M2M token generation (is the proxy fetching a valid JWT?) | `vercel dev` |
+| Token validation (does the API accept/reject the JWT?) | `vercel dev` |
+| JWKS key mismatch errors | `vercel dev` |
+| End-to-end prod-equivalent request flow | `vercel dev` |
+| Debugging 401s that only happen in production | `vercel dev` |
+
+---
+
 ## Refreshing Prod Data Locally
 
 When production has new data you want locally, just re-run:
