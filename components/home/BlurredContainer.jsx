@@ -34,12 +34,15 @@ const BlurredContainer = ({ triggerNotification }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs(todayString, dateFormat));
   const [selectedTime, setSelectedTime] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingClubs, setLoadingClubs] = useState(true);
+  const [loadingCourts, setLoadingCourts] = useState(false);
 
   const navigate = useNavigate();
 
   // Load clubs on component mount
   useEffect(() => {
     const loadClubs = async () => {
+      setLoadingClubs(true);
       try {
         const fetchedClubs = await fetchClubs();
         const filteredClubs = fetchedClubs.filter(club => club.status === "active");
@@ -52,6 +55,8 @@ const BlurredContainer = ({ triggerNotification }) => {
       } catch (error) {
         console.error("Error loading clubs:", error);
         triggerNotification?.("error", t('failedToLoadClubs'));
+      } finally {
+        setLoadingClubs(false);
       }
     };
 
@@ -64,6 +69,7 @@ const BlurredContainer = ({ triggerNotification }) => {
   useEffect(() => {
     const loadCourts = async () => {
       if (selectedClubId) {
+        setLoadingCourts(true);
         try {
           const clubData = await fetchClubById(selectedClubId);
           if (clubData && clubData[0]) {
@@ -73,6 +79,8 @@ const BlurredContainer = ({ triggerNotification }) => {
         } catch (error) {
           console.error("Error loading courts:", error);
           triggerNotification?.("error", t('failedToLoadCourts'));
+        } finally {
+          setLoadingCourts(false);
         }
       }
     };
@@ -155,6 +163,19 @@ const BlurredContainer = ({ triggerNotification }) => {
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
       <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/5 rounded-full blur-lg pointer-events-none"></div>
       
+      {/* Loading overlay for clubs/courts fetch */}
+      {(loadingClubs || loadingCourts) && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl bg-black/40 backdrop-blur-sm">
+          <svg className="animate-spin h-10 w-10 text-[#DDF31A] mb-4" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-white/80 text-sm font-medium tracking-wide">
+            {loadingClubs ? t('loadingClubs') : t('loadingCourts')}
+          </span>
+        </div>
+      )}
+
       <div className="relative z-10">
         <ConfigProvider
           theme={{

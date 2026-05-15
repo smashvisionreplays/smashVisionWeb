@@ -34,7 +34,9 @@ const translations = {
     failedToLoadClubs: 'Failed to load clubs',
     failedToLoadCourts: 'Failed to load courts',
     failedToFetchVideo: 'Failed to fetch video',
-    
+    loadingClubs: 'Loading clubs...',
+    loadingCourts: 'Loading courts...',
+
     // Dashboard
     myClips: 'Clips',
     descriptionPanel: 'Manage and monitor activity on your',
@@ -244,7 +246,9 @@ const translations = {
     failedToLoadClubs: 'Error al cargar clubes',
     failedToLoadCourts: 'Error al cargar canchas',
     failedToFetchVideo: 'Error al obtener video',
-    
+    loadingClubs: 'Cargando clubes...',
+    loadingCourts: 'Cargando canchas...',
+
     // Dashboard
     myClips: 'Clips',
     descriptionPanel: 'Gestiona y monitorea la actividad en tus',
