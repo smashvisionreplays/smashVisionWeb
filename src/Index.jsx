@@ -1,5 +1,13 @@
-import React, { useState } from 'react';
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from "react-router-dom";
+
+function Analytics() {
+  const location = useLocation();
+  useEffect(() => {
+    window.gtag?.('config', import.meta.env.VITE_GA_MEASUREMENT_ID, { page_path: location.pathname });
+  }, [location]);
+  return null;
+}
 import NavBarTW from '../components/NavBarTW';
 import TopNotification from '../components/TopNotification';
 import Footer from '../components/Footer';
@@ -39,6 +47,7 @@ const Index = () => {
       }}
     >
       <div className="flex flex-col min-h-screen">
+        <Analytics />
         <NavBarTW />
 
         {notification && (
