@@ -444,8 +444,7 @@ const detectLanguageFromLocation = async () => {
     const response = await fetch('https://ipapi.co/json/');
     const data = await response.json();
     return spanishCountries.includes(data.country_code) ? 'es' : 'en';
-  } catch (error) {
-    console.log('Location detection failed, using browser language');
+  } catch {
     const browserLang = navigator.language.split('-')[0];
     return browserLang === 'es' ? 'es' : 'en';
   }

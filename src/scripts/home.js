@@ -71,8 +71,7 @@ function getSpecificDates() {
 		const {data,error} = await actions.getClubCourts({club:club});
 		//console.log("courts are in front:", data)
 		if (data && !error) {	
-			const courtsNumber=data[0].Courts_Number;	
-			console.log("courtsNumber is", courtsNumber)
+			const courtsNumber=data[0].Courts_Number;
 			for(var i=1;i<=courtsNumber;i++){
 				//console.log("appending child", i)
 				courtsDropdown?.appendChild(new Option(i.toString(), i.toString())).cloneNode(true);
@@ -95,8 +94,6 @@ function getSpecificDates() {
 				let label = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')} - ${siguienteHora.toString().padStart(2, '0')}:${siguienteMinuto.toString().padStart(2, '0')}`;
 				let value = `${hora.toString().padStart(2, '0')}_${minuto === 0 ? 0 : 1}`;
 
-				//lista.push({ label, value });
-				console.log("appending:",)
 				timeDropdown?.appendChild(new Option(label, value)).cloneNode(true);
 			}
 		}

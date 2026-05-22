@@ -21,7 +21,6 @@ export const WebSocketProvider = ({ children }) => {
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('WebSocket connected to api ws');
         setIsConnected(true);
         reconnectAttempts.current = 0;
       };
@@ -29,7 +28,6 @@ export const WebSocketProvider = ({ children }) => {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('WebSocket message received:', data);
           handleWebSocketMessage(data);
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
@@ -37,7 +35,6 @@ export const WebSocketProvider = ({ children }) => {
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
         setIsConnected(false);
         setSocket(null);
         
@@ -60,29 +57,21 @@ export const WebSocketProvider = ({ children }) => {
   };
 
   const handleWebSocketMessage = (data) => {
-    console.log('Handling WebSocket message:', data);
     switch (data.type) {
       case 'RELOAD_CAMERAS':
-        console.log('Processing RELOAD_CAMERAS signal');
-        // Trigger reload by updating a timestamp
         setLiveUpdates(prev => ({
           ...prev,
           _reloadTrigger: Date.now()
         }));
         break;
-      
+
       case 'LIVE_STREAM_STARTED':
       case 'LIVE_STREAM_STOPPED':
-        console.log('Processing legacy stream message, triggering reload');
-        // Trigger reload for legacy messages
         setLiveUpdates(prev => ({
           ...prev,
           _reloadTrigger: Date.now()
         }));
         break;
-      
-      default:
-        console.log('Unknown WebSocket message type:', data.type);
     }
   };
 

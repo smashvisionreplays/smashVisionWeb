@@ -40,7 +40,6 @@ export const selectBestPoints=async(id_club, weekday, court_number, hour, sectio
 
 // Query all clubs
 export const selectClubs = async () => {
-    console.log("selectclubs in dbcontroller")
     return await query('SELECT * FROM Clubs WHERE status = "active"', []);
 }
 

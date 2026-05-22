@@ -3,11 +3,9 @@ import { Stream } from "@cloudflare/stream-react";
 
 const VideoPlayer = ({ videoRef, onVideoLoaded, uid }) => {
   useEffect(() => {
-    console.log("VideoPlayer: in useffect");
     if (!videoRef?.current) return;
 
     const handleLoadedData = () => {
-      console.log("VideoPlayer: video loaded successfully");
       onVideoLoaded(true);
     };
 
