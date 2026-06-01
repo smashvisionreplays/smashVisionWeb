@@ -18,6 +18,7 @@ async function getM2MToken() {
 
   cachedToken = m2mToken.token;
   tokenExpiry = Date.now() + expiresIn * 1000;
+  console.log(`New M2M token fetched, expires in ${expiresIn} seconds`);
   return cachedToken;
 }
 
@@ -53,8 +54,16 @@ export default async function handler(req, res) {
     const contentType = apiRes.headers.get("content-type") || "";
 
     res.status(apiRes.status);
+
+    const disposition = apiRes.headers.get("content-disposition");
+    if (disposition) res.setHeader("Content-Disposition", disposition);
+
     if (contentType.includes("application/json")) {
       res.json(await apiRes.json());
+    } else if (contentType.startsWith("video/") || contentType === "application/octet-stream") {
+      res.setHeader("Content-Type", contentType);
+      const { Readable } = await import("stream");
+      Readable.fromWeb(apiRes.body).pipe(res);
     } else {
       res.send(await apiRes.text());
     }
