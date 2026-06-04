@@ -85,6 +85,8 @@ const translations = {
     // Video view
     createClip: 'Create Clip of my Game!',
     createClipSimple: 'Create Clip',
+    previousVideo: 'Previous',
+    nextVideo: 'Next',
     bestPoints: 'Best Points',
     loginToCreateClip: 'Login to Create Clip',
     signInRequired: 'Sign In Required',
@@ -296,6 +298,8 @@ const translations = {
     // Video view
     createClip: '¡Crear Clip de mi Juego!',
     createClipSimple: 'Crear Clip',
+    previousVideo: 'Anterior',
+    nextVideo: 'Siguiente',
     bestPoints: 'Mejores Puntos',
     loginToCreateClip: 'Inicia Sesión para Crear Clip',
     signInRequired: 'Inicio de Sesión Requerido',

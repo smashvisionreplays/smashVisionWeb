@@ -5,7 +5,7 @@ import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime } from "../scripts/utils";
-import { fetchBestPoints } from "../../src/controllers/serverController";
+import { fetchBestPoints, fetchCourtVideos } from "../../src/controllers/serverController";
 import { Tooltip } from "antd";
 import { fetchUserMetadata } from "../controllers/userController";
 import { useLanguage } from '../contexts/LanguageContext';
@@ -30,6 +30,8 @@ const VideoView = ({ triggerNotification }) => {
   const [clockTime, setClockTime] = useState("00:00:00");
   const [activeTab, setActiveTab] = useState('createClip');
   const [presetClipTimes, setPresetClipTimes] = useState(null);
+  const [sortedCourtVideos, setSortedCourtVideos] = useState([]);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(-1);
   const { t } = useLanguage();
 
   const state = location.state;
@@ -164,6 +166,61 @@ const VideoView = ({ triggerNotification }) => {
     }
   }, [isVideoLoaded, updateClock]);
 
+  useEffect(() => {
+    if (!id_club || !court_number) return;
+    const loadCourtVideos = async () => {
+      try {
+        const videos = await fetchCourtVideos(id_club, court_number);
+        const weekdayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const todayIndex = new Date().getDay();
+        // Map each weekday to a number 0–6 where today=6, yesterday=5, ...
+        const weekdayToSortKey = (wd) => {
+          const idx = weekdayOrder.indexOf(wd);
+          return ((idx - todayIndex - 1 + 7) % 7);
+        };
+        const sorted = [...videos].sort((a, b) => {
+          const dayDiff = weekdayToSortKey(a.weekday) - weekdayToSortKey(b.weekday);
+          if (dayDiff !== 0) return dayDiff;
+          if (a.hour !== b.hour) return Number(a.hour) - Number(b.hour);
+          return Number(a.hour_section) - Number(b.hour_section);
+        });
+        setSortedCourtVideos(sorted);
+        const idx = sorted.findIndex(v => v.uid === videoUID);
+        setCurrentVideoIndex(idx);
+      } catch (error) {
+        console.error("Error loading court videos for navigation:", error);
+      }
+    };
+    loadCourtVideos();
+  }, [id_club, court_number, videoUID]);
+
+  const navigateToVideo = (targetVideo) => {
+    navigate('/videoView', {
+      state: {
+        videoUID: targetVideo.uid,
+        id_club,
+        weekday: targetVideo.weekday,
+        court_number,
+        hour: targetVideo.hour,
+        section: targetVideo.hour_section,
+      }
+    });
+  };
+
+  const formatVideoTimeLabel = (vid) => {
+    const h = Number(vid.hour);
+    if (vid.hour_section === 0 || vid.hour_section === '0') {
+      return `${String(h).padStart(2, '0')}:00 – ${String(h).padStart(2, '0')}:30`;
+    }
+    return `${String(h).padStart(2, '0')}:30 – ${String(h + 1).padStart(2, '0')}:00`;
+  };
+
+  const currentVideoLabel = currentVideoIndex >= 0 && sortedCourtVideos[currentVideoIndex]
+    ? `${t(sortedCourtVideos[currentVideoIndex].weekday)} · ${formatVideoTimeLabel(sortedCourtVideos[currentVideoIndex])}`
+    : weekday
+      ? `${t(weekday)} · ${formatVideoTimeLabel({ hour, hour_section: section })}`
+      : null;
+
   return (
     <div className=" w-[80%] mx-auto flex flex-col gap-10 sm:flex-row" style={{ marginTop: '6rem', marginBottom: '4rem' }}>
       <div className="mx-auto w-full">
@@ -171,12 +228,43 @@ const VideoView = ({ triggerNotification }) => {
           {clockTime}
         </h3>
         
-        <VideoPlayer 
-          videoRef={videoRef} 
-          onVideoLoaded={handleVideoLoaded} 
-          uid={videoUID} 
+        <VideoPlayer
+          videoRef={videoRef}
+          onVideoLoaded={handleVideoLoaded}
+          uid={videoUID}
         />
-        
+
+        {/* Video Navigation */}
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <button
+            onClick={() => currentVideoIndex > 0 && navigateToVideo(sortedCourtVideos[currentVideoIndex - 1])}
+            disabled={currentVideoIndex <= 0}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 disabled:opacity-25 disabled:cursor-not-allowed"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            {t('previousVideo')}
+          </button>
+
+          {currentVideoLabel && (
+            <span className="text-white/50 text-sm font-medium tracking-wide text-center">
+              {currentVideoLabel}
+            </span>
+          )}
+
+          <button
+            onClick={() => currentVideoIndex >= 0 && currentVideoIndex < sortedCourtVideos.length - 1 && navigateToVideo(sortedCourtVideos[currentVideoIndex + 1])}
+            disabled={currentVideoIndex < 0 || currentVideoIndex >= sortedCourtVideos.length - 1}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 disabled:opacity-25 disabled:cursor-not-allowed"
+          >
+            {t('nextVideo')}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
         {/* Best Points Tags - Desktop Only */}
         {bestPoints.length > 0 && (
           <div className="mt-6 hidden md:block relative backdrop-blur-xl bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl overflow-hidden p-5">

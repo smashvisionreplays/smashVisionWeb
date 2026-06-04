@@ -31,6 +31,16 @@ export const fetchVideos = async (params) => {
   }
 };
 
+export const fetchCourtVideos = async (clubId, courtNumber) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/videos/court/${clubId}/${courtNumber}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching court videos in controller:`, error);
+    throw error;
+  }
+};
+
 export const fetchClubVideos = async (clubId) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/videos/club/${clubId}`);
