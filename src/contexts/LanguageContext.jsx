@@ -150,6 +150,16 @@ const translations = {
     bestPointsGenerated: 'Best Points Generated',
     totalClips: 'Total Clips',
     totalBestPoints: 'Total Best Points',
+    minutesDelivered: 'Minutes Delivered',
+    totalMinutesDelivered: 'Total minutes delivered',
+    metricsUpdatedDaily: 'Metrics updated daily · Data available through yesterday',
+    videoBreakdown: 'Per-video breakdown',
+    noMinutesData: 'No minutes data available for this period',
+    date: 'Date',
+    court: 'Court',
+    time: 'Time',
+    minutes: 'min',
+    total: 'Total',
 
     // CreateClipBox validation
     clipTimeOutOfRange: 'Clip start or end time cannot be out of video total times',
@@ -365,6 +375,16 @@ const translations = {
     bestPointsGenerated: 'Mejores Puntos Generados',
     totalClips: 'Total de Clips',
     totalBestPoints: 'Total de Mejores Puntos',
+    minutesDelivered: 'Minutos Entregados',
+    totalMinutesDelivered: 'Total de minutos entregados',
+    metricsUpdatedDaily: 'Métricas actualizadas a diario · Datos disponibles hasta ayer',
+    videoBreakdown: 'Desglose por video',
+    noMinutesData: 'No hay datos de minutos para este periodo',
+    date: 'Fecha',
+    court: 'Cancha',
+    time: 'Hora',
+    minutes: 'min',
+    total: 'Total',
 
     // CreateClipBox validation
     clipTimeOutOfRange: 'El tiempo de inicio o fin del clip no puede estar fuera del video',

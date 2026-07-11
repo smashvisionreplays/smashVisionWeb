@@ -168,6 +168,53 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
     ];
   }
 
+  export const videoMinutesColumns = (rows, t) => {
+    const uniqueCourts = [...new Set(rows.map(item => item.court_number))];
+    const uniqueDays = [...new Set(rows.map(item => item.weekday))];
+    return [
+      {
+        title: t('date') || 'Date',
+        dataIndex: 'video_date',
+        key: 'video_date',
+        sorter: (a, b) => new Date(a.video_date) - new Date(b.video_date),
+        defaultSortOrder: 'descend',
+      },
+      {
+        title: t('day') || 'Day',
+        dataIndex: 'weekday',
+        key: 'weekday',
+        filters: uniqueDays.map(day => ({ text: t(day) || day, value: day })),
+        filterMode: 'tree',
+        filterSearch: true,
+        onFilter: (value, record) => record.weekday === value,
+        render: (weekday) => t(weekday) || weekday,
+      },
+      {
+        title: t('court') || 'Court',
+        dataIndex: 'court_number',
+        key: 'court_number',
+        filters: uniqueCourts.map(number => ({ text: `${t('court') || 'Court'} ${number}`, value: number })),
+        filterMode: 'tree',
+        filterSearch: true,
+        onFilter: (value, record) => record.court_number == value,
+        render: (number) => `${t('court') || 'Court'} ${number}`,
+      },
+      {
+        title: t('time') || 'Time',
+        dataIndex: 'timeSlot',
+        key: 'timeSlot',
+      },
+      {
+        title: t('minutesDelivered') || 'Minutes Delivered',
+        dataIndex: 'minutesNum',
+        key: 'minutesNum',
+        align: 'right',
+        sorter: (a, b) => a.minutesNum - b.minutesNum,
+        render: (val) => `${Number(val || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${t('minutes') || 'min'}`,
+      },
+    ];
+  }
+
   export const livesColumns = (cameras, handleToggleLive, setWatchCamera, togglingCameras, t) => {
     return [
       {
