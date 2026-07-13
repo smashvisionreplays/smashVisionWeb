@@ -5,6 +5,8 @@ import { useAuth } from '@clerk/clerk-react';
 import { useLanguage } from '../../src/contexts/LanguageContext';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
+import TableAnt from '../TableAnt';
+import { videoMinutesColumns } from './columnSchemas';
 import '../../stylesheet/rangepicker.css';
 
 const { RangePicker } = DatePicker;
@@ -15,12 +17,38 @@ const StatisticsContent = ({ userId }) => {
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState([
     dayjs().subtract(30, 'days'),
-    dayjs()
+    dayjs().subtract(1, 'day')
   ]);
   const [statisticsData, setStatisticsData] = useState({
     clips: [],
-    bestPoints: []
+    bestPoints: [],
+    videoMinutes: []
   });
+
+  // End date is capped to yesterday: today's videos are only synced once daily
+  // (at 7am), so showing "today" would display stale, mid-day-inaccurate data.
+  const disabledDate = (current) => current && current >= dayjs().startOf('day');
+
+  // hour + hour_section (0 = :00-:30, 1 = :30-:00 of next hour) -> "10:00 - 10:30"
+  const formatTimeSlot = (hour, section) => {
+    const pad = (n) => String(n).padStart(2, '0');
+    const startMin = section === 0 ? '00' : '30';
+    const endHour = section === 0 ? hour : hour + 1;
+    const endMin = section === 0 ? '30' : '00';
+    return `${pad(hour)}:${startMin} - ${pad(endHour)}:${endMin}`;
+  };
+
+  const videoMinutes = statisticsData.videoMinutes || [];
+  const totalMinutes = videoMinutes.reduce(
+    (sum, v) => sum + Number(v.minutes_delivered || 0),
+    0
+  );
+  // Pre-format rows for the Ant table: display strings + numeric minutes for sorting
+  const videoMinutesRows = videoMinutes.map((v) => ({
+    ...v,
+    timeSlot: formatTimeSlot(v.hour, v.hour_section),
+    minutesNum: Number(v.minutes_delivered || 0),
+  }));
 
   const loadStatistics = async () => {
     if (!dateRange || dateRange.length !== 2) return;
@@ -100,6 +128,7 @@ const StatisticsContent = ({ userId }) => {
           <RangePicker
             value={dateRange}
             onChange={handleDateRangeChange}
+            disabledDate={disabledDate}
             format="YYYY-MM-DD"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -110,6 +139,7 @@ const StatisticsContent = ({ userId }) => {
             dropdownClassName="mobile-rangepicker"
           />
         </div>
+        <p className="text-white/30 text-xs mt-3">{t('metricsUpdatedDaily')}</p>
       </div>
 
       {/* Statistics Cards */}
@@ -181,6 +211,35 @@ const StatisticsContent = ({ userId }) => {
           )}
         </div>
       </div>
+
+      {/* Minutes Delivered — total */}
+      <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-6">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#DDF31A]/30 to-transparent pointer-events-none"></div>
+        <h3 className="text-sm font-semibold text-white/60 mb-4 uppercase tracking-wider">{t('minutesDelivered')}</h3>
+        <div className="text-center">
+          <div className="text-5xl font-bold text-[#DDF31A] mb-1 drop-shadow-[0_0_12px_rgba(221,243,26,0.3)]">
+            {totalMinutes.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          </div>
+          <p className="text-white/35 text-xs">{t('totalMinutesDelivered')}</p>
+        </div>
+      </div>
+
+      {/* Minutes Delivered — per-video breakdown (same table style as Videos/Clips) */}
+      {videoMinutesRows.length > 0 ? (
+        <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
+          <TableAnt
+            columns={videoMinutesColumns(videoMinutesRows, t)}
+            data={videoMinutesRows}
+            needsExpand={false}
+            needsVirtual={true}
+          />
+        </div>
+      ) : (
+        <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden p-6">
+          <p className="text-white/30 text-xs text-center py-4">{t('noMinutesData')}</p>
+        </div>
+      )}
     </div>
   );
 };

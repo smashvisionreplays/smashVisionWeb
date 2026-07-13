@@ -39,7 +39,16 @@ const BlurredContainer = ({ triggerNotification }) => {
 
   const navigate = useNavigate();
 
-  // Load clubs on component mount
+  const STORAGE_KEY = 'smashvision_search_form';
+
+  const saveToStorage = (update) => {
+    const current = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...current, ...update }));
+  };
+
+  const clearStorage = () => sessionStorage.removeItem(STORAGE_KEY);
+
+  // Load clubs on component mount, then restore saved form state
   useEffect(() => {
     const loadClubs = async () => {
       setLoadingClubs(true);
@@ -52,6 +61,25 @@ const BlurredContainer = ({ triggerNotification }) => {
           icon: club.logo && <img alt="" src={club.logo} className="w-5 h-5 rounded-full" />,
         }));
         setClubs(formattedClubs);
+
+        const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+        if (saved.clubId) {
+          const savedClub = formattedClubs.find(c => c.value === saved.clubId);
+          if (savedClub) {
+            setSelectedClubId(saved.clubId);
+            setSelectedClub(savedClub);
+            form.setFieldValue('club', saved.clubId);
+          }
+        }
+        if (saved.date) {
+          const restoredDate = dayjs(saved.date, dateFormat);
+          setSelectedDate(restoredDate);
+          form.setFieldValue('date', restoredDate);
+        }
+        if (saved.time) {
+          setSelectedTime(saved.time);
+          form.setFieldValue('time', dayjs(saved.time, 'h:mm a'));
+        }
       } catch (error) {
         console.error("Error loading clubs:", error);
         triggerNotification?.("error", t('failedToLoadClubs'));
@@ -65,7 +93,7 @@ const BlurredContainer = ({ triggerNotification }) => {
 
 
 
-  // Load courts when club is selected
+  // Load courts when club is selected, then restore saved court
   useEffect(() => {
     const loadCourts = async () => {
       if (selectedClubId) {
@@ -75,6 +103,12 @@ const BlurredContainer = ({ triggerNotification }) => {
           if (clubData && clubData[0]) {
             const courtsNumbers = clubData[0]["courts_number"].map(court => parseInt(court));
             setCourts(courtsNumbers);
+
+            const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+            if (saved.court && courtsNumbers.includes(saved.court)) {
+              setSelectedCourt(saved.court);
+              form.setFieldValue('court', saved.court);
+            }
           }
         } catch (error) {
           console.error("Error loading courts:", error);
@@ -99,6 +133,19 @@ const BlurredContainer = ({ triggerNotification }) => {
 
   const handleTimeSelect = (time, timeString) => {
     setSelectedTime(timeString);
+    saveToStorage({ time: timeString });
+  };
+
+  const handleClearAll = () => {
+    clearStorage();
+    setSelectedClubId(null);
+    setSelectedClub({});
+    setCourts([]);
+    setSelectedCourt(null);
+    setSelectedDate(dayjs(todayString, dateFormat));
+    setSelectedTime(null);
+    form.resetFields();
+    form.setFieldValue('date', dayjs(todayString, dateFormat));
   };
 
   const handleSeeVideo = async () => {
@@ -250,6 +297,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                   setSelectedClubId(parseInt(value));
                   setSelectedCourt(null);
                   form.setFieldValue('court', null);
+                  saveToStorage({ clubId: parseInt(value), court: null });
                 }}
                 options={clubs}
                 labelRender={labelRender}
@@ -281,7 +329,7 @@ const BlurredContainer = ({ triggerNotification }) => {
               <Select
                 size="large"
                 placeholder={t('selectCourt')}
-                onChange={setSelectedCourt}
+                onChange={(value) => { setSelectedCourt(value); saveToStorage({ court: value }); }}
                 options={courts.map((court) => ({ label: `${t('court')} ${court}`, value: court }))}
                 disabled={!selectedClubId}
                 className="[&_.ant-select-selector]:!bg-white/5 [&_.ant-select-selector]:!border-white/10 [&_.ant-select-selector]:!rounded-[7px] [&_.ant-select-selection-placeholder]:!text-white/50 [&_.ant-select-selection-item]:!text-white [&_.ant-select-selector]:focus:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!border-[#DDF31A] [&_.ant-select-focused_.ant-select-selector]:!shadow-[0_0_0_1px_#DDF31A]"
@@ -307,7 +355,7 @@ const BlurredContainer = ({ triggerNotification }) => {
                 value={selectedDate}
                 minDate={dayjs(lastWeekString, dateFormat)}
                 maxDate={dayjs(todayString, dateFormat)}
-                onChange={(date) => date && setSelectedDate(date)}
+                onChange={(date) => { if (date) { setSelectedDate(date); saveToStorage({ date: date.format(dateFormat) }); } }}
                 allowClear={false}
                 className="[&_.ant-picker]:!bg-white/5 [&_.ant-picker]:!border-white/10 [&_.ant-picker]:!rounded-[12px] [&_.ant-picker-input>input]:!text-white [&_.ant-picker-input>input::placeholder]:!text-white/50 [&_.ant-picker]:focus:!border-[#DDF31A] [&_.ant-picker-focused]:!border-[#DDF31A] [&_.ant-picker-focused]:!shadow-[0_0_0_1px_#DDF31A]"
               />
@@ -332,8 +380,17 @@ const BlurredContainer = ({ triggerNotification }) => {
               />
             </Form.Item>
 
-            {/* Submit Button */}
+            {/* Clear + Submit Buttons */}
             <Form.Item className="mb-0 pt-4">
+              <button
+                type="button"
+                onClick={handleClearAll}
+                className="w-full h-10 mb-3 bg-transparent border border-white/15 text-white/50 hover:text-white/80 hover:border-white/30 text-sm font-medium rounded-xl transition-all duration-200"
+              >
+                {t('clearAllFields')}
+              </button>
+            </Form.Item>
+            <Form.Item className="mb-0">
               <Button
                 type="primary"
                 htmlType="submit"
