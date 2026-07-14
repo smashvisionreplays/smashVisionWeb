@@ -38,6 +38,13 @@ const StatisticsContent = ({ userId }) => {
     return `${pad(hour)}:${startMin} - ${pad(endHour)}:${endMin}`;
   };
 
+  // Date the minutes-delivered feature was deployed. Ranges starting before this
+  // only contain data from here onward, so we surface an explanatory note.
+  const MINUTES_TRACKING_START = dayjs('2026-07-02');
+  const showMinutesNote =
+    dateRange?.[0] && dateRange[0].isBefore(MINUTES_TRACKING_START, 'day');
+  const minutesTrackingStartLabel = MINUTES_TRACKING_START.format('YYYY-MM-DD');
+
   const videoMinutes = statisticsData.videoMinutes || [];
   const totalMinutes = videoMinutes.reduce(
     (sum, v) => sum + Number(v.minutes_delivered || 0),
@@ -222,6 +229,11 @@ const StatisticsContent = ({ userId }) => {
           </div>
           <p className="text-white/35 text-xs">{t('totalMinutesDelivered')}</p>
         </div>
+        {showMinutesNote && (
+          <p className="text-white/40 text-xs mt-4 leading-relaxed border-t border-white/5 pt-4">
+            {t('minutesTrackingNote').replace('{date}', minutesTrackingStartLabel)}
+          </p>
+        )}
       </div>
 
       {/* Minutes Delivered — per-video breakdown (same table style as Videos/Clips) */}
