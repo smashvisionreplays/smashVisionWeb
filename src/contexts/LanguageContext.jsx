@@ -12,6 +12,9 @@ const translations = {
     dashboard: 'Dashboard',
     tournaments: 'Tournaments',
     lives: 'Lives',
+    about: 'About',
+    forClubs: 'For Clubs',
+    forPlayers: 'For Players',
     
     // Home page
     findYourGame: 'Find Your Game',
@@ -238,6 +241,9 @@ const translations = {
     dashboard: 'Panel de Control',
     tournaments: 'Torneos',
     lives: 'En Vivo',
+    about: 'Nosotros',
+    forClubs: 'Para Clubes',
+    forPlayers: 'Para Jugadores',
     
     // Home page
     findYourGame: 'Encuentra Tu Juego',
