@@ -56,7 +56,7 @@ const content = {
     heroTitle: 'Every game your members play',
     heroTitleAccent: 'becomes an asset your club owns.',
     heroText:
-      'SmashVision installs professional cameras in your courts that automatically record every match. Your members relive their games, create highlight clips, and share them — while your club builds a library of branded content, gains 24/7 court visibility, and offers an experience no other club has. Zero effort from your staff.',
+      'We install professional cameras in your courts that record every match automatically. Members relive their games, clip their best points, and share them — while your club builds a branded content library and gains 24/7 court visibility. Zero effort from your staff.',
     heroCtaPrimary: 'Book a demo',
     heroCtaSecondary: 'See what players get',
 
@@ -65,76 +65,76 @@ const content = {
     problems: [
       {
         title: 'Great moments, gone forever',
-        text: 'Your members play their best points and never see them again. There is nothing to relive, analyze, or share — and nothing that brings them back.',
+        text: 'Members play their best points and never see them again — nothing to relive, share, or bring them back.',
       },
       {
-        title: 'Constant pressure to make content',
-        text: 'Social media never stops asking for fresh, authentic footage. Producing it manually is expensive, slow, and rarely feels real.',
+        title: 'Constant pressure for content',
+        text: 'Social media never stops asking for fresh, authentic footage. Making it manually is slow and expensive.',
       },
       {
         title: 'Coaching without playback',
-        text: 'Private classes and clinics rely on memory. Coaches describe mistakes instead of showing them, and players have nothing to review at home.',
+        text: 'Classes rely on memory. Coaches describe mistakes instead of showing them, and players have nothing to review.',
       },
       {
         title: 'No eyes on your courts',
-        text: 'Once staff leave, you have no record of what happened on your premises — during the day, overnight, or between bookings.',
+        text: 'Once staff leave, you have no record of what happened — during the day, overnight, or between bookings.',
       },
     ],
 
     solutionKicker: 'The solution',
     solutionTitle: 'One camera system. A platform your members love and an asset your club owns.',
     solutionText:
-      'We install the hardware, connect it to the SmashVision platform, and run it for you. From that moment, every match on every court is recorded, uploaded, and ready — automatically. What you do with it is where the value multiplies.',
+      'We install the hardware, connect it to SmashVision, and run it for you. From then on, every match on every court records, uploads, and is ready — automatically.',
 
     featuresKicker: 'What SmashVision does for your club',
     features: [
       {
         icon: 'heart',
-        title: 'Engage & retain your members',
-        text: 'Give players a reason to keep coming back. They watch their full match, relive every point, and leave with highlights they are proud to share — a differentiator members will not find anywhere else. It turns a booking into an experience, and an experience into loyalty.',
+        title: 'Engage & retain members',
+        text: 'Players watch their full match and leave with highlights they are proud to share — a differentiator they will not find elsewhere. It turns a booking into an experience, and an experience into loyalty.',
       },
       {
         icon: 'film',
         title: 'An automatic content engine',
-        text: 'Every clip a member creates is watermarked with your brand and added to your club’s content pool. A club with 100 active members generates dozens of real, authentic gameplay clips every week — ready to download and post to Instagram, TikTok, or YouTube with zero work from your team.',
+        text: 'Every member clip is watermarked with your brand and added to your content pool. 100 active members generate dozens of authentic clips a week — ready to post to Instagram, TikTok, or YouTube.',
       },
       {
         icon: 'whistle',
-        title: 'Supercharge private classes & coaching',
-        text: 'Turn every lesson into a review session. During class, anyone can press the court-side button to bookmark a moment worth reviewing — a great point, a repeated mistake, a drill. Those moments show up highlighted on the recording, so coaches and players jump straight to what mattered and clip it to study later. Your academy offers video analysis as a standard feature — not a premium add-on.',
+        title: 'Supercharge classes & coaching',
+        text: 'During class, press the court-side button to bookmark any moment. It appears highlighted on the recording, so coaches and players jump straight to what mattered and clip it to study. Video analysis, as standard.',
       },
       {
         icon: 'broadcast',
         title: 'Live streaming for the public',
-        text: 'Go live from any court with a single button — no external accounts, no setup. Streaming runs automatically on the SmashVision platform and appears instantly on the public Lives page. Broadcast tournaments, finals, and league nights, and give distant fans a front-row seat.',
+        text: 'Go live from any court with one button — no external accounts, no setup. It streams on the SmashVision platform and appears instantly on the public Lives page. Broadcast tournaments, finals, and league nights.',
       },
       {
         icon: 'shield',
-        title: '24/7 security & court visibility',
-        text: 'Our cameras record across all your operating hours — and overnight on request — so you always know what happens on your courts. Use private monitoring to keep eyes on the club after closing, review incidents, and protect your facilities around the clock.',
+        title: '24/7 security & visibility',
+        text: 'Cameras record across all your operating hours — and overnight on request. Keep eyes on the club after closing, review incidents, and protect your facilities around the clock.',
       },
       {
         icon: 'chart',
         title: 'Statistics & insights',
-        text: 'A club dashboard shows clips generated, best points captured, and video minutes delivered over any date range. See exactly how much value your members are getting from the platform — and how much content your club is banking.',
+        text: 'Your dashboard shows clips generated, best points captured, and video minutes delivered over any date range — exactly how much value members get and content your club banks.',
       },
     ],
 
     howKicker: 'How it works',
     howSteps: [
-      { icon: 'camera', title: 'We install the cameras', text: 'Professional cameras go up on your courts and connect to the internet through a secure tunnel — no port forwarding, no IT headaches.' },
-      { icon: 'bolt', title: 'Every game records itself', text: 'Matches are recorded automatically during your operating hours and uploaded to secure cloud streaming. Your staff does nothing.' },
-      { icon: 'film', title: 'Members watch, clip & share', text: 'Players find their game by club, court, date, and time, watch it back, and create branded highlight clips they download and share.' },
-      { icon: 'chart', title: 'Your club reaps the value', text: 'You get a content library, engaged members, coaching playback, live streaming, and round-the-clock court visibility — all in one dashboard.' },
+      { icon: 'camera', title: 'We install the cameras', text: 'Professional cameras go up on your courts and connect through a secure tunnel — no IT headaches.' },
+      { icon: 'bolt', title: 'Every game records itself', text: 'Matches record automatically during your hours and upload to secure cloud streaming. Staff does nothing.' },
+      { icon: 'film', title: 'Members watch, clip & share', text: 'Players find their game by club, court, date, and time, watch it back, and download branded clips.' },
+      { icon: 'chart', title: 'Your club reaps the value', text: 'Content library, engaged members, coaching playback, live streaming, and 24/7 visibility — in one dashboard.' },
     ],
 
     adsKicker: 'Beyond content',
-    adsTitle: 'Structured, branded video is advertising inventory.',
+    adsTitle: 'Your recordings and clips are ad space you can sell.',
     adsText:
-      'Every clip your members generate is watermarked and downloadable — structured video content you can offer to sponsors and partners. It is a format far more engaging than static banners, and it is generated by real players on your courts, every single week. SmashVision turns what is already happening at your club into a marketing asset you own.',
+      'Every game recording and member clip includes dedicated advertising spaces — real estate you can sell to sponsors and local partners. Their brand rides along on authentic padel content generated by real players on your courts, every week. It is a new revenue stream built into footage you are already capturing.',
 
     finalTitle: 'You already have the courts. You already have the players.',
-    finalText: 'SmashVision turns what is already happening into a platform your members love and a marketing asset your club owns. Let us show you how it works at your club.',
+    finalText: 'SmashVision turns what is already happening into a platform your members love and an asset your club owns. Let us show you how it works.',
     finalCtaPrimary: 'Talk to us on WhatsApp',
     finalCtaSecondary: 'Email us',
   },
@@ -144,7 +144,7 @@ const content = {
     heroTitle: 'Cada partido que juegan tus miembros',
     heroTitleAccent: 'se convierte en un activo de tu club.',
     heroText:
-      'SmashVision instala cámaras profesionales en tus canchas que graban automáticamente cada partido. Tus miembros reviven sus juegos, crean clips de sus mejores momentos y los comparten — mientras tu club construye una biblioteca de contenido con tu marca, obtiene visibilidad 24/7 de las canchas y ofrece una experiencia que ningún otro club tiene. Sin ningún esfuerzo de tu personal.',
+      'Instalamos cámaras profesionales en tus canchas que graban cada partido automáticamente. Tus miembros reviven sus juegos, recortan sus mejores puntos y los comparten — mientras tu club construye una biblioteca de contenido con tu marca y obtiene visibilidad 24/7 de las canchas. Sin ningún esfuerzo de tu personal.',
     heroCtaPrimary: 'Agenda una demo',
     heroCtaSecondary: 'Ver qué obtienen los jugadores',
 
@@ -153,76 +153,76 @@ const content = {
     problems: [
       {
         title: 'Grandes momentos, perdidos para siempre',
-        text: 'Tus miembros juegan sus mejores puntos y nunca los vuelven a ver. No hay nada que revivir, analizar o compartir — y nada que los haga volver.',
+        text: 'Tus miembros juegan sus mejores puntos y nunca los vuelven a ver — nada que revivir, compartir o que los haga volver.',
       },
       {
-        title: 'Presión constante por crear contenido',
-        text: 'Las redes sociales nunca dejan de pedir material fresco y auténtico. Producirlo manualmente es caro, lento y rara vez se siente real.',
+        title: 'Presión constante por contenido',
+        text: 'Las redes nunca dejan de pedir material fresco y auténtico. Producirlo manualmente es lento y caro.',
       },
       {
         title: 'Clases sin repetición',
-        text: 'Las clases privadas y los clinics dependen de la memoria. Los entrenadores describen los errores en lugar de mostrarlos, y los jugadores no tienen nada que repasar en casa.',
+        text: 'Las clases dependen de la memoria. Los entrenadores describen los errores en lugar de mostrarlos, y los jugadores no tienen nada que repasar.',
       },
       {
         title: 'Sin ojos en tus canchas',
-        text: 'Cuando el personal se va, no tienes registro de lo que pasó en tus instalaciones — durante el día, de noche o entre reservas.',
+        text: 'Cuando el personal se va, no tienes registro de lo que pasó — durante el día, de noche o entre reservas.',
       },
     ],
 
     solutionKicker: 'La solución',
     solutionTitle: 'Un sistema de cámaras. Una plataforma que tus miembros aman y un activo que tu club posee.',
     solutionText:
-      'Instalamos el hardware, lo conectamos a la plataforma SmashVision y lo operamos por ti. Desde ese momento, cada partido en cada cancha se graba, se sube y queda listo — automáticamente. Lo que haces con ello es donde el valor se multiplica.',
+      'Instalamos el hardware, lo conectamos a SmashVision y lo operamos por ti. Desde ese momento, cada partido en cada cancha se graba, se sube y queda listo — automáticamente.',
 
     featuresKicker: 'Lo que SmashVision hace por tu club',
     features: [
       {
         icon: 'heart',
-        title: 'Engancha y fideliza a tus miembros',
-        text: 'Dale a los jugadores una razón para volver. Ven su partido completo, reviven cada punto y se van con highlights que están orgullosos de compartir — un diferenciador que no encontrarán en ningún otro lugar. Convierte una reserva en una experiencia, y una experiencia en lealtad.',
+        title: 'Engancha y fideliza',
+        text: 'Los jugadores ven su partido completo y se van con highlights que comparten con orgullo — un diferenciador que no hallarán en otro lugar. Convierte una reserva en experiencia, y una experiencia en lealtad.',
       },
       {
         icon: 'film',
-        title: 'Un motor de contenido automático',
-        text: 'Cada clip que crea un miembro lleva la marca de agua de tu marca y se añade al pool de contenido de tu club. Un club con 100 miembros activos genera decenas de clips de juego reales y auténticos cada semana — listos para descargar y publicar en Instagram, TikTok o YouTube sin ningún trabajo de tu equipo.',
+        title: 'Motor de contenido automático',
+        text: 'Cada clip lleva la marca de agua de tu club y se suma a tu pool de contenido. 100 miembros activos generan decenas de clips auténticos por semana — listos para Instagram, TikTok o YouTube.',
       },
       {
         icon: 'whistle',
-        title: 'Potencia clases privadas y entrenamientos',
-        text: 'Convierte cada lección en una sesión de análisis. Durante la clase, cualquiera puede presionar el botón en la cancha para marcar un momento que valga la pena repasar — un gran punto, un error repetido, un ejercicio. Esos momentos aparecen resaltados en la grabación, así entrenadores y jugadores saltan directo a lo que importó y lo recortan para estudiar después. Tu academia ofrece análisis en video como una función estándar — no como un extra premium.',
+        title: 'Potencia clases y entrenamientos',
+        text: 'Durante la clase, presiona el botón en la cancha para marcar cualquier momento. Aparece resaltado en la grabación, así entrenadores y jugadores saltan a lo que importó y lo recortan para estudiar. Análisis en video, de serie.',
       },
       {
         icon: 'broadcast',
-        title: 'Transmisión en vivo para el público',
-        text: 'Transmite en vivo desde cualquier cancha con un solo botón — sin cuentas externas ni configuración. La transmisión funciona automáticamente en la plataforma SmashVision y aparece al instante en la página pública de En Vivo. Transmite torneos, finales y noches de liga, y dale a los aficionados lejanos un asiento de primera fila.',
+        title: 'Transmisión en vivo pública',
+        text: 'Transmite desde cualquier cancha con un botón — sin cuentas externas ni configuración. Se transmite en la plataforma SmashVision y aparece al instante en la página de En Vivo. Torneos, finales y noches de liga.',
       },
       {
         icon: 'shield',
         title: 'Seguridad y visibilidad 24/7',
-        text: 'Nuestras cámaras graban durante todo tu horario de operación — y de noche si lo solicitas — para que siempre sepas qué pasa en tus canchas. Usa el monitoreo privado para vigilar el club después del cierre, revisar incidentes y proteger tus instalaciones las 24 horas.',
+        text: 'Las cámaras graban durante todo tu horario — y de noche si lo solicitas. Vigila el club tras el cierre, revisa incidentes y protege tus instalaciones las 24 horas.',
       },
       {
         icon: 'chart',
         title: 'Estadísticas e insights',
-        text: 'Un panel del club muestra los clips generados, los mejores puntos capturados y los minutos de video entregados en cualquier rango de fechas. Ve exactamente cuánto valor obtienen tus miembros de la plataforma — y cuánto contenido está acumulando tu club.',
+        text: 'Tu panel muestra clips generados, mejores puntos capturados y minutos de video entregados en cualquier rango de fechas — cuánto valor obtienen tus miembros y cuánto contenido acumula tu club.',
       },
     ],
 
     howKicker: 'Cómo funciona',
     howSteps: [
-      { icon: 'camera', title: 'Instalamos las cámaras', text: 'Cámaras profesionales se instalan en tus canchas y se conectan a internet mediante un túnel seguro — sin redireccionamiento de puertos ni dolores de cabeza de IT.' },
-      { icon: 'bolt', title: 'Cada juego se graba solo', text: 'Los partidos se graban automáticamente durante tu horario y se suben a streaming seguro en la nube. Tu personal no hace nada.' },
-      { icon: 'film', title: 'Los miembros ven, recortan y comparten', text: 'Los jugadores encuentran su juego por club, cancha, fecha y hora, lo vuelven a ver y crean clips con tu marca que descargan y comparten.' },
-      { icon: 'chart', title: 'Tu club cosecha el valor', text: 'Obtienes una biblioteca de contenido, miembros comprometidos, repetición para entrenamientos, transmisión en vivo y visibilidad continua de las canchas — todo en un panel.' },
+      { icon: 'camera', title: 'Instalamos las cámaras', text: 'Cámaras profesionales se instalan en tus canchas y se conectan mediante un túnel seguro — sin dolores de cabeza de IT.' },
+      { icon: 'bolt', title: 'Cada juego se graba solo', text: 'Los partidos se graban automáticamente durante tu horario y se suben a la nube. Tu personal no hace nada.' },
+      { icon: 'film', title: 'Los miembros ven y recortan', text: 'Los jugadores encuentran su juego por club, cancha, fecha y hora, lo ven y descargan clips con tu marca.' },
+      { icon: 'chart', title: 'Tu club cosecha el valor', text: 'Biblioteca de contenido, miembros comprometidos, repetición para clases, vivo y visibilidad 24/7 — en un panel.' },
     ],
 
     adsKicker: 'Más allá del contenido',
-    adsTitle: 'El video estructurado y con tu marca es inventario publicitario.',
+    adsTitle: 'Tus grabaciones y clips son espacio publicitario que puedes vender.',
     adsText:
-      'Cada clip que generan tus miembros lleva marca de agua y se puede descargar — contenido de video estructurado que puedes ofrecer a patrocinadores y socios. Es un formato mucho más atractivo que los banners estáticos, y lo generan jugadores reales en tus canchas, cada semana. SmashVision convierte lo que ya sucede en tu club en un activo de marketing que te pertenece.',
+      'Cada grabación de partido y clip de tus miembros incluye espacios publicitarios dedicados — un espacio que puedes vender a patrocinadores y socios locales. Su marca acompaña contenido de pádel auténtico generado por jugadores reales en tus canchas, cada semana. Un nuevo ingreso integrado en material que ya estás capturando.',
 
     finalTitle: 'Ya tienes las canchas. Ya tienes los jugadores.',
-    finalText: 'SmashVision convierte lo que ya está sucediendo en una plataforma que tus miembros aman y un activo de marketing que tu club posee. Déjanos mostrarte cómo funciona en tu club.',
+    finalText: 'SmashVision convierte lo que ya está sucediendo en una plataforma que tus miembros aman y un activo que tu club posee. Déjanos mostrarte cómo funciona.',
     finalCtaPrimary: 'Escríbenos por WhatsApp',
     finalCtaSecondary: 'Envíanos un correo',
   },

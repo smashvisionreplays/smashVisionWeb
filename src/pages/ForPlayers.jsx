@@ -51,7 +51,7 @@ const content = {
     heroTitle: 'Relive every point.',
     heroTitleAccent: 'Share every moment.',
     heroText:
-      'The cameras at your club record every game automatically — so the moment you step off the court, your match is already waiting for you. Watch it back, clip your best rallies, and download them to keep forever. No setup, no hassle, nothing to install.',
+      'The cameras at your club record every game automatically — so the moment you step off the court, your match is waiting. Watch it back, clip your best rallies, and download them to keep forever. Nothing to set up, nothing to install.',
     heroCta: 'Find my game',
     heroCtaSecondary: 'Watch live matches',
 
@@ -60,50 +60,50 @@ const content = {
       {
         icon: 'search',
         title: 'Find your game in seconds',
-        text: 'Just pick your club, court, date, and the hour you played. Your full match appears instantly — with a 7-day history so you never miss it. No login needed to search and watch.',
+        text: 'Pick your club, court, date, and hour — your full match appears instantly, with a 7-day history. No login needed to search and watch.',
       },
       {
         icon: 'play',
         title: 'Watch your full match',
-        text: 'Stream your entire game in high quality, with a live clock overlay that syncs the real-world time to what is happening on screen. Jump straight to the moments you marked on court with one click.',
+        text: 'Stream your whole game in high quality, with a live clock synced to the action. Jump to the moments you marked on court with one click.',
       },
       {
         icon: 'scissors',
         title: 'Create highlight clips',
-        text: 'Capture any moment as a 5–60 second clip. Tag it as a Good Point, Blooper, or Forced Error, add a personal note, and let the platform render it — branded and ready to share.',
+        text: 'Capture any moment as a 5–60 second clip. Tag it, add a note, and let the platform render it — branded and ready to share.',
       },
       {
         icon: 'download',
-        title: 'Download & keep them forever',
-        text: 'Every clip you make is yours to download as an MP4. Post it, send it to your group chat, or build your own highlight reel — the moment is yours to keep.',
+        title: 'Download & keep forever',
+        text: 'Every clip is yours to download as an MP4. Post it, send it to the group chat, or build your own reel — the moment is yours.',
       },
       {
         icon: 'star',
         title: 'Mark moments as you play',
-        text: 'Nailed a great point? Press the button on the court to bookmark that moment. When you open your recording, every marked moment is highlighted and clickable as a Best Point — tap one to jump right to the rally and clip it, no scrubbing required.',
+        text: 'Nailed a great point? Press the court-side button to bookmark it. In your recording it shows up as a clickable Best Point — tap to jump straight to the rally and clip it.',
       },
       {
         icon: 'folder',
-        title: 'Everything saved to your account',
-        text: 'Every clip you create is stored in your personal Dashboard. Come back any time to rewatch, download, or share the highlights you have collected.',
+        title: 'Saved to your account',
+        text: 'Every clip is stored in your personal Dashboard. Come back any time to rewatch, download, or share your highlights.',
       },
       {
         icon: 'broadcast',
         title: 'Watch matches live',
-        text: 'Courts streaming right now show up on the Lives page. Pick any SmashVision club and watch live padel unfold in real time — perfect for following friends, finals, and tournaments.',
+        text: 'Courts streaming right now appear on the Lives page. Pick any SmashVision club and watch padel unfold in real time — friends, finals, and tournaments.',
       },
       {
         icon: 'globe',
         title: 'In your language, zero setup',
-        text: 'The whole experience works in English or Spanish and adapts to you automatically. There is nothing to install and nothing to configure — just show up, play, and relive it.',
+        text: 'The whole experience works in English or Spanish and adapts automatically. Nothing to install — just show up, play, and relive it.',
       },
     ],
 
     howKicker: 'Getting started',
     howSteps: [
-      { title: 'Play your game', text: 'Book and play at any SmashVision-equipped club. The cameras record your match automatically — you do not have to do a thing.' },
-      { title: 'Find it online', text: 'Head to the app, select your club, court, date, and time, and your match loads instantly. Free to search and watch.' },
-      { title: 'Clip & download', text: 'Sign in to create clips of your best moments, tag them, add notes, and download them as MP4s saved to your account.' },
+      { title: 'Play your game', text: 'Play at any SmashVision-equipped club. The cameras record automatically — you do nothing.' },
+      { title: 'Find it online', text: 'Open the app, select your club, court, date, and time, and your match loads instantly. Free to watch.' },
+      { title: 'Clip & download', text: 'Sign in to clip your best moments, tag them, and download them as MP4s saved to your account.' },
     ],
 
     finalTitle: 'Your best game is already waiting for you.',
@@ -117,7 +117,7 @@ const content = {
     heroTitle: 'Revive cada punto.',
     heroTitleAccent: 'Comparte cada momento.',
     heroText:
-      'Las cámaras de tu club graban cada partido automáticamente — así que en el momento en que sales de la cancha, tu juego ya te está esperando. Vuelve a verlo, recorta tus mejores jugadas y descárgalas para guardarlas para siempre. Sin configuración, sin complicaciones, sin nada que instalar.',
+      'Las cámaras de tu club graban cada partido automáticamente — así que al salir de la cancha, tu juego ya te está esperando. Vuelve a verlo, recorta tus mejores jugadas y descárgalas para siempre. Sin configuración, sin nada que instalar.',
     heroCta: 'Buscar mi juego',
     heroCtaSecondary: 'Ver partidos en vivo',
 
@@ -126,50 +126,50 @@ const content = {
       {
         icon: 'search',
         title: 'Encuentra tu juego en segundos',
-        text: 'Solo elige tu club, cancha, fecha y la hora en que jugaste. Tu partido completo aparece al instante — con un historial de 7 días para que nunca te lo pierdas. No necesitas iniciar sesión para buscar y ver.',
+        text: 'Elige tu club, cancha, fecha y hora — tu partido completo aparece al instante, con un historial de 7 días. No necesitas iniciar sesión para buscar y ver.',
       },
       {
         icon: 'play',
         title: 'Mira tu partido completo',
-        text: 'Reproduce todo tu juego en alta calidad, con un reloj en vivo que sincroniza la hora real con lo que sucede en pantalla. Salta directo a los momentos que marcaste en la cancha con un clic.',
+        text: 'Reproduce todo tu juego en alta calidad, con un reloj en vivo sincronizado con la acción. Salta a los momentos que marcaste en la cancha con un clic.',
       },
       {
         icon: 'scissors',
         title: 'Crea clips de tus highlights',
-        text: 'Captura cualquier momento como un clip de 5 a 60 segundos. Etiquétalo como Buen Punto, Blooper o Error Forzado, añade una nota personal y deja que la plataforma lo procese — con marca y listo para compartir.',
+        text: 'Captura cualquier momento como un clip de 5 a 60 segundos. Etiquétalo, añade una nota y deja que la plataforma lo procese — con marca y listo para compartir.',
       },
       {
         icon: 'download',
-        title: 'Descárgalos y guárdalos para siempre',
-        text: 'Cada clip que creas es tuyo para descargar como MP4. Publícalo, envíalo a tu grupo de chat o arma tu propio reel de highlights — el momento es tuyo para conservarlo.',
+        title: 'Descárgalos para siempre',
+        text: 'Cada clip es tuyo para descargar como MP4. Publícalo, envíalo al grupo o arma tu propio reel — el momento es tuyo.',
       },
       {
         icon: 'star',
         title: 'Marca momentos mientras juegas',
-        text: '¿Clavaste un gran punto? Presiona el botón en la cancha para marcar ese momento. Cuando abras tu grabación, cada momento marcado aparece resaltado y clicable como Mejor Punto — toca uno para saltar directo a la jugada y recortarla, sin tener que adelantar.',
+        text: '¿Clavaste un gran punto? Presiona el botón en la cancha para marcarlo. En tu grabación aparece como un Mejor Punto clicable — tócalo para saltar a la jugada y recortarla.',
       },
       {
         icon: 'folder',
         title: 'Todo guardado en tu cuenta',
-        text: 'Cada clip que creas se almacena en tu Panel personal. Vuelve cuando quieras para volver a verlos, descargarlos o compartir los highlights que has coleccionado.',
+        text: 'Cada clip se almacena en tu Panel personal. Vuelve cuando quieras para verlos, descargarlos o compartir tus highlights.',
       },
       {
         icon: 'broadcast',
         title: 'Mira partidos en vivo',
-        text: 'Las canchas que están transmitiendo ahora mismo aparecen en la página de En Vivo. Elige cualquier club SmashVision y mira el pádel en vivo en tiempo real — perfecto para seguir a amigos, finales y torneos.',
+        text: 'Las canchas que transmiten ahora aparecen en la página de En Vivo. Elige cualquier club SmashVision y mira el pádel en tiempo real — amigos, finales y torneos.',
       },
       {
         icon: 'globe',
         title: 'En tu idioma, sin configuración',
-        text: 'Toda la experiencia funciona en inglés o español y se adapta a ti automáticamente. No hay nada que instalar ni configurar — solo llega, juega y revívelo.',
+        text: 'Toda la experiencia funciona en inglés o español y se adapta automáticamente. Nada que instalar — solo llega, juega y revívelo.',
       },
     ],
 
     howKicker: 'Cómo empezar',
     howSteps: [
-      { title: 'Juega tu partido', text: 'Reserva y juega en cualquier club equipado con SmashVision. Las cámaras graban tu partido automáticamente — no tienes que hacer nada.' },
-      { title: 'Encuéntralo en línea', text: 'Entra a la app, selecciona tu club, cancha, fecha y hora, y tu partido carga al instante. Gratis para buscar y ver.' },
-      { title: 'Recorta y descarga', text: 'Inicia sesión para crear clips de tus mejores momentos, etiquétalos, añade notas y descárgalos como MP4 guardados en tu cuenta.' },
+      { title: 'Juega tu partido', text: 'Juega en cualquier club equipado con SmashVision. Las cámaras graban automáticamente — no haces nada.' },
+      { title: 'Encuéntralo en línea', text: 'Abre la app, selecciona tu club, cancha, fecha y hora, y tu partido carga al instante. Gratis para ver.' },
+      { title: 'Recorta y descarga', text: 'Inicia sesión para recortar tus mejores momentos, etiquétalos y descárgalos como MP4 guardados en tu cuenta.' },
     ],
 
     finalTitle: 'Tu mejor juego ya te está esperando.',
