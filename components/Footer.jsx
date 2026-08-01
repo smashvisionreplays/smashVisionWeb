@@ -30,6 +30,8 @@ export default function Footer() {
             </p>
             <Link to="/" className="text-white/50 hover:text-[#DDF31A] text-sm transition-colors">{t('findYourGame')}</Link>
             <Link to="/lives" className="text-white/50 hover:text-[#DDF31A] text-sm transition-colors">{t('lives')}</Link>
+            <Link to="/about" className="text-white/50 hover:text-[#DDF31A] text-sm transition-colors">{t('about')}</Link>
+            <Link to="/about?tab=players" className="text-white/50 hover:text-[#DDF31A] text-sm transition-colors">{t('forPlayers')}</Link>
             <Link to="/tournaments" className="text-white/50 hover:text-[#DDF31A] text-sm transition-colors">{t('tournaments')}</Link>
           </div>
 

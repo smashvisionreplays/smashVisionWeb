@@ -20,6 +20,7 @@ import ClipView from './pages/ClipView';
 import Login from './pages/Login';
 import Tournaments from './pages/Tournaments';
 import Lives from './pages/Lives';
+import About from './pages/About';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 import {ConfigProvider, Steps, theme } from 'antd';
@@ -65,6 +66,7 @@ const Index = () => {
             <Route path="/" element={<Home triggerNotification={triggerNotification} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/about" element={<About />} />
             <Route path="/lives" element={<Lives />} />
             <Route
               path="/dashboard"
