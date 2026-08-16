@@ -122,6 +122,16 @@ const translations = {
     clipReadyDescription: 'The clip has been processed and saved in your account. You can find it anytime in your dashboard and download it from there.',
     goToDashboard: 'Go to Dashboard',
 
+    // Sharing
+    shareOnWhatsApp: 'Share on WhatsApp',
+    shareVideoMessage: 'Watch this match on SmashVision (available for 7 days):',
+    shareClip: 'Share',
+    shareNow: 'Share now',
+    preparingClip: 'Preparing clip...',
+    shareClipTitle: 'My SmashVision clip',
+    shareClipMessage: 'My clip from SmashVision',
+    shareClipFailed: 'Could not share the clip. Try downloading it instead.',
+
     // Lives page
     liveStreams: 'Live Streams',
     liveStreamsDescription: 'Watch live padel matches from clubs around the world. Select a club to see their active courts.',
@@ -350,6 +360,16 @@ const translations = {
     clipReadyTitle: '¡Tu clip está listo!',
     clipReadyDescription: 'El clip ha sido procesado y guardado en tu cuenta. Puedes encontrarlo en cualquier momento en tu panel y descargarlo desde allí.',
     goToDashboard: 'Ir al Panel',
+
+    // Sharing
+    shareOnWhatsApp: 'Compartir por WhatsApp',
+    shareVideoMessage: 'Mira este partido en SmashVision (disponible por 7 días):',
+    shareClip: 'Compartir',
+    shareNow: 'Compartir ahora',
+    preparingClip: 'Preparando clip...',
+    shareClipTitle: 'Mi clip de SmashVision',
+    shareClipMessage: 'Mi clip de SmashVision',
+    shareClipFailed: 'No se pudo compartir el clip. Intenta descargarlo.',
 
     // Lives page
     liveStreams: 'Transmisiones en Vivo',

@@ -1,4 +1,5 @@
 import TagDisplay from "../TagDisplay";
+import ShareClipButton from "../share/ShareClipButton";
 
 export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
   const uniqueCourtNumbers = [...new Set(videos.map(item => item.Court_Number))];
@@ -96,7 +97,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
   ];
 }
 
-  export const clipsColumns = (clips, showVideoInModal, onDeleteClip, t, userRole) => {
+  export const clipsColumns = (clips, showVideoInModal, onDeleteClip, t, userRole, onShareError) => {
     const uniqueDays = [...new Set(clips.map(item => item.Weekday))];
     return [
       {
@@ -152,6 +153,14 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
               >
                 {t('download') || 'Download'}
               </a>
+            )}
+            {record.downloadURL && (
+              <ShareClipButton
+                clipUID={record.UID}
+                clipName={record.Clip_Name}
+                note={record.note}
+                onError={onShareError}
+              />
             )}
             {(userRole !== 'club' || record.id_user == null) && (
               <button

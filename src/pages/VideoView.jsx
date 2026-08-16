@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
+import WhatsAppShareButton from "../../components/share/WhatsAppShareButton";
 import Notification from "../../components/Notification";
 import { getVideoSeekTime, getWeekdaySortKey, buildVideoViewSearch, parseVideoViewSearch, getVideoSlotKey } from "../scripts/utils";
 import { fetchBestPoints, fetchCourtVideos, fetchVideos } from "../../src/controllers/serverController";
@@ -321,6 +322,13 @@ const VideoView = ({ triggerNotification }) => {
             </svg>
           </button>
         </div>
+
+        {/* Share the video as a link: the URL carries the full video address */}
+        {videoUID && (
+          <div className="mt-4 flex justify-center">
+            <WhatsAppShareButton url={`${window.location.origin}/videoView?${buildVideoViewSearch(videoParams)}`} />
+          </div>
+        )}
 
         {/* Best Points Tags - Desktop Only */}
         {bestPoints.length > 0 && (

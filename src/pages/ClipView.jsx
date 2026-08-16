@@ -11,6 +11,7 @@ const useIsMobile = () => {
 };
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import ProgressBar from "../../components/ProgressBar";
+import ShareClipButton from "../../components/share/ShareClipButton";
 import { useLocation } from "react-router-dom";
 import { fetchVideoData, createDownload, fetchDownload, selectDownload, updateDownload } from "../controllers/serverController";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -185,7 +186,7 @@ const ClipView = ({ triggerNotification }) => {
         {isClipReady && <VideoPlayer videoRef={videoRef} onVideoLoaded={setIsVideoLoaded} uid={clipUID} />}
 
         {isVideoLoaded && (
-          <div className="mt-5 mx-auto flex justify-center">
+          <div className="mt-5 mx-auto flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3">
             <button
               disabled={!downloadURL}
               onClick={handleDownloadVideo}
@@ -193,6 +194,18 @@ const ClipView = ({ triggerNotification }) => {
             >
               {t('downloadVideo')}
             </button>
+
+            {/* The clip is already processed here, so the file can be fetched
+                up front and shared with a single tap. */}
+            {downloadURL && (
+              <ShareClipButton
+                clipUID={clipUID}
+                note={clipNote}
+                prefetch
+                className="w-full sm:w-auto py-2.5 px-5 font-semibold"
+                onError={(message) => triggerNotification?.('error', message, '', true)}
+              />
+            )}
           </div>
         )}
 

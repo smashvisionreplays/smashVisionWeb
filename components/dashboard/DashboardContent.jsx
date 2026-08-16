@@ -228,7 +228,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
           <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
             <TableAnt
-              columns={clipsColumns(clips, handleShowModal, handleOpenDeleteModal, t, userRole)}
+              columns={clipsColumns(clips, handleShowModal, handleOpenDeleteModal, t, userRole, (message) => triggerNotification?.('error', message, '', true))}
               data={clips}
               needsExpand={false}
               needsVirtual={true}

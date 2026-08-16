@@ -179,6 +179,19 @@ export async function createDownload(uid) {
   }
 }
 
+// Downloads the clip itself instead of handing the browser a URL, so it can be
+// passed to the native share sheet as a file. Throws so the caller can fall
+// back to a plain download.
+export async function fetchClipFile(uid) {
+  const response = await fetch(`${API_BASE_URL}/clips/${uid}/download/file`);
+
+  if (!response.ok) {
+      throw new Error(`Failed to download clip file (${response.status})`);
+  }
+
+  return await response.blob();
+}
+
 export async function selectDownload(uid) {
   try {
       const response = await fetch(`${API_BASE_URL}/clips/${uid}/download`, {
