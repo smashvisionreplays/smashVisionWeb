@@ -208,10 +208,14 @@ const VideoView = ({ triggerNotification }) => {
     return `${String(h).padStart(2, '0')}:30 – ${String(h + 1).padStart(2, '0')}:00`;
   };
 
+  // Prev/next never leaves the current court, so court_number from state is always the right one.
+  const courtLabel = court_number ? `${t('court')} ${court_number}` : null;
+  const withCourt = (label) => (courtLabel ? `${courtLabel} · ${label}` : label);
+
   const currentVideoLabel = currentVideoIndex >= 0 && sortedCourtVideos[currentVideoIndex]
-    ? `${t(sortedCourtVideos[currentVideoIndex].weekday)} · ${formatVideoTimeLabel(sortedCourtVideos[currentVideoIndex])}`
+    ? withCourt(`${t(sortedCourtVideos[currentVideoIndex].weekday)} · ${formatVideoTimeLabel(sortedCourtVideos[currentVideoIndex])}`)
     : weekday
-      ? `${t(weekday)} · ${formatVideoTimeLabel({ hour, hour_section: section })}`
+      ? withCourt(`${t(weekday)} · ${formatVideoTimeLabel({ hour, hour_section: section })}`)
       : null;
 
   return (
