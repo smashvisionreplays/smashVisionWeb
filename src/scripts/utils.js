@@ -10,6 +10,16 @@ export function convertSecondsToMinutes(secs) {
     return {minutes,seconds};
 }
 
+// Videos are addressed by weekday within a rolling 7-day window, so a weekday
+// only orders correctly relative to today. Maps each weekday to 0–6 where the
+// oldest available day (7 days ago) = 0 and today = 6.
+export function getWeekdaySortKey(weekday, today = new Date()) {
+    const weekdayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const idx = weekdayOrder.indexOf(weekday);
+    if (idx === -1) return -1;
+    return ((idx - today.getDay() - 1 + 7) % 7);
+}
+
 //function for best moments
 export function getVideoSeekTime(selectedTime, startRecordingTime) {
     const toSeconds = (time) => {

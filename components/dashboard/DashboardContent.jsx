@@ -8,6 +8,7 @@ import { useAuth } from '@clerk/clerk-react';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 import StatisticsContent from "./StatisticsContent";
+import { getWeekdaySortKey } from "../../src/scripts/utils";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
   const { t, language } = useLanguage();
@@ -157,7 +158,17 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
     try {
       const clubData = await fetchClubVideos(userId);
       if (clubData) {
-        const formattedVideos = clubData.map((video) => ({
+        // Default order: day (oldest → today), then court, then hour.
+        // Ant's filters keep the data source order, so filtered views stay sorted too.
+        const sortedData = [...clubData].sort((a, b) => {
+          const dayDiff = getWeekdaySortKey(a.weekday) - getWeekdaySortKey(b.weekday);
+          if (dayDiff !== 0) return dayDiff;
+          const courtDiff = Number(a.court_number) - Number(b.court_number);
+          if (courtDiff !== 0) return courtDiff;
+          if (a.hour !== b.hour) return Number(a.hour) - Number(b.hour);
+          return Number(a.hour_section) - Number(b.hour_section);
+        });
+        const formattedVideos = sortedData.map((video) => ({
           ID: video.id,
           id_club: userId,
           Weekday: video.weekday,

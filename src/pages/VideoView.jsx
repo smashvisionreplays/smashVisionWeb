@@ -4,7 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
 import Notification from "../../components/Notification";
-import { getVideoSeekTime } from "../scripts/utils";
+import { getVideoSeekTime, getWeekdaySortKey } from "../scripts/utils";
 import { fetchBestPoints, fetchCourtVideos } from "../../src/controllers/serverController";
 import { Tooltip } from "antd";
 import { fetchUserMetadata } from "../controllers/userController";
@@ -171,15 +171,8 @@ const VideoView = ({ triggerNotification }) => {
     const loadCourtVideos = async () => {
       try {
         const videos = await fetchCourtVideos(id_club, court_number);
-        const weekdayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const todayIndex = new Date().getDay();
-        // Map each weekday to a number 0–6 where today=6, yesterday=5, ...
-        const weekdayToSortKey = (wd) => {
-          const idx = weekdayOrder.indexOf(wd);
-          return ((idx - todayIndex - 1 + 7) % 7);
-        };
         const sorted = [...videos].sort((a, b) => {
-          const dayDiff = weekdayToSortKey(a.weekday) - weekdayToSortKey(b.weekday);
+          const dayDiff = getWeekdaySortKey(a.weekday) - getWeekdaySortKey(b.weekday);
           if (dayDiff !== 0) return dayDiff;
           if (a.hour !== b.hour) return Number(a.hour) - Number(b.hour);
           return Number(a.hour_section) - Number(b.hour_section);
