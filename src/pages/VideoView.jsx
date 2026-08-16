@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import VideoPlayer from "../../components/videoView/VideoPlayer";
 import CreateClipBox from "../../components/videoView/CreateClipBox";
 import Notification from "../../components/Notification";
-import { getVideoSeekTime, getWeekdaySortKey } from "../scripts/utils";
-import { fetchBestPoints, fetchCourtVideos } from "../../src/controllers/serverController";
+import { getVideoSeekTime, getWeekdaySortKey, buildVideoViewSearch, parseVideoViewSearch, getVideoSlotKey } from "../scripts/utils";
+import { fetchBestPoints, fetchCourtVideos, fetchVideos } from "../../src/controllers/serverController";
 import { Tooltip } from "antd";
 import { fetchUserMetadata } from "../controllers/userController";
 import { useLanguage } from '../contexts/LanguageContext';
@@ -32,23 +32,74 @@ const VideoView = ({ triggerNotification }) => {
   const [presetClipTimes, setPresetClipTimes] = useState(null);
   const [sortedCourtVideos, setSortedCourtVideos] = useState([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(-1);
+  const [resolvedVideo, setResolvedVideo] = useState(null);
   const { t } = useLanguage();
 
-  const state = location.state;
-  const { id_club, weekday, hour, court_number, section, videoUID } = state || {};
+  // A video can be addressed three ways: the URL query (shared link, refresh,
+  // bookmark), navigation state (in-app links), or the sessionStorage mirror
+  // (links made before the URL carried parameters). The URL wins so that what
+  // the address bar shows is always what is playing.
+  const urlParams = useMemo(() => parseVideoViewSearch(location.search), [location.search]);
+  const stateParams = location.state?.weekday ? location.state : null;
+  const videoParams = urlParams || stateParams;
+  const { id_club, weekday, hour, court_number, section } = videoParams || {};
+  const slotKey = videoParams ? getVideoSlotKey(videoParams) : null;
+
+  // The uid is not in the URL, so it comes either from the navigation state of
+  // an in-app click (instant) or from a lookup (shared link). Both are matched
+  // against the current slot so a uid is never reused for the next video.
+  const stateUID = stateParams && getVideoSlotKey(stateParams) === slotKey ? stateParams.videoUID : null;
+  const videoUID = stateUID || (resolvedVideo?.slotKey === slotKey ? resolvedVideo.uid : null);
 
   useEffect(() => {
-    if (state) {
-      sessionStorage.setItem("videoViewState", JSON.stringify(state));
+    if (videoParams) return;
+    const saved = sessionStorage.getItem("videoViewState");
+    const restored = saved ? JSON.parse(saved) : null;
+    if (restored?.weekday) {
+      navigate(`/videoView?${buildVideoViewSearch(restored)}`, { replace: true });
     } else {
-      const saved = sessionStorage.getItem("videoViewState");
-      if (saved) {
-        navigate("/videoView", { replace: true, state: JSON.parse(saved) });
-      } else {
+      navigate("/", { replace: true });
+    }
+  }, [videoParams, navigate]);
+
+  // Keep the address bar shareable: stamp the parameters onto the URL whenever
+  // we arrived through navigation state.
+  useEffect(() => {
+    if (!videoParams) return;
+    sessionStorage.setItem("videoViewState", JSON.stringify(videoParams));
+    const search = buildVideoViewSearch(videoParams);
+    if (location.search !== `?${search}`) {
+      navigate(`/videoView?${search}`, { replace: true, state: location.state });
+    }
+  }, [videoParams, location.search, location.state, navigate]);
+
+  // A shared link may carry only the slot, with no uid; resolve it the same way
+  // the Home search does.
+  useEffect(() => {
+    if (!videoParams || videoUID) return;
+    let cancelled = false;
+
+    const resolveVideo = async () => {
+      try {
+        const video = await fetchVideos({ id_club, weekday, court_number, hour, section });
+        if (cancelled) return;
+        if (!video?.length || !video[0].url) {
+          triggerNotification?.("error", t('videoNotFound'), t('noVideoAvailable'));
+          navigate("/", { replace: true });
+          return;
+        }
+        setResolvedVideo({ slotKey, uid: video[0].uid });
+      } catch (error) {
+        if (cancelled) return;
+        console.error("Error resolving video from URL parameters:", error);
+        triggerNotification?.("error", t('failedToFetchVideo'));
         navigate("/", { replace: true });
       }
-    }
-  }, [state, navigate]);
+    };
+
+    resolveVideo();
+    return () => { cancelled = true; };
+  }, [videoParams, videoUID, slotKey, id_club, weekday, court_number, hour, section, navigate]);
 
   // Utility functions
   const formatTime = (hours, minutes, seconds) =>
@@ -131,6 +182,7 @@ const VideoView = ({ triggerNotification }) => {
   }, [user?.id]);
 
   useEffect(() => {
+    if (!id_club || !weekday) return;
     const loadBestPoints = async () => {
       const params = { id_club, weekday, hour, court_number, section };
       
@@ -188,16 +240,15 @@ const VideoView = ({ triggerNotification }) => {
   }, [id_club, court_number, videoUID]);
 
   const navigateToVideo = (targetVideo) => {
-    navigate('/videoView', {
-      state: {
-        videoUID: targetVideo.uid,
-        id_club,
-        weekday: targetVideo.weekday,
-        court_number,
-        hour: targetVideo.hour,
-        section: targetVideo.hour_section,
-      }
-    });
+    const target = {
+      videoUID: targetVideo.uid,
+      id_club,
+      weekday: targetVideo.weekday,
+      court_number,
+      hour: targetVideo.hour,
+      section: targetVideo.hour_section,
+    };
+    navigate(`/videoView?${buildVideoViewSearch(target)}`, { state: target });
   };
 
   const formatVideoTimeLabel = (vid) => {
@@ -225,11 +276,20 @@ const VideoView = ({ triggerNotification }) => {
           {clockTime}
         </h3>
         
-        <VideoPlayer
-          videoRef={videoRef}
-          onVideoLoaded={handleVideoLoaded}
-          uid={videoUID}
-        />
+        {/* A shared link has no uid until the lookup resolves; mounting the
+            player before then makes it request /null and 404. */}
+        {videoUID ? (
+          <VideoPlayer
+            videoRef={videoRef}
+            onVideoLoaded={handleVideoLoaded}
+            uid={videoUID}
+          />
+        ) : (
+          <div className="relative rounded-2xl overflow-hidden border border-white/5 aspect-video w-full flex flex-col items-center justify-center gap-4 bg-white/[0.03]">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-[#acbb22]/20 border-t-[#B8E016]"></div>
+            <p className="text-white/40 text-sm">{t('loading')}</p>
+          </div>
+        )}
 
         {/* Video Navigation */}
         <div className="mt-4 flex items-center justify-between gap-3">

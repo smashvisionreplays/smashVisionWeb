@@ -3,6 +3,7 @@ import { Modal, ConfigProvider, theme  } from 'antd';
 import VideoPlayer from "../components/videoView/VideoPlayer";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from '../src/contexts/LanguageContext';
+import { buildVideoViewSearch } from '../src/scripts/utils';
 
 const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
     const { t } = useLanguage();
@@ -17,9 +18,7 @@ const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
   }, [isModalOpen]);
 
   const handleGoToCreateClip= ()=>{
-    navigate(`/videoView`,
-        { state: videoData
-      });
+    navigate(`/videoView?${buildVideoViewSearch(videoData)}`, { state: videoData });
   }
 
   const buildFooter = () => {
