@@ -18,7 +18,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-4">
             <Link to="/">
-              <img src="./logo.webp" alt="SmashVision" className="h-8 w-auto opacity-90" />
+              <img src="./logo.webp" alt="SmashVision" className="h-20 w-auto opacity-90" />
             </Link>
             <p className="text-white/50 text-sm leading-relaxed max-w-[200px]">{tagline}</p>
           </div>
