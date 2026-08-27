@@ -206,6 +206,17 @@ const ClipView = ({ triggerNotification }) => {
                 onError={(message) => triggerNotification?.('error', message, '', true)}
               />
             )}
+
+            {/* The 9:16 version is rendered on demand, so it is not prefetched */}
+            {downloadURL && (
+              <ShareClipButton
+                clipUID={clipUID}
+                note={clipNote}
+                variant="story"
+                className="w-full sm:w-auto py-2.5 px-5 font-semibold"
+                onError={(message) => triggerNotification?.('error', message, '', true)}
+              />
+            )}
           </div>
         )}
 

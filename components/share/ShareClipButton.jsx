@@ -1,23 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { fetchClipFile } from '../../src/controllers/serverController';
 import { useLanguage } from '../../src/contexts/LanguageContext';
-
-// Sharing a real video file is the only way to land a clip in WhatsApp or an
-// Instagram story from the web: navigator.share() opens the OS sheet and the
-// user picks the app. There is no way to target one app directly.
-export const canShareVideoFiles = () => {
-  try {
-    const probe = new File([new Blob(['0'], { type: 'video/mp4' })], 'probe.mp4', { type: 'video/mp4' });
-    return Boolean(navigator.canShare?.({ files: [probe] }));
-  } catch {
-    return false;
-  }
-};
-
-const buildClipFileName = (clipName) => {
-  const base = (clipName || 'smashvision-clip').toString().replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '');
-  return `${base || 'smashvision-clip'}.mp4`;
-};
+import { canShareVideoFiles, buildClipFileName } from './clipFiles';
+import ClipOptionButton, { ShareIcon, InstagramIcon } from './ClipOptionButton';
 
 /**
  * Two-step on purpose: browsers only allow navigator.share() while the user
@@ -25,8 +10,10 @@ const buildClipFileName = (clipName) => {
  * on mobile data. So the first tap fetches the file and the second one — still
  * a fresh gesture, with the file already in memory — opens the sheet.
  * `prefetch` skips step one where we know the clip is ready (ClipView).
+ * `description` switches from the compact pill to the option row used inside
+ * the share modal.
  */
-const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = false, onError }) => {
+const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = false, variant = 'clip', description, onError }) => {
   const { t } = useLanguage();
   const [status, setStatus] = useState('idle'); // idle | preparing | ready
   const fileRef = useRef(null);
@@ -34,11 +21,17 @@ const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = f
 
   const prepareFile = async () => {
     if (fileRef.current) return fileRef.current;
-    const blob = await fetchClipFile(clipUID);
-    const file = new File([blob], buildClipFileName(clipName), { type: blob.type || 'video/mp4' });
+    const blob = await fetchClipFile(clipUID, variant);
+    const file = new File([blob], buildClipFileName(clipName, variant), { type: blob.type || 'video/mp4' });
     fileRef.current = file;
     return file;
   };
+
+  // The prepared file belongs to one clip in one format; drop it if either changes.
+  useEffect(() => {
+    fileRef.current = null;
+    setStatus('idle');
+  }, [clipUID, variant]);
 
   useEffect(() => {
     if (!supported || !prefetch || !clipUID) return;
@@ -53,8 +46,8 @@ const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = f
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clipUID, prefetch, supported]);
 
-  // Desktop browsers cannot hand a file to another app, and Download is already
-  // next to this button there, so the share button is mobile-only.
+  // Desktop browsers cannot hand a file to another app; the download options
+  // cover that case instead.
   if (!supported) return null;
 
   const handleClick = async () => {
@@ -77,15 +70,30 @@ const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = f
       if (error?.name === 'AbortError') return; // the user dismissed the sheet
       console.error('Error sharing clip:', error);
       setStatus(fileRef.current ? 'ready' : 'idle');
-      onError?.(t('shareClipFailed'));
+      onError?.(error?.status === 503 ? t('storyBusyRetry') : t('shareClipFailed'));
     }
   };
 
+  const isStory = variant === 'story';
   const label = status === 'preparing'
-    ? t('preparingClip')
+    ? t(isStory ? 'preparingStory' : 'preparingClip')
     : status === 'ready'
       ? t('shareNow')
-      : t('shareClip');
+      : t(isStory ? 'shareToStory' : 'shareClip');
+  const icon = isStory ? <InstagramIcon /> : <ShareIcon />;
+
+  if (description) {
+    return (
+      <ClipOptionButton
+        icon={icon}
+        label={label}
+        description={description}
+        onClick={handleClick}
+        busy={status === 'preparing'}
+        className={className}
+      />
+    );
+  }
 
   return (
     <button
@@ -93,14 +101,9 @@ const ShareClipButton = ({ clipUID, clipName, note, className = '', prefetch = f
       disabled={status === 'preparing'}
       className={`inline-flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-sm font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${className}`}
     >
-      {status === 'preparing' ? (
-        <span className="w-4 h-4 rounded-full border-2 border-[#acbb22]/30 border-t-[#B8E016] animate-spin"></span>
-      ) : (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0L8 8m4-4l4 4" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-        </svg>
-      )}
+      {status === 'preparing'
+        ? <span className="w-4 h-4 rounded-full border-2 border-[#acbb22]/30 border-t-[#B8E016] animate-spin"></span>
+        : <span className="w-4 h-4">{icon}</span>}
       {label}
     </button>
   );
