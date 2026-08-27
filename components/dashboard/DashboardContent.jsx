@@ -8,6 +8,8 @@ import { useAuth } from '@clerk/clerk-react';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 import StatisticsContent from "./StatisticsContent";
+import ShareClipModal from "../share/ShareClipModal";
+import ClipDownloadModal from "../share/ClipDownloadModal";
 import { getWeekdaySortKey } from "../../src/scripts/utils";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
@@ -21,6 +23,8 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
   const [togglingCameras, setTogglingCameras] = useState(new Set());
   const [watchCamera, setWatchCamera] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ open: false, clip: null });
+  const [shareModal, setShareModal] = useState({ open: false, clip: null });
+  const [downloadModal, setDownloadModal] = useState({ open: false, clip: null });
   const [deleteInput, setDeleteInput] = useState('');
   const [deleting, setDeleting] = useState(false);
   const confirmWord = language === 'es' ? 'eliminar' : 'delete';
@@ -228,7 +232,7 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
           <div className="relative backdrop-blur-sm bg-white/2 rounded-2xl border border-white/10 overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#acbb22]/30 to-transparent pointer-events-none z-10"></div>
             <TableAnt
-              columns={clipsColumns(clips, handleShowModal, handleOpenDeleteModal, t, userRole)}
+              columns={clipsColumns(clips, handleShowModal, handleOpenDeleteModal, t, userRole, (clip) => setShareModal({ open: true, clip }), (clip) => setDownloadModal({ open: true, clip }))}
               data={clips}
               needsExpand={false}
               needsVirtual={true}
@@ -411,6 +415,20 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
           </div>
         </Modal>
       </ConfigProvider>
+
+      <ShareClipModal
+        clip={shareModal.clip}
+        open={shareModal.open}
+        onClose={() => setShareModal({ open: false, clip: null })}
+        onError={(message) => triggerNotification?.('error', message, '', true)}
+      />
+
+      <ClipDownloadModal
+        clip={downloadModal.clip}
+        open={downloadModal.open}
+        onClose={() => setDownloadModal({ open: false, clip: null })}
+        onError={(message) => triggerNotification?.('error', message, '', true)}
+      />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { fetchClubs, fetchClubById, fetchVideos } from '../../src/controllers/se
 import { useNavigate } from "react-router-dom";
 import { DatePicker, TimePicker, Form, Button, Space, Select, ConfigProvider, theme } from 'antd';
 import { useLanguage } from '../../src/contexts/LanguageContext';
+import { buildVideoViewSearch } from '../../src/scripts/utils';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -170,16 +171,10 @@ const BlurredContainer = ({ triggerNotification }) => {
       if (video.length === 0 || video[0].url === null) {
         triggerNotification?.("error", t('videoNotFound'), t('noVideoAvailable'));
       } else {
-        navigate(`/videoView`, {
-          state: {
-            videoUID: video[0].uid,
-            id_club: selectedClubId,
-            weekday: selectedDate.toDate().toLocaleString('en', { weekday: 'long' }),
-            court_number: selectedCourt,
-            hour: convert24To12(selectedTime).split(":")[0],
-            section: section
-          }
-        });
+        // The search already resolved the uid; pass it along so VideoView does
+        // not have to look it up again.
+        const videoState = { ...params, videoUID: video[0].uid };
+        navigate(`/videoView?${buildVideoViewSearch(params)}`, { state: videoState });
       }
     } catch (error) {
       console.error("Error fetching video:", error);
