@@ -85,13 +85,11 @@ smashVisionWeb/
 ├── components/
 │   ├── NavBarTW.jsx  Footer.jsx  Sidebar.jsx  LanguageSelector.jsx
 │   ├── TopNotification.jsx  Notification.jsx  ProgressBar.jsx
-│   ├── TableAnt.jsx  Table.jsx  TagDisplay.jsx  VideoModal.jsx  glassModalTheme.js
+│   ├── TableAnt.jsx  Table.jsx  TagDisplay.jsx  VideoModal.jsx
 │   ├── DatePicker.jsx  TimePicker.jsx  TimePickerAsphalt.jsx  SelectMenuAvatar.jsx
 │   ├── auth/ProtectedRoute.jsx  RoleBasedAuth.jsx  Login.jsx
 │   ├── home/BlurredContainer.jsx        # the search form
 │   ├── videoView/VideoPlayer.jsx  CreateClipBox.jsx  TableActions.jsx
-│   ├── share/ShareClipButton.jsx  ShareClipModal.jsx  ClipDownloadModal.jsx
-│   │         ClipOptionButton.jsx  WhatsAppShareButton.jsx  clipFiles.js
 │   └── dashboard/DashboardContent.jsx  StatisticsContent.jsx  columnSchemas.jsx
 ├── stylesheet/                    # index.css (Tailwind directives), dashboard, lives, videoview, rangepicker
 ├── public/                        # logos, svg icons, background images, policy PDFs
@@ -120,11 +118,7 @@ Defined in `src/Index.jsx`; the layout (NavBar, notification slot, Footer) wraps
 
 `ProtectedRoute` (`components/auth/ProtectedRoute.jsx`) waits for Clerk's `isLoaded`, then redirects to `/login` when `!isSignedIn`. `RoleBasedAuth.jsx` exists but is **not used** by any route — role gating happens inside `Dashboard`/`Sidebar`/`DashboardContent` instead.
 
-**Addressing a video:** `/videoView` carries the full video address in the query string — `?club=3&court=2&weekday=Wednesday&hour=10&section=0` — built and validated by `buildVideoViewSearch` / `parseVideoViewSearch` / `getVideoSlotKey` in `src/scripts/utils.js`. **The URL is the source of truth**; navigation state and the `sessionStorage.videoViewState` mirror are only fallbacks for in-app links and older sessions, and `VideoView` stamps the parameters back onto the URL so the address bar is always shareable.
-
-The Cloudflare uid is deliberately **not** in the URL. In-app navigation (Home search, dashboard modal, prev/next) passes it through `navigate(..., {state})` so those clicks need no extra request; a pasted link resolves it with `fetchVideos`. Both are matched against a slot key so a uid is never reused for a different video, and the player only mounts once a uid exists (mounting it with `null` makes the Cloudflare embed request `/null` and 404).
-
-`ClipView` still receives its subject via `navigate(..., {state})` only.
+**Navigation state:** `VideoView` and `ClipView` receive their subject via `navigate(..., {state})`, not URL params. `VideoView` mirrors that state into `sessionStorage.videoViewState` and restores it on a hard refresh (falling back to `/` if there is nothing saved). A `/videoView` URL is therefore **not shareable**.
 
 ---
 
@@ -185,7 +179,6 @@ All calls live in `src/controllers/` — **components should never call `fetch`/
 | `registerClip(...)` | `POST /clips` |
 | `fetchClubClips` / `fetchMemberClips` | `GET /clips/club/:id` \| `/clips/member/:id` |
 | `createDownload` / `fetchDownload` / `selectDownload` / `updateDownload` | the `/clips/:uid/download*` family |
-| `fetchClipFile(uid, variant)` | `GET /clips/:uid/download/file` \| `/clips/:uid/story/file` — returns a **Blob** for the native share sheet |
 | `deleteClip(clipId, token)` | `DELETE /clips/:id` (sends `Authorization: Bearer <clerk token>`) |
 | `fetchClubCameras(clubId)` | `GET /cameras/club/:id` |
 | `toggleCameraLive(cameraId, clubId, court, status)` | `POST /cameras/:id/toggleLive` |
@@ -249,8 +242,8 @@ If metadata has no `id`, `Dashboard` renders an "Account Setup Required" screen 
 
 Tabs come from `Sidebar` (desktop) or a Headless UI `TabGroup` (mobile), filtered by role — a `member` only sees **Clips**; `club` sees **Clips / Videos / Lives / Statistics**. `DashboardContent` re-checks the role and shows "Access Restricted" if a member reaches another tab.
 
-- **Clips** — `fetchClubClips` or `fetchMemberClips`, re-mapped from lowercase API fields to PascalCase row fields (`clip.id → ID`, `clip.downloadurl → downloadURL`, …). Watch opens `VideoModal`; Download opens `ClipDownloadModal`; Share (mobile only — hidden where the browser cannot share files) opens `ShareClipModal`; Delete opens a confirmation modal that requires typing **`delete`** (or **`eliminar`** in Spanish) and then calls `deleteClip` with a Clerk token. The delete button is hidden for a club when the clip belongs to a member. Both format modals live in `DashboardContent` state, one instance for the whole table — see §7F.
-- **Videos** (club only) — `fetchClubVideos`, sorted **day → court → hour** in `loadVideos` (`getWeekdaySortKey` maps a weekday to its place in the rolling 7-day window, oldest first, today last; Ant's filters preserve dataSource order so filtered views stay sorted). Block/unblock buttons; `Blocked` is the string `"Si"` / `"No"`, not a boolean.
+- **Clips** — `fetchClubClips` or `fetchMemberClips`, re-mapped from lowercase API fields to PascalCase row fields (`clip.id → ID`, `clip.downloadurl → downloadURL`, …). Watch opens `VideoModal`; Download is an `<a>` to the proxy; Delete opens a confirmation modal that requires typing **`delete`** (or **`eliminar`** in Spanish) and then calls `deleteClip` with a Clerk token. The delete button is hidden for a club when the clip belongs to a member.
+- **Videos** (club only) — `fetchClubVideos`, with block/unblock buttons. `Blocked` is the string `"Si"` / `"No"`, not a boolean.
 - **Lives** (club only) — `fetchClubCameras`, toggle per court via `toggleCameraLive`, and a "Watch" modal embedding `${live_tunnel_url}/stream.html?src=court${n}`. Reloads whenever the WebSocket signals.
 - **Statistics** (club only) — see below.
 
@@ -271,21 +264,6 @@ One `fetchStatistics(clubId, start, end, token)` returns `{clips, bestPoints, vi
 Pick a club → `fetchClubCameras` → grid of cards. A camera with `status === 'Live'` and a `live_tunnel_url` renders the tunnel `<iframe>` inline (pointer-events disabled) and opens full-screen in a modal on click. `useWebSocketStatus(cameras)` overlays recent WebSocket updates.
 
 ---
-
-### F. Sharing (`components/share/`)
-
-Videos and clips are shared differently, because a video is a 7-day recording far too big to hand to another app, while a clip is short enough to be the file itself.
-
-- **A video → a link.** `WhatsAppShareButton` on `VideoView` opens `https://wa.me/?text=<message + the shareable /videoView URL>`. The message says the link lives 7 days, because that is when the recording is deleted.
-- **A clip → the actual file.** `ShareClipButton` fetches the mp4 with `fetchClipFile(uid, variant)` and passes it to `navigator.share({files})`, which opens the OS share sheet; the user picks WhatsApp, Instagram, anything installed. **There is no way to target one app, or to post to an Instagram story, from the web** — the sheet is as direct as it gets.
-
-Three constraints shape the code and are easy to undo by accident:
-
-1. **Sharing is two-step.** Browsers only allow `navigator.share()` while the user gesture is still live (~5 s), and fetching a clip over mobile data takes longer, so the first tap prepares the file and the second opens the sheet. `ClipView` knows the clip is ready, so it prefetches (`prefetch`) and usually needs one tap. A prepared file is dropped whenever the clip or format changes.
-2. **File sharing is mobile-only.** `canShareVideoFiles()` (`clipFiles.js`) probes with a dummy `File`; where it is false — most desktop browsers — the share button does not render at all, and the download modal is how the story format is reached.
-3. **Two formats.** `variant: 'clip'` is the original 16:9 (`/clips/:uid/download/file`); `variant: 'story'` is a 9:16 render for Instagram stories (`/clips/:uid/story/file`), produced by the API with ffmpeg — see `../api/docs/clip-story-rendering.md`. The story render is made on demand and can take 10–30 s, and the API answers **503** when too many renders are queued, which `fetchClipFile` surfaces as `storyBusyRetry` instead of a hard failure.
-
-In the dashboard both formats are offered through modals rather than a row of buttons: `ShareClipModal` (share sheet) and `ClipDownloadModal` (download). Each renders `ClipOptionButton` rows, and all modals — including `VideoModal` — take their glass styling from `components/glassModalTheme.js`. `ClipView` still shows its buttons inline.
 
 ## 8. Contexts
 
