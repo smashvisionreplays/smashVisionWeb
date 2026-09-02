@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect} from 'react';
-import { Modal, ConfigProvider } from 'antd';
-import { glassModalTheme, glassModalStyles } from './glassModalTheme';
+import { Modal, ConfigProvider, theme  } from 'antd';
 import VideoPlayer from "../components/videoView/VideoPlayer";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from '../src/contexts/LanguageContext';
-import { buildVideoViewSearch } from '../src/scripts/utils';
 
 const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
     const { t } = useLanguage();
@@ -19,7 +17,9 @@ const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
   }, [isModalOpen]);
 
   const handleGoToCreateClip= ()=>{
-    navigate(`/videoView?${buildVideoViewSearch(videoData)}`, { state: videoData });
+    navigate(`/videoView`,
+        { state: videoData
+      });
   }
 
   const buildFooter = () => {
@@ -46,7 +46,49 @@ const App = ({videoData, isModalOpen, handleOk, handleCancel}) => {
 
   return (
     <>
-    <ConfigProvider theme={glassModalTheme} modal={{ styles: glassModalStyles }}>
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+        token: {
+          colorBgElevated: 'rgba(15, 20, 30, 0.15)',
+          colorBorder: 'rgba(255,255,255,0.1)',
+          borderRadiusLG: 20,
+        },
+      }}
+      modal={{
+        styles: {
+          mask: {
+            backdropFilter: 'blur(20px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+          },
+          content: {
+            background: 'rgba(15, 20, 30, 0.35)',
+            backdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+            WebkitBackdropFilter: 'blur(40px) saturate(200%) brightness(1.1)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: 24,
+            boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset',
+            padding: 0,
+            overflow: 'hidden',
+          },
+          header: {
+            background: 'transparent',
+            borderBottom: '1px solid rgba(255,255,255,0.07)',
+            padding: '20px 24px 16px',
+            marginBottom: 0,
+          },
+          body: {
+            padding: '20px 24px',
+          },
+          footer: {
+            background: 'transparent',
+            borderTop: '1px solid rgba(255,255,255,0.07)',
+            padding: '14px 24px',
+            marginTop: 0,
+          },
+        },
+      }}
+    >
 
     <Modal
         title={

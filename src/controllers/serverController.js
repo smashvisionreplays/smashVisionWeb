@@ -179,25 +179,6 @@ export async function createDownload(uid) {
   }
 }
 
-// Downloads the clip itself instead of handing the browser a URL, so it can be
-// passed to the native share sheet as a file. `variant` picks the original 16:9
-// clip or the 9:16 render made for Instagram stories. Throws so the caller can
-// fall back to a plain download.
-export async function fetchClipFile(uid, variant = 'clip') {
-  const path = variant === 'story' ? 'story/file' : 'download/file';
-  const response = await fetch(`${API_BASE_URL}/clips/${uid}/${path}`);
-
-  if (!response.ok) {
-      // 503 means the API is rendering as much as it can right now; callers
-      // tell the user to retry rather than showing a hard failure.
-      const error = new Error(`Failed to download clip file (${response.status})`);
-      error.status = response.status;
-      throw error;
-  }
-
-  return await response.blob();
-}
-
 export async function selectDownload(uid) {
   try {
       const response = await fetch(`${API_BASE_URL}/clips/${uid}/download`, {

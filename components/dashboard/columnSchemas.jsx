@@ -1,5 +1,4 @@
 import TagDisplay from "../TagDisplay";
-import { canShareVideoFiles } from "../share/clipFiles";
 
 export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo, t) => {
   const uniqueCourtNumbers = [...new Set(videos.map(item => item.Court_Number))];
@@ -97,7 +96,7 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
   ];
 }
 
-  export const clipsColumns = (clips, showVideoInModal, onDeleteClip, t, userRole, onShareClip, onDownloadClip) => {
+  export const clipsColumns = (clips, showVideoInModal, onDeleteClip, t, userRole) => {
     const uniqueDays = [...new Set(clips.map(item => item.Weekday))];
     return [
       {
@@ -146,29 +145,13 @@ export const videosColumns = (videos, showVideoInModal, blockVideo, unblockVideo
             >
               {t('watch') || 'Watch'}
             </button>
-            {/* Opens the format options: the clip as it is, or the 9:16 story
-                render. On desktop this is the only route to the story format. */}
             {record.downloadURL && (
-              <button
-                onClick={() => onDownloadClip(record)}
+              <a
+                href={`/api/proxy/clips/${record.UID}/download/file`}
                 className="px-3 py-1.5 bg-sky-500/10 text-sky-300 border border-sky-400/25 rounded-xl text-sm font-medium hover:bg-sky-500/20 hover:text-sky-200 transition-all duration-200"
               >
                 {t('download') || 'Download'}
-              </button>
-            )}
-            {/* One button; the modal offers the clip and story formats.
-                Hidden where the browser cannot share files, i.e. desktop. */}
-            {record.downloadURL && canShareVideoFiles() && (
-              <button
-                onClick={() => onShareClip(record)}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[#acbb22]/20 to-[#B8E016]/10 text-[#B8E016] border border-[#acbb22]/25 rounded-xl text-sm font-medium hover:from-[#acbb22]/30 hover:to-[#B8E016]/20 transition-all duration-200"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0L8 8m4-4l4 4" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                </svg>
-                {t('shareClip') || 'Share'}
-              </button>
+              </a>
             )}
             {(userRole !== 'club' || record.id_user == null) && (
               <button
