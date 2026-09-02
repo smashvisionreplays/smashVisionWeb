@@ -74,6 +74,7 @@ smashVisionWeb/
 │   ├── controllers/               # ⭐ every API call lives here
 │   │   ├── serverController.js    # clubs, videos, clips, cameras
 │   │   ├── statisticsController.js
+│   │   ├── adminController.js     # outdated videos + bulk delete (admin only)
 │   │   ├── userController.js      # Clerk metadata lookup
 │   │   ├── usersController.js     # ⚠️ dead code
 │   │   └── dbController.js        # ⚠️ dead code — old direct MySQL access
@@ -91,9 +92,11 @@ smashVisionWeb/
 │   ├── home/BlurredContainer.jsx        # the search form
 │   ├── videoView/VideoPlayer.jsx  CreateClipBox.jsx  TableActions.jsx
 │   └── dashboard/DashboardContent.jsx  StatisticsContent.jsx  columnSchemas.jsx
+│                 AdminContent.jsx      dashboardTabs.js   # ⭐ tabs + roles, one list
 ├── stylesheet/                    # index.css (Tailwind directives), dashboard, lives, videoview, rangepicker
 ├── public/                        # logos, svg icons, background images, policy PDFs
-└── docs/api-authentication.md     # M2M proxy design (⚠️ header name is stale — see §5)
+├── docs/api-authentication.md     # M2M proxy design (⚠️ header name is stale — see §5)
+└── docs/admin-outdated-videos.md  # ⭐ admin panel: design, findings, what is untested
 ```
 
 Note `components/` sits at the **repo root**, not under `src/` — imports from pages look like `../../components/...`.
@@ -116,7 +119,7 @@ Defined in `src/Index.jsx`; the layout (NavBar, notification slot, Footer) wraps
 | `/tournaments` | `Tournaments` | no | Reachable by URL but **commented out of the navbar**. |
 | `/terms/privacy-policy`, `/terms/terms-and-conditions` | PDF viewers | no | |
 
-`ProtectedRoute` (`components/auth/ProtectedRoute.jsx`) waits for Clerk's `isLoaded`, then redirects to `/login` when `!isSignedIn`. `RoleBasedAuth.jsx` exists but is **not used** by any route — role gating happens inside `Dashboard`/`Sidebar`/`DashboardContent` instead.
+`ProtectedRoute` (`components/auth/ProtectedRoute.jsx`) waits for Clerk's `isLoaded`, then redirects to `/login` when `!isSignedIn`. `RoleBasedAuth.jsx` exists but is **not used** by any route — role gating happens inside `Dashboard`/`Sidebar`/`DashboardContent`, all driven by `components/dashboard/dashboardTabs.js`.
 
 **Navigation state:** `VideoView` and `ClipView` receive their subject via `navigate(..., {state})`, not URL params. `VideoView` mirrors that state into `sessionStorage.videoViewState` and restores it on a hard refresh (falling back to `/` if there is nothing saved). A `/videoView` URL is therefore **not shareable**.
 
@@ -183,6 +186,8 @@ All calls live in `src/controllers/` — **components should never call `fetch`/
 | `fetchClubCameras(clubId)` | `GET /cameras/club/:id` |
 | `toggleCameraLive(cameraId, clubId, court, status)` | `POST /cameras/:id/toggleLive` |
 | `fetchUserMetadata(clerkUserId)` (`userController.js`) | `GET /users/metadata/:userId` |
+| `fetchOutdatedVideos(days, token)` (`adminController.js`) | `GET /admin/videos/outdated?days=` — **throws** on failure, so a broken request can't read as "nothing outdated" |
+| `deleteVideosBatch(uids, token)` | `POST /admin/videos/delete` — one chunk; resolves to `{deleted, skipped, failed}` |
 | `fetchStatistics(clubId, start, end, token)` (`statisticsController.js`) | `GET /statistics?...` |
 | `fetchUserEmailsByIds(ids, token)` | `POST /statistics/user-emails` |
 
@@ -196,15 +201,18 @@ Style note: `fetchClubs`/`fetchVideos`/`fetchClubById`… use **axios and rethro
 Clerk session (browser)
    └─ useUser().id  (a Clerk id, e.g. user_2abc...)
         └─ GET /api/proxy/users/metadata/<clerk id>
-             └─ { role: 'member' | 'club', id: <DB primary key>, userId }
+             └─ { role: 'member' | 'club' | 'admin', id: <DB primary key>, userId }
 ```
 
-`role` comes from Clerk `publicMetadata`, `id` from Clerk `privateMetadata` — both are set by the API's Clerk webhook (or by `sync-dev-user.js` in dev).
+`role` comes from Clerk `publicMetadata`, `id` from Clerk `privateMetadata` — both are set by the API's Clerk webhook (or by `sync-dev-user.js` in dev). Granting admin is `../api/scripts/set-role.js <email> admin` against the right Clerk instance.
 
 **Crucially, `id` means different things per role:**
 
 - `member` → `users.id`
 - `club` → `clubs.id`
+- `admin` → `users.id` (an admin is a member with platform-wide powers, and keeps their own clips)
+
+**The role in this app is presentation only.** It decides which tabs render; it is not what protects the admin endpoints. The API re-reads the role from Clerk on every `/api/admin/*` request, so editing `role` in devtools reveals an empty panel and 403s, not data.
 
 That is why `Dashboard` passes `userMetadata.id` down as `userId` and `DashboardContent` then uses it as a **club id** (`fetchClubClips(userId)`, `fetchClubCameras(userId)`, `fetchClubVideos(userId)`, `<StatisticsContent userId={userId}/>` → `clubId`). Do not "fix" this naming without tracing every call site.
 
@@ -240,12 +248,13 @@ If metadata has no `id`, `Dashboard` renders an "Account Setup Required" screen 
 
 ### C. Club dashboard (`Dashboard` → `DashboardContent`)
 
-Tabs come from `Sidebar` (desktop) or a Headless UI `TabGroup` (mobile), filtered by role — a `member` only sees **Clips**; `club` sees **Clips / Videos / Lives / Statistics**. `DashboardContent` re-checks the role and shows "Access Restricted" if a member reaches another tab.
+Both navigations — `Sidebar` (desktop) and the Headless UI `TabGroup` (mobile) — render from **`components/dashboard/dashboardTabs.js`**, the single list of tabs and the roles allowed each. `member` sees **Clips**; `club` sees **Clips / Videos / Lives / Statistics**; `admin` sees **Clips / Admin**. `DashboardContent` re-checks against that same list and shows "Access Restricted" for anything else, so a tab cannot be offered in one navigation and missing from the other. Add a tab there, not in the components.
 
 - **Clips** — `fetchClubClips` or `fetchMemberClips`, re-mapped from lowercase API fields to PascalCase row fields (`clip.id → ID`, `clip.downloadurl → downloadURL`, …). Watch opens `VideoModal`; Download is an `<a>` to the proxy; Delete opens a confirmation modal that requires typing **`delete`** (or **`eliminar`** in Spanish) and then calls `deleteClip` with a Clerk token. The delete button is hidden for a club when the clip belongs to a member.
 - **Videos** (club only) — `fetchClubVideos`, with block/unblock buttons. `Blocked` is the string `"Si"` / `"No"`, not a boolean.
 - **Lives** (club only) — `fetchClubCameras`, toggle per court via `toggleCameraLive`, and a "Watch" modal embedding `${live_tunnel_url}/stream.html?src=court${n}`. Reloads whenever the WebSocket signals.
 - **Statistics** (club only) — see below.
+- **Admin** (admin only) — see §7G.
 
 Column definitions for all three tables live in `components/dashboard/columnSchemas.jsx` (`clipsColumns`, `videosColumns`, `livesColumns`, `videoMinutesColumns`); `TableAnt.jsx` is the shared Ant `<Table>` wrapper (dark theme, `virtual` when `needsVirtual`, index-based row keys).
 
@@ -262,6 +271,32 @@ One `fetchStatistics(clubId, start, end, token)` returns `{clips, bestPoints, vi
 ### E. Live streams (`Lives.jsx`, public)
 
 Pick a club → `fetchClubCameras` → grid of cards. A camera with `status === 'Live'` and a `live_tunnel_url` renders the tunnel `<iframe>` inline (pointer-events disabled) and opens full-screen in a modal on click. `useWebSocketStatus(cameras)` overlays recent WebSocket updates.
+
+### F. Admin — outdated videos (`AdminContent.jsx`, admin only)
+
+**The problem it solves.** Recordings are supposed to be deleted from Cloudflare after 7 days. When that fails — the cleanup errors, or motion detection uploads recordings of an empty court that were never registered — storage fills, new uploads are rejected, and the club servers start queueing videos they cannot deliver. This panel is the manual way to see and clear that.
+
+`fetchOutdatedVideos(days, token)` → `{storage, summary, videos, maxDeleteBatch, truncated}`. Three cards (Cloudflare storage against the plan limit, outdated count, space to reclaim), an "older than" window (7/14/30/90 days — the API floors it at 7), and a selectable table.
+
+**The Reason column is a diagnosis, not decoration.** Every row is equally deletable; the category says which failure produced it, and which number is large tells you where to look — `Delete failed` means the cleanup's Cloudflare call is erroring, `Unregistered` means club servers are uploading recordings the platform never registered, `Not cleaned up` means the unlink itself never ran. The three are derived in the API (`../api/CLAUDE.md` §6); their labels, explanations and colours are the `CATEGORY_*` maps at the top of the component, and both places that show a category read from them.
+
+The counts on the "Outdated videos" card are `CategoryChip`s — the same colours as the table badges, each with its explanation on hover, click or focus. They look like buttons and are deliberately inert (`cursor-help`, not `cursor-pointer`): making them filter the table would be a second, competing way to do what the Reason column's own filter already does. They carry `tabIndex` and the table's badges do not, because the badges repeat the same three explanations once per row and fifty identical tab stops are worse than none — the card is the keyboard path to the legend.
+
+**Filtering by day.** Recordings are named `Friday_9_1_15_1`, and the API turns that into a `weekday` on every row (see `../api/CLAUDE.md` §6), so the table filters by weekday the same way `videosColumns` does. Anything whose name doesn't yield a day — an unnamed upload, a manual one — lands in an **"Unrecognised name"** bucket that is its own filter value, so it is never swept up by a day filter and never hidden either.
+
+Two things make that filter safe to act on in bulk:
+
+- **The filters are controlled state, and the matching rows are derived from them** — not read out of the table's `onChange`. Reading the event would go stale the moment a delete or a reload replaced the data without the user touching a filter, and "select all matching" would then act on the wrong set. The predicates in `FILTER_PREDICATES` are shared by the table's own `onFilter` and that derivation, so the two cannot disagree.
+- **Selection spans pages, and says when it spans filters.** Ant's header checkbox only reaches the current page, so the selection dropdown adds "Select all N matching". Selections deliberately survive a filter change (building one across days is legitimate), so the action bar warns when some selected rows are no longer visible — otherwise the count reads as if it were only what's on screen.
+
+Deletion is **permanent and Cloudflare-side**, which shapes the whole component:
+
+1. **Confirmation is typed.** The same pattern as deleting a clip — the word `delete` / `eliminar` — not a single click.
+2. **It is chunked, not one request.** Cloudflare has no bulk delete, so the API caps a batch at 50 and this chunks at 25 with a progress bar. One chunk failing does not abandon the rest of the selection.
+3. **The result is read, not assumed.** A uid can come back `skipped` (a member's clip, or still inside the 7-day window — the API refuses both regardless of what the table showed) or `failed`, so the notification reports deleted/skipped/failed rather than "done".
+4. **Rows are removed locally, not refetched.** Cloudflare's list is eventually consistent and would happily return a video that was just deleted.
+
+A failed load renders an explicit error panel, never the empty state — "nothing outdated" and "we could not check" must not look the same when the consequence is a full account.
 
 ---
 
@@ -351,6 +386,6 @@ Docker files (`Dockerfile`, `nginx.conf`, `docker-compose.yml`, `build-docker.sh
 5. **`docs/api-authentication.md`** describes the header as `x-app-token`; the code uses `Authorization`. Trust the code.
 6. **`README.md`** documents the retired Docker/nginx/Cloudflare-tunnel deployment and MySQL env vars. `DEVELOPMENT_TESTING_INSTRUCTIONS.md` is the current guide.
 7. **`Tournaments.jsx`** contains hardcoded demo tournaments with Unsplash images and is deliberately hidden from the navbar.
-8. **`RoleBasedAuth.jsx`** is unused and defaults to a role named `'player'`, which doesn't exist in the platform (`member` / `club`).
+8. **`RoleBasedAuth.jsx`** is unused and defaults to a role named `'player'`, which doesn't exist in the platform (`member` / `club` / `admin`).
 9. `TableAnt` keys rows by array index, so sorted/filtered tables can reuse keys; `useWebSocketStatus` indexes `liveUpdates[camera.ID]`, but the context only ever sets `_reloadTrigger`, so the per-camera merge path is effectively inert (the refetch is what updates the UI).
 10. **In-flight migration: Clerk → Supabase Auth.** A `clerk_to_supabase_migration` branch exists in both repos and the API already has phase-1 SQL (`users.auth_id`, `users.role`, a custom JWT-claims hook). `master` is still fully on Clerk — check your branch before touching auth.

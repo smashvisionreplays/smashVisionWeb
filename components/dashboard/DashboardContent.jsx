@@ -8,6 +8,8 @@ import { useAuth } from '@clerk/clerk-react';
 import '../../stylesheet/dashboard.css';
 import { clipsColumns, livesColumns, videosColumns } from "./columnSchemas";
 import StatisticsContent from "./StatisticsContent";
+import AdminContent from "./AdminContent";
+import { getTabsForRole } from "./dashboardTabs";
 import { getWeekdaySortKey } from "../../src/scripts/utils";
 
 const DashboardContent = ({ selectedButton, userRole, userId, renderModal, triggerNotification }) => {
@@ -205,8 +207,11 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
       );
     }
 
-    // Member role can only see clips
-    if (userRole === 'member' && selectedButton !== 'Clips') {
+    // Hiding a tab is presentation; this is the check that decides. Driven by
+    // the same list the navigations render from, so a role can never reach a
+    // tab it was not offered.
+    const allowed = getTabsForRole(t, userRole).some(tab => tab.name === selectedButton);
+    if (!allowed) {
       return (
         <div className="flex flex-col items-center justify-center h-64">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center mb-4">
@@ -214,9 +219,9 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h3 className="text-base font-semibold text-white/50 mb-1">Access Restricted</h3>
+          <h3 className="text-base font-semibold text-white/50 mb-1">{t('accessRestricted')}</h3>
           <p className="text-white/30 text-sm text-center max-w-xs leading-relaxed">
-            This section is only available for club accounts.
+            {t('accessRestrictedBody')}
           </p>
         </div>
       );
@@ -341,6 +346,9 @@ const DashboardContent = ({ selectedButton, userRole, userId, renderModal, trigg
 
       case "Statistics":
         return <StatisticsContent userId={userId} />;
+
+      case "Admin":
+        return <AdminContent triggerNotification={triggerNotification} />;
 
       default:
         return <EmptyState type="data" />;
