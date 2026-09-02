@@ -6,6 +6,7 @@ import { useUser } from '@clerk/clerk-react';
 import { fetchUserMetadata } from '../controllers/userController';
 import { useLanguage } from '../contexts/LanguageContext';
 import VideoModal from "../../components/VideoModal";
+import { getTabsForRole } from "../../components/dashboard/dashboardTabs";
 
 export default function Dashboard({ triggerNotification }) {
   const { user } = useUser();
@@ -13,12 +14,9 @@ export default function Dashboard({ triggerNotification }) {
   const [userMetadata, setUserMetadata] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const getCategories = () => [
-    { name: 'Clips', label: t('myClips') },
-    { name: 'Videos', label: 'Videos' },
-    { name: 'Lives', label: t('lives') },
-    { name: 'Statistics', label: t('statistics') },
-  ];
+  // Same source as the desktop sidebar, so the mobile strip offers a role
+  // exactly the tabs it can actually open.
+  const categories = getTabsForRole(t, userMetadata?.role);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoData, setVideoData] = useState(null);
@@ -92,7 +90,7 @@ export default function Dashboard({ triggerNotification }) {
             <div className="backdrop-blur-md bg-white/5 rounded-2xl border border-white/10 p-1.5 w-full max-w-sm shadow-xl">
               <TabGroup>
                 <TabList className="flex gap-1">
-                  {getCategories().map(({ name, label }) => (
+                  {categories.map(({ name, label }) => (
                     <Tab
                       key={name}
                       className="group relative flex-1 rounded-xl py-2 px-2 text-xs font-semibold text-white/50
@@ -126,7 +124,7 @@ export default function Dashboard({ triggerNotification }) {
                 <div className="w-1 h-9 rounded-full bg-gradient-to-b from-[#acbb22] to-[#B8E016] flex-shrink-0 shadow-[0_0_8px_rgba(172,187,34,0.4)]"></div>
                 <div>
                   <h1 className="text-xl font-bold text-white/90 leading-tight">
-                    {getCategories().find(cat => cat.name === selectedButton)?.label || selectedButton}
+                    {categories.find(cat => cat.name === selectedButton)?.label || selectedButton}
                   </h1>
                   <p className="text-white/35 text-xs mt-0.5 font-light">
                     {t('descriptionPanel')} {selectedButton.toLowerCase()}

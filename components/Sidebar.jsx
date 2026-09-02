@@ -3,6 +3,7 @@ import { initFlowbite } from "flowbite";
 import { TabGroup, TabList, Tab } from '@headlessui/react';
 import { useAuth, useUser, UserButton } from '@clerk/clerk-react'
 import { useLanguage } from '../src/contexts/LanguageContext';
+import { getTabsForRole } from './dashboard/dashboardTabs';
 
 export default function Sidebar({ onSelect, userRole = 'member' }) {
   const { t } = useLanguage();
@@ -13,18 +14,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
     initFlowbite();
   }, []);
 
-  const getAllCategories = () => [
-    { name: 'Clips', label: t('myClips'), roles: ['member', 'club'], icon: '/clips.svg' },
-    { name: 'Videos', label: 'Videos', roles: ['club'], icon: '/videocam.svg' },
-    { name: 'Lives', label: t('lives'), roles: ['club'], icon: '/live_tv.svg' },
-    { name: 'Statistics', label: t('statistics'), roles: ['club'], icon: '/statistics.svg' },
-  ];
-
-  const allCategories = getAllCategories();
-
-  const categories = allCategories.filter(category => 
-    category.roles.includes(userRole)
-  );
+  const categories = getTabsForRole(t, userRole);
 
   return (
     <div className="relative">
@@ -54,7 +44,7 @@ export default function Sidebar({ onSelect, userRole = 'member' }) {
                     {userName}
                   </span>
                   <span className="text-sm text-white/60 font-medium capitalize">
-                    {userRole === 'club' ? t('clubAccount') : t('memberAccount')}
+                    {userRole === 'admin' ? t('adminAccount') : userRole === 'club' ? t('clubAccount') : t('memberAccount')}
                   </span>
                 </div>
               </div>
