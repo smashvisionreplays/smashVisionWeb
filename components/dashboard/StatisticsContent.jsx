@@ -15,9 +15,13 @@ const StatisticsContent = ({ userId }) => {
   const { getToken } = useAuth();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
+  // Both bounds must span whole days. They are sent to the API as literal
+  // 'YYYY-MM-DD HH:mm:ss' strings and compared against clips._createddate, so a
+  // bare dayjs() — which carries the current time of day — would cut the last day
+  // off at whatever o'clock the page happened to be opened.
   const [dateRange, setDateRange] = useState([
-    dayjs().subtract(30, 'days'),
-    dayjs().subtract(1, 'day')
+    dayjs().subtract(30, 'days').startOf('day'),
+    dayjs().subtract(1, 'day').endOf('day')
   ]);
   const [statisticsData, setStatisticsData] = useState({
     clips: [],
@@ -81,8 +85,15 @@ const StatisticsContent = ({ userId }) => {
     }
   }, [userId, dateRange]);
 
+  // The picker is in date mode, so it hands both ends back at 00:00 — taking them
+  // as-is would exclude the entire end day. Widen to whole days here, once, so
+  // every consumer of dateRange sees the same bounds the query uses.
   const handleDateRangeChange = (dates) => {
-    setDateRange(dates);
+    if (!dates || !dates[0] || !dates[1]) {
+      setDateRange(dates);
+      return;
+    }
+    setDateRange([dates[0].startOf('day'), dates[1].endOf('day')]);
   };
 
   const downloadClipsExcel = async () => {
