@@ -1,26 +1,29 @@
 # API Authentication — SmashVision Web
 
-This document explains how `smashVisionWeb` authenticates with the SmashVision API, how the Vercel proxy works, and how to set everything up for local development and production.
+How `smashVisionWeb` reaches the SmashVision API, what the Vercel proxy does, and how to set it up locally and in production.
 
 ---
 
-## The Problem
+## The problem
 
-The SmashVision API (`api.smashvisionapp.com`) is a public URL. Without protection, anyone could hit it directly from Postman or a script without being a legitimate SmashVision client. CORS alone only protects browser-to-browser cross-origin requests — it does not stop server-to-server or direct HTTP calls.
+`api.smashvisionapp.com` is a public URL. CORS only constrains browsers; it does nothing about Postman, curl or a scraper. We want a cheap signal that a request came from our own frontend.
+
+Note what this is *not*. Most of the site is public — the club list, the video search on Home, `/videoView`, `/lives` all work signed-out — so the proxy forwards for anonymous visitors too. The app token proves **origin**, not **permission**. Anything that depends on who the user is must check the user's own Clerk JWT (see "User identity" below).
 
 ---
 
-## The Solution: Vercel Proxy with Clerk M2M Tokens
+## The solution: a shared secret between the proxy and the API
 
-A **machine-to-machine (M2M)** token is a short-lived JWT issued by Clerk that proves the caller is a trusted SmashVision application — not a random external client. The secret used to generate this token is stored **only on the Vercel server** (never in the browser), so it cannot be extracted.
+Every REST call from the browser targets the relative path `/api/proxy/...`. In production a Vercel serverless function (`api/proxy/[...path].js`) picks it up and forwards it to Railway with **two independent headers**:
 
-All frontend API calls go through a Vercel serverless function (`/api/proxy/[...path].js`) which:
+| Header | Carries | Read by |
+|---|---|---|
+| `x-app-token` | a static secret, `APP_PROXY_SECRET` | `requireAppToken` on the API |
+| `Authorization` | the browser's own Clerk session JWT, forwarded untouched (absent when signed out) | `clerkMiddleware()` / `getAuth(req)` / `requireAdmin` |
 
-1. Fetches a short-lived M2M JWT from Clerk (cached until near-expiry)
-2. Forwards the original request to the Railway API
-3. Attaches the M2M JWT as an `x-app-token` header
+Keeping them separate is the whole design. They used to be conflated and it cost us twice — see "History" at the bottom.
 
-The Railway API validates that header on every `/api/*` request using Clerk's public JWKS endpoint.
+The secret lives only in the Vercel function's runtime environment. It is never `VITE_`-prefixed, so it never enters the browser bundle.
 
 ---
 
@@ -30,127 +33,121 @@ The Railway API validates that header on every `/api/*` request using Clerk's pu
 
 ```
 Browser
-  │
   │  GET /api/proxy/clubs
+  │  Authorization: Bearer <Clerk user JWT>   (only if signed in)
   ▼
 Vercel Serverless Function  (api/proxy/[...path].js)
-  │  - Holds CLERK_M2M_CLIENT_SECRET (server-side only, never in browser)
-  │  - Fetches M2M JWT from Clerk (cached per function instance)
-  │  - Adds x-app-token header
+  │  - holds APP_PROXY_SECRET (server-side only)
+  │  - forwards method, JSON body, query string
+  │  - streams video/* and application/octet-stream through,
+  │    preserving Content-Disposition (clip downloads keep their filename)
   │
   │  GET https://api.smashvisionapp.com/api/clubs
-  │  Headers: x-app-token: <M2M JWT>
-  │           Authorization: Bearer <Clerk user JWT>  (if user is signed in)
+  │  x-app-token:   <APP_PROXY_SECRET>
+  │  Authorization: Bearer <Clerk user JWT>   (forwarded as-is)
   ▼
 Railway API
-  │  requireAppToken middleware validates x-app-token via Clerk JWKS
-  │  clerkMiddleware validates Authorization header for user-protected routes
+  │  requireAppToken   constant-time compares x-app-token
+  │  clerkMiddleware   verifies Authorization for user-identified routes
   ▼
 Response → Vercel → Browser
 ```
 
-### Local Development (Vite)
+`vercel.json` rewrites `/api/proxy/(.*)` → `/api/proxy/[...path]?path=$1`; everything else falls through to the SPA.
 
-In development there is no Vercel runtime. Instead, Vite's built-in proxy rewrites `/api/proxy/*` → `http://localhost:5000/api/*` (or the value of `VITE_API_URL`), sending requests directly to the API without a token.
+### Local development (Vite)
 
-The API middleware skips M2M validation when `NODE_ENV !== "production"`, so local development works without any token setup.
+There is no Vercel runtime. `vite.config.js` proxies `/api/proxy/*` → `${VITE_API_URL}/api/*` (default `http://localhost:5000`), skipping the serverless function entirely. `requireAppToken` short-circuits when `NODE_ENV !== "production"`, so no secret is needed. The Vite proxy is disabled when `process.env.VERCEL` is set (i.e. under `vercel dev`).
 
 ```
-Browser
-  │
-  │  GET /api/proxy/clubs
-  ▼
-Vite Dev Server Proxy
-  │  Rewrites path: /api/proxy/clubs → /api/clubs
-  │  Forwards to VITE_API_URL (e.g. http://localhost:5000)
-  ▼
-Local or Railway API
-  │  requireAppToken skips validation (NODE_ENV = development)
-  ▼
-Response → Browser
+Browser → Vite dev proxy (/api/proxy/clubs → /api/clubs) → local API (NODE_ENV=development)
 ```
+
+| You want to test | Run |
+|---|---|
+| UI, pages, API calls, Clerk sign-in, roles | `npm run dev` → http://localhost:5173 |
+| The proxy itself, the app-token gate, prod-equivalent 401s | `vercel dev` → http://localhost:3000 |
+
+For `vercel dev`, `.env.local` needs `APP_PROXY_SECRET` and `RAILWAY_API_URL=http://localhost:5000`, and that local API must run with `NODE_ENV=production` and the same `APP_PROXY_SECRET` for the gate to actually fire.
+
+> ⚠️ **`vercel dev` also reads `.env`.** If `RAILWAY_API_URL` there still points at `https://api.smashvisionapp.com`, your local frontend proxies to **production** and nothing says so — you get production's 401s and assume your local setup is broken. Keep `RAILWAY_API_URL` on `http://localhost:5000` in both local files; the production value belongs in the Vercel dashboard. Note `http`, not `https`: the local API serves plain HTTP, and `https://localhost:5000` fails the TLS handshake, which the proxy reports as a generic `502 Proxy error`.
 
 ---
 
-## File Reference
+## User identity
 
-| File | Location | Purpose |
-|------|----------|---------|
-| Vercel proxy function | `smashVisionWeb/api/proxy/[...path].js` | Serverless function — fetches M2M token, proxies to Railway |
-| Vite proxy config | `smashVisionWeb/vite.config.js` | Dev-only proxy: forwards `/api/proxy/*` to local/Railway API |
-| Route config | `smashVisionWeb/vercel.json` | Ensures `/api/*` reaches the serverless function, not the SPA |
-| App token middleware | `api/src/middleware/requireAppToken.js` | Validates `x-app-token` on all `/api/*` routes in production |
-| Middleware applied in | `api/server.js` | `app.use("/api", requireAppToken)` before all route handlers |
+The proxy does not touch `Authorization`, so a signed-in user's Clerk JWT reaches the API intact and `getAuth(req)` resolves them in production exactly as it does locally. That is what `DELETE /api/clips/:id` and everything under `/api/admin/*` rely on.
+
+The API's `getUserToken(req)` (`api/src/middleware/requireAdmin.js`) reads `Authorization` first and still falls back to the legacy `x-user-token`; nothing sends that header any more and the fallback can be removed once no old deployment is live.
+
+WebSocket is not proxied — Vercel serverless cannot do WS upgrades. `WebSocketContext.jsx` connects straight to Railway at `${VITE_WS_URL}/ws?token=<Clerk user JWT>`.
 
 ---
 
-## Environment Variables
+## File reference
 
-### smashVisionWeb — Vercel Dashboard
+| File | Purpose |
+|---|---|
+| `smashVisionWeb/api/proxy/[...path].js` | The serverless proxy: adds `x-app-token`, forwards `Authorization` |
+| `smashVisionWeb/vite.config.js` | Dev-only proxy to the local/remote API |
+| `smashVisionWeb/vercel.json` | Routes `/api/proxy/*` to the function, everything else to the SPA |
+| `api/src/middleware/requireAppToken.js` | Compares `x-app-token` on all `/api/*` in production |
+| `api/src/middleware/requireAdmin.js` | `getUserToken()` + the admin role gate |
+| `api/server.js` | `app.use("/api", requireAppToken)` before the routers |
 
-These must be added as **server-side** variables (no `VITE_` prefix). They are never sent to the browser.
+---
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `CLERK_ISSUER_URL` | Your Clerk frontend API URL | `https://clerk.smashvisionapp.com` |
-| `CLERK_M2M_CLIENT_ID` | Client ID of the M2M machine in Clerk | `m2m_abc123...` |
-| `CLERK_M2M_CLIENT_SECRET` | Client secret of the M2M machine — keep this safe | `sk_...` |
-| `RAILWAY_API_URL` | Base URL of the Railway API | `https://api.smashvisionapp.com` |
+## Environment variables
 
-> These variables are only accessible inside the Vercel serverless function. They are NOT bundled into the React app.
-
-### smashVisionWeb — Local `.env`
-
-Only `VITE_` prefixed variables are needed locally. The proxy reads `VITE_API_URL` from `vite.config.js`.
-
-```env
-VITE_API_URL=https://api.smashvisionapp.com
-# Or point to local API:
-# VITE_API_URL=http://localhost:5000
-```
-
-### Railway API — Environment Variables
+### Vercel (server-side — no `VITE_` prefix)
 
 | Variable | Description |
-|----------|-------------|
-| `CLERK_ISSUER_URL` | Same Clerk frontend API URL as above — used to fetch JWKS for token validation |
-| `NODE_ENV` | Must be set to `production` for M2M validation to be enforced |
-| `ALLOWED_ORIGINS` | Comma-separated allowed CORS origins (e.g. `https://smashvisionapp.com,https://www.smashvisionapp.com`) |
+|---|---|
+| `APP_PROXY_SECRET` | The shared secret. Must be byte-identical to the API's. |
+| `RAILWAY_API_URL` | `https://api.smashvisionapp.com` |
+
+### Railway (API)
+
+| Variable | Description |
+|---|---|
+| `APP_PROXY_SECRET` | Same value as on Vercel. **If unset in production the API returns 500 on every `/api/*` request** — it fails closed rather than silently opening. |
+| `NODE_ENV` | Must be `production` or the gate is skipped entirely |
+| `ALLOWED_ORIGINS` | `https://smashvisionapp.com,https://www.smashvisionapp.com` |
+
+### Local `.env`
+
+Only `VITE_`-prefixed vars are needed for `npm run dev`; the Vite proxy reads `VITE_API_URL`.
 
 ---
 
-## Setting Up Clerk M2M (One-Time)
+## Rotating the secret
 
-1. Go to the [Clerk Dashboard](https://dashboard.clerk.com)
-2. Select your SmashVision application
-3. Navigate to **Configure → M2M Tokens**
-4. Click **Create machine** — name it `SmashVision Web`
-5. Copy the `Client ID` and `Client Secret`
-6. Add them to Vercel as `CLERK_M2M_CLIENT_ID` and `CLERK_M2M_CLIENT_SECRET`
+Generate: `openssl rand -base64 32`
 
-The `CLERK_ISSUER_URL` is your Clerk **Frontend API URL**, found under **Configure → API Keys** — it looks like `https://clerk.smashvisionapp.com` or `https://<your-id>.clerk.accounts.dev` in development.
+Order matters, because the API accepts exactly one value:
 
----
+1. Set the new value on **Railway** and redeploy. Requests from the old proxy now 401.
+2. Set the new value on **Vercel** and redeploy.
 
-## How to Test in Production (Vercel Deployment)
-
-1. Add all four Vercel server-side env vars listed above in the Vercel dashboard
-2. Add `CLERK_ISSUER_URL` and `NODE_ENV=production` to Railway
-3. Set `ALLOWED_ORIGINS=https://smashvisionapp.com,https://www.smashvisionapp.com` in Railway
-4. Push to `master` — Vercel will deploy automatically
-5. Open the deployed app and watch the Network tab: all API calls should go to `/api/proxy/*` and return valid responses
-6. In Vercel's function logs you should see `Fetching new M2M token...` on the first request, then silence as the token is reused from cache
-
-To confirm the Railway API is rejecting unauthorized requests, try hitting `https://api.smashvisionapp.com/api/clubs` directly from Postman without the `x-app-token` header — you should get `401 Missing app token`.
+That is a short window of 401s. To rotate with no downtime, add a second accepted value on the API first, cut Vercel over, then remove the old one.
 
 ---
 
-## How the Token Cache Works
+## Verifying a deploy
 
-The M2M token is cached in the Vercel function's module scope (a variable at the top of `[...path].js`). Vercel function instances are reused across requests within the same deployment, so the token is typically fetched once and reused until 60 seconds before it expires, at which point a new one is fetched automatically. On a cold start (new instance), the cache is empty and one fetch happens.
+1. Open the app and watch the Network tab — every API call goes to `/api/proxy/*` and returns 200.
+2. Sign in and delete one of your own clips. It should succeed; a 401 here means `Authorization` is not reaching the API.
+3. `curl https://api.smashvisionapp.com/api/clubs` with no headers → `401 {"error":"Missing app token"}`.
+4. Same with a wrong `x-app-token` → `401 {"error":"Invalid app token"}`.
+5. Vercel function logs should be quiet — there is no token fetch any more.
 
 ---
 
-## WebSocket
+## History — why this is not Clerk M2M
 
-The WebSocket connection (`wss://api.smashvisionapp.com/ws`) is **not** proxied through Vercel — Vercel serverless functions do not support WebSocket upgrades. The WebSocket connects directly to Railway and is authenticated using a Clerk user JWT passed as a query parameter (`?token=...`). This is handled separately in `WebSocketContext.jsx` and is unaffected by the M2M proxy.
+The first version minted a Clerk **M2M JWT** in the proxy and sent it as `Authorization: Bearer`, demoting the user's own JWT to `x-user-token`. The API verified it against Clerk's JWKS. Two things went wrong:
+
+1. **Quota.** The token was cached in the function's *module scope*, which is per lambda instance, not global. Vercel starts and recycles instances constantly, so each cold start minted a fresh token until Clerk returned `403 token_quota_exceeded` — and the proxy then 502'd every request. M2M tokens are priced and rate-limited for backend-to-backend traffic; fronting a public website with them is the wrong tool.
+2. **Lost user identity.** With the machine token in `Authorization`, `clerkMiddleware()`/`getAuth(req)` saw the machine, not the user, so `DELETE /api/clips/:id` returned 401 in production while working locally.
+
+A static shared secret gives the same guarantee the M2M token actually provided — "this came from our proxy" — with no quota, no network call and no JWKS cache, and leaves `Authorization` free for the user. `CLERK_M2M_CLIENT_ID`, `CLERK_M2M_CLIENT_SECRET`, `CLERK_API_MACHINE_ID` and the API-side `CLERK_ISSUER_URL` are all unused now and can be deleted from both dashboards.

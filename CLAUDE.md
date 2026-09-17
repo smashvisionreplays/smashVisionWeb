@@ -95,7 +95,7 @@ smashVisionWeb/
 │                 AdminContent.jsx      dashboardTabs.js   # ⭐ tabs + roles, one list
 ├── stylesheet/                    # index.css (Tailwind directives), dashboard, lives, videoview, rangepicker
 ├── public/                        # logos, svg icons, background images, policy PDFs
-├── docs/api-authentication.md     # M2M proxy design (⚠️ header name is stale — see §5)
+├── docs/api-authentication.md     # ⭐ proxy auth design, env vars, secret rotation
 └── docs/admin-outdated-videos.md  # ⭐ admin panel: design, findings, what is untested
 ```
 
@@ -133,22 +133,24 @@ Defined in `src/Index.jsx`; the layout (NavBar, notification slot, Footer) wraps
 
 ```
 Browser  ──GET /api/proxy/clubs──►  Vercel serverless fn  api/proxy/[...path].js
-                                      │ holds CLERK_M2M_CLIENT_SECRET (server-side only)
-                                      │ mints a Clerk M2M JWT, cached in module scope
-                                      │   until 60s before expiry
-                                      ▼
+         Authorization: Bearer        │ holds APP_PROXY_SECRET (server-side only)
+           <Clerk user JWT>           │ no token minting, no network call
+           (only if signed in)        ▼
                                     GET ${RAILWAY_API_URL}/api/clubs
-                                      Authorization: Bearer <M2M JWT>
-                                      x-user-token: <the browser's Authorization header, if any>
+                                      x-app-token:   <APP_PROXY_SECRET>
+                                      Authorization: <forwarded untouched>
                                       ▼
-                                    Railway API — requireAppToken verifies the M2M JWT via Clerk JWKS
+                                    Railway API — requireAppToken compares x-app-token;
+                                                  clerkMiddleware reads Authorization
 ```
+
+**Two headers, two jobs, and they must not be mixed up.** `x-app-token` proves the request came from our proxy; `Authorization` says who the user is. Keeping them separate is what makes `getAuth(req)` work in production.
 
 `vercel.json` rewrites `/api/proxy/(.*)` → `/api/proxy/[...path]?path=$1` and sends everything else to the SPA. The proxy forwards the method, JSON body and query string, and streams `video/*` / `application/octet-stream` responses through while preserving `Content-Disposition` (that's how clip downloads keep their filename).
 
-> ⚠️ **`docs/api-authentication.md` is out of date on one detail:** it says the proxy sends the M2M token as `x-app-token`. The code sends it as `Authorization: Bearer` and demotes the **user's** Clerk JWT to `x-user-token`. Consequence: the API's `clerkMiddleware`/`getAuth(req)` sees the machine token, not the user, so **user-identified endpoints (currently `DELETE /api/clips/:id`) fail with 401 in production while working locally.** Keep this in mind before adding user-authenticated endpoints.
+The proxy is **secret management, not access control** — anything prefixed `VITE_` is bundled into the browser, so the shared secret has to live in a server-side runtime. The proxy forwards for anonymous visitors too (most of the site is public), so holding the secret is not permission to do anything: user-scoped endpoints check the Clerk JWT themselves.
 
-The purpose of the proxy is **secret management, not access control** — anything prefixed `VITE_` is bundled into the browser, so the M2M secret has to live in a server-side runtime. Anyone with a valid M2M JWT can call the Railway API directly.
+> **History.** Until September 2026 the proxy minted a Clerk **M2M JWT** and put it in `Authorization`, demoting the user's JWT to `x-user-token`. The token was cached per lambda instance, so every Vercel cold start minted a new one until Clerk returned `token_quota_exceeded` and every call 502'd — and with the machine token in `Authorization`, `getAuth(req)` never saw the user. Both fixed by the split above. See `docs/api-authentication.md`.
 
 ### Local development
 
@@ -157,9 +159,9 @@ The purpose of the proxy is **secret management, not access control** — anythi
 | You want to test | Run |
 |---|---|
 | UI, pages, API calls, Clerk sign-in, roles | `npm run dev` → http://localhost:5173 |
-| The M2M proxy, token minting, JWKS validation, prod-equivalent 401s | `vercel dev` → http://localhost:3000 |
+| The proxy, the app-token gate, prod-equivalent 401s | `vercel dev` → http://localhost:3000 |
 
-For `vercel dev`, `.env.local` needs `CLERK_M2M_CLIENT_SECRET` and `RAILWAY_API_URL=http://localhost:5000` (point it at your **local** API, and run that API with `NODE_ENV=production` if you want the middleware to actually validate).
+For `vercel dev`, `.env.local` needs `APP_PROXY_SECRET` and `RAILWAY_API_URL=http://localhost:5000` (point it at your **local** API, and run that API with `NODE_ENV=production` and the same secret if you want the middleware to actually fire).
 
 ### WebSocket — not proxied
 
@@ -324,9 +326,8 @@ Connects on mount with the Clerk token, reconnects with exponential backoff (`2^
 | `VITE_API_URL` | dev only | Target of the Vite proxy (`http://localhost:5000`) |
 | `VITE_WS_URL` | browser | `ws://localhost:5000` / `wss://api.smashvisionapp.com` |
 | `VITE_GA_MEASUREMENT_ID` | browser | GA4 id; leave empty to disable analytics |
-| `CLERK_M2M_CLIENT_SECRET` | **server** | Used by the Vercel proxy to mint the M2M token |
+| `APP_PROXY_SECRET` | **server** | Sent by the proxy as `x-app-token`; must be byte-identical to the API's. `openssl rand -base64 32` |
 | `RAILWAY_API_URL` | **server** | Where the proxy forwards (`https://api.smashvisionapp.com`) |
-| `CLERK_M2M_CLIENT_ID`, `CLERK_ISSUER_URL` | **server** | Documented in `docs/api-authentication.md`; the current proxy code only reads the secret |
 
 ⚠️ **Vite loads `.env.development` (dot), not `.env_development` (underscore).** The underscore variant is git-ignored and silently ignored by Vite.
 
@@ -382,8 +383,8 @@ Docker files (`Dockerfile`, `nginx.conf`, `docker-compose.yml`, `build-docker.sh
 1. **`src/controllers/dbController.js` is dead code** — the old direct-MySQL layer (`mysql2` in the browser, `import.meta.env.DB_*`). Imported by nothing and cannot work. It also carries the same best-points weekday bug described below. Safe to delete.
 2. **`src/controllers/usersController.js`** (hardcoded `http://localhost:5000/api/login`) and **`src/scripts/home.js`** (pre-React DOM manipulation) are dead code too.
 3. **Best points from the wrong weekday** — a known active bug, root cause in the API (`api/db/videos.js selectBestPoints` never filters by `weekday`). Full analysis in `../FIX_BUG_bestpoints_weekday.md`. The frontend already sends `weekday` correctly; no change is needed here.
-4. **User-authenticated API calls fail in production** because the Vercel proxy moves the user JWT to `x-user-token` — see §5. Affects `deleteClip` today.
-5. **`docs/api-authentication.md`** describes the header as `x-app-token`; the code uses `Authorization`. Trust the code.
+4. **User-authenticated API calls in production — FIXED.** The proxy no longer touches `Authorization`, so `deleteClip` and the admin calls resolve the real user. **Not yet verified end-to-end in production**, because it was broken long enough that the delete path never actually ran there.
+5. ~~`docs/api-authentication.md` header mismatch~~ — the doc and the code now agree on `x-app-token`.
 6. **`README.md`** documents the retired Docker/nginx/Cloudflare-tunnel deployment and MySQL env vars. `DEVELOPMENT_TESTING_INSTRUCTIONS.md` is the current guide.
 7. **`Tournaments.jsx`** contains hardcoded demo tournaments with Unsplash images and is deliberately hidden from the navbar.
 8. **`RoleBasedAuth.jsx`** is unused and defaults to a role named `'player'`, which doesn't exist in the platform (`member` / `club` / `admin`).
